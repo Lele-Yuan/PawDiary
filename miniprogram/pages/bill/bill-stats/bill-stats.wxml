@@ -1,0 +1,72 @@
+<nav-bar title="消费统计" back="{{true}}" />
+
+<view class="stats-page">
+  <!-- 月度/年度切换 -->
+  <view class="period-tabs card">
+    <view class="period-tab {{period === 'month' ? 'active' : ''}}" bindtap="switchPeriod" data-period="month">月度</view>
+    <view class="period-tab {{period === 'year' ? 'active' : ''}}" bindtap="switchPeriod" data-period="year">年度</view>
+  </view>
+
+  <!-- 总额概览 -->
+  <view class="total-card card">
+    <text class="total-label">{{period === 'month' ? currentYear + '年' + currentMonth + '月' : currentYear + '年'}} 总支出</text>
+    <view class="total-amount">
+      <text class="total-currency">¥</text>
+      <text class="total-value">{{totalStr}}</text>
+    </view>
+  </view>
+
+  <!-- 饼图 -->
+  <view class="chart-card card" wx:if="{{categoryStats.length}}">
+    <view class="chart-title">分类占比</view>
+    <canvas canvas-id="pieChart" class="pie-chart" id="pieChart"></canvas>
+    <!-- 图例 -->
+    <view class="chart-legend">
+      <view class="legend-item" wx:for="{{categoryStats}}" wx:key="category">
+        <view class="legend-dot" style="background-color: {{item.color}};"></view>
+        <text class="legend-label">{{item.label}}</text>
+        <text class="legend-percent">{{item.percent}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类排行 -->
+  <view class="rank-card card" wx:if="{{categoryStats.length}}">
+    <view class="rank-title">分类排行</view>
+    <view class="rank-list">
+      <view class="rank-item" wx:for="{{categoryStats}}" wx:key="category">
+        <view class="rank-index">{{index + 1}}</view>
+        <text class="rank-icon">{{item.icon}}</text>
+        <view class="rank-info">
+          <text class="rank-name">{{item.label}}</text>
+          <view class="rank-bar-track">
+            <view class="rank-bar-fill" style="width: {{item.percent}}%; background-color: {{item.color}};"></view>
+          </view>
+        </view>
+        <view class="rank-amount">
+          <text class="rank-money">¥{{item.amountStr}}</text>
+          <text class="rank-percent">{{item.percent}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 近6个月趋势 -->
+  <view class="trend-card card" wx:if="{{trends.length}}">
+    <view class="trend-title">近6个月趋势</view>
+    <view class="trend-chart">
+      <view class="trend-bar-wrap" wx:for="{{trends}}" wx:key="month">
+        <view class="trend-bar-outer">
+          <view class="trend-bar-inner" style="height: {{item.heightPercent}}%;"></view>
+        </view>
+        <text class="trend-amount-label">{{item.totalStr}}</text>
+        <text class="trend-month-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-hint" wx:if="{{!categoryStats.length && loaded}}">
+    <text class="empty-text">该时段暂无消费数据</text>
+  </view>
+</view>

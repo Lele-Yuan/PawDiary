@@ -1,0 +1,83 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color: rgba(255, 255, 255, 0.92);
+  /* 在支持 backdrop-filter 的版本中启用磨砂效果 */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: none;
+  border-radius: 48px 48px 0 0;
+  overflow: hidden;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.tab-bar-inner {
+  height: 100rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 40rpx;
+  box-sizing: border-box;
+}
+
+/* 每个 Tab 项的外层容器（用于撑开可点击区域） */
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100rpx;
+}
+
+/* Tab 项内容容器（图标 + 文字，激活态加胶囊背景） */
+.tab-item-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10rpx 20rpx;
+  border-radius: 100rpx;
+  opacity: 0.6;
+  transition: all 0.25s ease;
+}
+
+/* 激活态：显示胶囊背景 + 不透明 */
+.tab-pill {
+  background-color: rgba(254, 157, 127, 0.2);
+  opacity: 1 !important;
+  min-width: 120rpx;
+}
+
+.tab-item-active .tab-item-inner {
+  opacity: 1;
+}
+
+.tab-icon {
+  width: 36rpx;
+  height: 36rpx;
+  flex-shrink: 0;
+}
+
+.tab-label {
+  font-size: 20rpx;
+  color: rgba(94, 95, 93, 1);
+  font-weight: 500;
+  margin-top: 4rpx;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+/* 激活态文字颜色 */
+.tab-label-active {
+  color: rgba(149, 73, 49, 1);
+}
+
+/* iPhone 底部安全区占位 */
+.tab-bar-safe-area {
+  height: env(safe-area-inset-bottom);
+  height: constant(safe-area-inset-bottom);
+}

@@ -1,0 +1,110 @@
+<view class="record-page">
+  <nav-bar title="健康记录" />
+  <!-- 标签筛选栏 -->
+  <scroll-view class="type-tabs" scroll-x enable-flex>
+    <view
+      class="tab-item {{activeType === item.key ? 'active' : ''}}"
+      wx:for="{{typeList}}"
+      wx:key="key"
+      data-type="{{item.key}}"
+      bindtap="switchType"
+    >
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 节标题 -->
+  <view class="section-title-row" wx:if="{{records.length}}">
+    <text class="section-title">健康时间线</text>
+  </view>
+
+  <!-- 时间线记录列表 -->
+  <view class="timeline" wx:if="{{records.length}}">
+    <view class="timeline-item" wx:for="{{records}}" wx:key="_id">
+      <!-- 左侧时间线 -->
+      <view class="timeline-left">
+        <view class="timeline-dot" style="background-color: {{item.typeColor}};"></view>
+        <view class="timeline-line" wx:if="{{index < records.length - 1}}"></view>
+      </view>
+
+      <!-- 右侧卡片：upcoming / completed 两种状态 -->
+      <view
+        class="timeline-card {{item.nextDateStr ? 'card-upcoming' : 'card-completed'}}"
+        data-id="{{item._id}}"
+        bindlongpress="onLongPressRecord"
+      >
+        <!-- upcoming 标签 -->
+        <view class="upcoming-tag" wx:if="{{item.nextDateStr}}">即将到来</view>
+
+        <!-- 主内容行：图标圆 + 内容 -->
+        <view class="card-main">
+          <!-- 类型图标圆形 -->
+          <view class="card-icon-circle" style="background-color: {{item.typeColor}}22;">
+            <text wx:if="{{item.type === 'deworm'}}">💊</text>
+            <text wx:elif="{{item.type === 'checkup'}}">🩺</text>
+            <text wx:elif="{{item.type === 'vaccine'}}">💉</text>
+            <text wx:elif="{{item.type === 'bath'}}">🛁</text>
+            <text wx:else>📋</text>
+          </view>
+
+          <!-- 文字内容 -->
+          <view class="card-content">
+            <text class="card-title">{{item.title}}</text>
+            <!-- upcoming 副文字 -->
+            <text class="card-subtitle subtitle-upcoming" wx:if="{{item.nextDateStr}}">
+              下次：{{item.nextDateStr}}
+            </text>
+            <!-- completed 副文字 -->
+            <text class="card-subtitle subtitle-completed" wx:else>
+              已完成 · {{item.dateStr}}
+            </text>
+            <!-- 地点/费用 -->
+            <view class="card-details" wx:if="{{item.location || item.cost}}">
+              <text class="detail-item" wx:if="{{item.location}}">📍 {{item.location}}</text>
+              <text class="detail-item" wx:if="{{item.cost}}">💰 ¥{{item.costStr}}</text>
+            </view>
+            <!-- 图片 -->
+            <view class="card-images" wx:if="{{item.images && item.images.length}}">
+              <image
+                class="thumb-img"
+                wx:for="{{item.images}}"
+                wx:for-item="img"
+                wx:for-index="imgIdx"
+                wx:key="imgIdx"
+                src="{{img}}"
+                mode="aspectFill"
+                data-urls="{{item.images}}"
+                data-current="{{img}}"
+                bindtap="previewImage"
+              />
+            </view>
+          </view>
+        </view>
+
+        <!-- upcoming 操作行 -->
+        <view class="card-actions" wx:if="{{item.nextDateStr}}">
+          <button
+            class="complete-btn"
+            hover-class="complete-btn-hover"
+            data-id="{{item._id}}"
+            bindtap="goAdd"
+          >立即完成</button>
+          <view class="bell-btn">🔔</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state
+    wx:if="{{!records.length && loaded}}"
+    icon="📝"
+    title="还没有记录"
+    description="记录毛孩子的每次驱虫、体检、疫苗和洗澡吧"
+    btnText="添加记录"
+    bind:action="goAdd"
+  />
+
+  <!-- 悬浮添加按钮 -->
+  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="goAdd">+</view>
+</view>

@@ -1,0 +1,289 @@
+.detail-page {
+  padding: 16rpx 28rpx 200rpx;
+}
+
+/* ===== 主白色大卡片 ===== */
+.detail-card {
+  background: linear-gradient(135deg, #FFFFFF 65%, rgba(232, 135, 90, 0.07) 100%);
+  border-radius: 96rpx;
+  box-shadow: 0 40rpx 80rpx rgba(149, 73, 49, 0.06);
+  padding: 56rpx 52rpx 48rpx;
+}
+
+/* ===== 标题区 ===== */
+.title-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 48rpx;
+}
+
+.title-main {
+  flex: 1;
+  min-width: 0;
+  margin-right: 24rpx;
+}
+
+/* 分类标签行 */
+.category-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.label-icon {
+  font-size: 22rpx;
+  margin-right: 8rpx;
+  line-height: 1;
+}
+
+.label-text {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #5E5F5D;
+  letter-spacing: 2rpx;
+  text-transform: uppercase;
+}
+
+/* 清单标题输入框 */
+.title-input {
+  height: 56rpx;
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #313333;
+  line-height: 1.2;
+  padding: 0;
+  border: none;
+  background: transparent;
+  margin-bottom: 8rpx;
+  width: 100%;
+}
+
+/* 副标题 */
+.title-sub {
+  font-size: 26rpx;
+  color: #5E5F5D;
+}
+
+/* 右侧百分比徽章 */
+.progress-badge {
+  padding-top: 24rpx;
+}
+
+.progress-num {
+  font-size: 60rpx;
+  font-weight: 900;
+  color: #3C6663;
+  line-height: 1;
+}
+
+.progress-pct {
+  font-size: 28rpx;
+  font-weight: 900;
+  color: #3C6663;
+  align-self: flex-start;
+  margin-top: 6rpx;
+}
+
+.progress-label-sm {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #5E5F5D;
+  letter-spacing: 1rpx;
+  text-transform: uppercase;
+  margin-top: 4rpx;
+}
+
+/* ===== 进度条 ===== */
+.detail-progress-bar {
+  width: 100%;
+  height: 24rpx;
+  border-radius: 24rpx;
+  background-color: #EFEEEB;
+  overflow: hidden;
+  margin-bottom: 48rpx;
+}
+
+.detail-progress-fill {
+  height: 100%;
+  border-radius: 24rpx;
+  background-color: #3C6663;
+  transition: width 0.3s ease;
+}
+
+/* ===== 清单项列表 ===== */
+.items-section {
+  margin-bottom: 24rpx;
+}
+
+/* 通用 item 卡片（pill） */
+.item-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 64rpx;
+  padding: 20rpx 28rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 已勾选态：灰色背景，半透明 */
+.item-checked {
+  background-color: #F5F3F1;
+  opacity: 0.6;
+}
+
+/* 未勾选态：白底渐变 + 浅边框 + 阴影 */
+.item-unchecked {
+  background: linear-gradient(135deg, #FFFFFF 60%, rgba(232, 135, 90, 0.06) 100%);
+  border: 2rpx solid rgba(60, 102, 99, 0.2);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+/* ===== 勾选框（圆角方形） ===== */
+.item-main {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.item-checkbox {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 12rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 28rpx;
+  flex-shrink: 0;
+}
+
+.checkbox-checked {
+  background-color: #3C6663;
+  border: none;
+}
+
+.checkbox-unchecked {
+  border: 4rpx solid rgba(60, 102, 99, 0.3);
+  background-color: transparent;
+}
+
+.check-icon {
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+/* 清单项名称 */
+.item-name {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #313333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name-checked {
+  text-decoration: line-through;
+  color: #5E5F5D;
+}
+
+/* 删除按钮 */
+.item-delete {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 8rpx;
+}
+
+.delete-icon {
+  font-size: 36rpx;
+  color: #B1B2B0;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.item-delete:active .delete-icon {
+  color: #C0392B;
+}
+
+/* ===== 添加新项目：虚线 pill ===== */
+.add-dashed {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 60rpx;
+  border: 4rpx dashed rgba(177, 178, 176, 1);
+  padding: 24rpx 32rpx;
+  height: 112rpx;
+  box-sizing: border-box;
+}
+
+.add-plus {
+  font-size: 36rpx;
+  font-weight: 300;
+  color: #5E5F5D;
+  margin-right: 16rpx;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.add-input {
+  flex: 1;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #5E5F5D;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* ===== 底部删除操作 ===== */
+.bottom-actions {
+  padding: 32rpx 0 0;
+}
+
+.delete-list-btn {
+  width: 100%;
+  color: #888888;
+  border-color: #CCCCCC;
+  font-size: 28rpx;
+}
+
+.delete-list-btn::after {
+  border: none;
+}
+
+/* ===== FAB 悬浮按钮 ===== */
+.detail-fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 136rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background-color: #FE9D7F;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 16rpx 40rpx rgba(0, 0, 0, 0.15), 0 40rpx 50rpx rgba(0, 0, 0, 0.10);
+  z-index: 100;
+}
+
+.detail-fab:active {
+  transform: scale(0.92);
+  opacity: 0.9;
+}
+
+.fab-icon {
+  font-size: 48rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+  line-height: 1;
+}

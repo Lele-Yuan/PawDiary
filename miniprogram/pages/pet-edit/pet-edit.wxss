@@ -1,0 +1,134 @@
+.page-container {
+  padding-bottom: 60rpx;
+}
+
+/* 头像区域 */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0 24rpx;
+}
+
+.avatar-preview {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  border: 4rpx solid #E8875A;
+  box-shadow: 0 8rpx 24rpx rgba(232, 135, 90, 0.25);
+}
+
+.avatar-tip {
+  font-size: 24rpx;
+  color: #E8875A;
+  margin-top: 16rpx;
+}
+
+/* 表单区域 */
+.form-section {
+  margin-top: 12rpx;
+}
+
+.required {
+  color: #C0392B;
+  margin-left: 4rpx;
+}
+
+/* 物种选择器 */
+.species-selector {
+  display: flex;
+  gap: 20rpx;
+}
+
+.species-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 0;
+  background-color: #F5F0E8;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.3s ease;
+}
+
+.species-item.active {
+  background-color: rgba(107, 45, 26, 0.1);
+  border-color: #6B2D1A;
+}
+
+.species-icon {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.species-label {
+  font-size: 24rpx;
+  color: #6B6B80;
+}
+
+.species-item.active .species-label {
+  color: #6B2D1A;
+  font-weight: 500;
+}
+
+/* 性别选择器 */
+.gender-selector {
+  display: flex;
+  gap: 20rpx;
+}
+
+.gender-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  background-color: #F5F0E8;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.3s ease;
+}
+
+.gender-item.active {
+  background-color: rgba(107, 45, 26, 0.1);
+  border-color: #6B2D1A;
+}
+
+.gender-icon {
+  font-size: 36rpx;
+  margin-right: 8rpx;
+}
+
+.gender-label {
+  font-size: 28rpx;
+  color: #6B6B80;
+}
+
+.gender-item.active .gender-label {
+  color: #6B2D1A;
+  font-weight: 500;
+}
+
+/* 按钮区域 */
+.btn-section {
+  padding: 16rpx 24rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 88rpx;
+  font-size: 32rpx;
+}
+
+.archive-btn {
+  width: 100%;
+  height: 88rpx;
+  font-size: 32rpx;
+  color: #888888;
+  border-color: #CCCCCC;
+}
+
+.archive-btn::after {
+  border: none;
+}

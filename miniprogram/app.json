@@ -1,0 +1,63 @@
+{
+  "cloud": true,
+  "pages": [
+    "pages/home/home",
+    "pages/checklist/checklist",
+    "pages/checklist/checklist-detail/checklist-detail",
+    "pages/record/record",
+    "pages/record/record-add/record-add",
+    "pages/bill/bill",
+    "pages/bill/bill-add/bill-add",
+    "pages/bill/bill-stats/bill-stats",
+    "pages/profile/profile",
+    "pages/pet-edit/pet-edit"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#f9d568",
+    "navigationBarTitleText": "宠物管家",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#FBF9F7"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#999999",
+    "selectedColor": "#E8875A",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/checklist/checklist",
+        "text": "清单",
+        "iconPath": "images/tab/checklist.png",
+        "selectedIconPath": "images/tab/checklist-active.png"
+      },
+      {
+        "pagePath": "pages/record/record",
+        "text": "记录",
+        "iconPath": "images/tab/record.png",
+        "selectedIconPath": "images/tab/record-active.png"
+      },
+      {
+        "pagePath": "pages/bill/bill",
+        "text": "账单",
+        "iconPath": "images/tab/bill.png",
+        "selectedIconPath": "images/tab/bill-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tab/profile.png",
+        "selectedIconPath": "images/tab/profile-active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

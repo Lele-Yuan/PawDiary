@@ -1,0 +1,40 @@
+<view class="pet-hero" bindlongpress="onLongPress">
+  <view class="hero-safe-space" style="height: {{statusBarHeight}}px;"></view>
+  <view class="hero-deco hero-deco-top"></view>
+  <view class="hero-deco hero-deco-bottom"></view>
+
+  <view class="hero-content">
+    <view class="hero-copy">
+      <view class="hero-caption">宠物管家</view>
+      <view class="hero-name">{{pet.name}}</view>
+
+      <view class="hero-meta">
+        <text wx:if="{{pet.breed}}" class="hero-meta-text">{{pet.breed}}</text>
+        <text wx:if="{{pet.breed && age}}" class="hero-meta-dot">·</text>
+        <text wx:if="{{age}}" class="hero-meta-text">{{age}}</text>
+      </view>
+
+      <view class="hero-stats">
+        <view class="hero-stat">
+          <view class="hero-stat-value">{{companionDays}}</view>
+          <view class="hero-stat-label">天陪伴</view>
+        </view>
+        <view class="hero-stat">
+          <view class="hero-stat-value">{{pet.weight || '--'}}<text class="hero-stat-unit" wx:if="{{pet.weight}}">kg</text></view>
+          <view class="hero-stat-label">当前体重</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="hero-avatar-wrap">
+      <image
+        class="hero-avatar"
+        src="{{pet.avatar || '/images/default/pet-avatar.png'}}"
+        mode="aspectFill"
+      />
+      <view class="gender-badge {{pet.gender === 'female' ? 'female' : 'male'}}">
+        {{pet.gender === 'female' ? '♀' : '♂'}}
+      </view>
+    </view>
+  </view>
+</view>

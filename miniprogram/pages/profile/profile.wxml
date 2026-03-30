@@ -1,0 +1,157 @@
+<view class="profile-page">
+  <nav-bar title="我的" />
+
+  <!-- ===== 用户信息区 ===== -->
+  <view class="user-section">
+    <!-- 头像（圆角方形） -->
+    <view class="user-avatar-wrap" bindtap="onLogin">
+      <image
+        class="user-avatar"
+        src="{{userInfo.avatarUrl || '/images/default/pet-avatar.png'}}"
+        mode="aspectFill"
+      />
+    </view>
+    <!-- 用户名 -->
+    <text class="user-name" bindtap="onLogin">{{userInfo.nickName || '点击登录'}}</text>
+    <!-- 微信云 badge -->
+    <view class="cloud-badge">
+      <text class="cloud-badge-icon">☁</text>
+      <text class="cloud-badge-text">微信云已连接</text>
+    </view>
+  </view>
+
+  <!-- ===== 我的毛孩子 ===== -->
+  <view class="family-section" wx:if="{{pets.length || true}}">
+    <!-- 标题行 -->
+    <view class="family-header">
+      <view class="family-header-left">
+        <text class="family-title">我的毛孩子</text>
+        <text class="family-subtitle">{{pets.length}} 位成员</text>
+      </view>
+      <view class="family-add-btn" bindtap="addPet">
+        <text class="family-add-icon">+</text>
+        <text class="family-add-text">添加宠物</text>
+      </view>
+    </view>
+
+    <!-- 宠物卡片列表 -->
+    <view
+      class="family-pet-card {{item._id === currentPetId ? 'pet-card-selected' : 'pet-card-normal'}}"
+      wx:for="{{pets}}"
+      wx:key="_id"
+      bindtap="onSwitchPet"
+      data-pet-id="{{item._id}}"
+    >
+      <!-- 宠物头像 -->
+      <image
+        class="pet-card-avatar"
+        src="{{item.avatar || '/images/default/pet-avatar.png'}}"
+        mode="aspectFill"
+      />
+      <!-- 宠物信息 -->
+      <view class="pet-card-info">
+        <text class="pet-card-name">{{item.name}}</text>
+        <text class="pet-card-desc">{{item.breed || '未知品种'}}{{item.age ? ' · ' + item.age + '岁' : ''}}</text>
+      </view>
+      <!-- 编辑按钮 -->
+      <view
+        class="pet-card-edit {{item._id === currentPetId ? 'edit-btn-selected' : 'edit-btn-normal'}}"
+        data-id="{{item._id}}"
+        bindtap="editPet"
+        catchtap
+      >
+        <text class="edit-icon">✎</text>
+      </view>
+    </view>
+
+    <!-- 无宠物引导 -->
+    <view class="family-empty" wx:if="{{!pets.length}}">
+      <text class="family-empty-text">还没有添加宠物，快去添加吧</text>
+    </view>
+  </view>
+
+  <!-- ===== Settings & Support ===== -->
+  <view class="settings-section">
+    <text class="settings-title">设置与支持</text>
+    <view class="settings-group">
+
+      <!-- 清除缓存 -->
+      <view class="menu-item" bindtap="clearCache">
+        <view class="menu-icon-circle" style="background-color: #F5E6CC;">
+          <text class="menu-icon-emoji">🔄</text>
+        </view>
+        <text class="menu-text">清除缓存</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <!-- 提醒通知（展示用） -->
+      <view class="menu-item">
+        <view class="menu-icon-circle" style="background-color: #BEE3E7;">
+          <text class="menu-icon-emoji">🔔</text>
+        </view>
+        <text class="menu-text">提醒通知</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <!-- 语言 -->
+      <view class="menu-item">
+        <view class="menu-icon-circle" style="background-color: rgba(254,157,127,0.3);">
+          <text class="menu-icon-emoji">🌐</text>
+        </view>
+        <text class="menu-text">语言设置</text>
+        <text class="menu-value">中文</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <!-- 关于我们 -->
+      <view class="menu-item" bindtap="showAbout">
+        <view class="menu-icon-circle" style="background-color: #E9E8E6;">
+          <text class="menu-icon-emoji">ℹ</text>
+        </view>
+        <text class="menu-text">关于宠物管家</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <!-- 帮助中心 -->
+      <view class="menu-item menu-item-last">
+        <view class="menu-icon-circle" style="background-color: rgba(190,235,231,0.4);">
+          <text class="menu-icon-emoji">🎧</text>
+        </view>
+        <text class="menu-text">帮助中心</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+    </view>
+  </view>
+
+  <!-- ===== 退出登录 ===== -->
+  <view class="signout-section" wx:if="{{userInfo.nickName}}">
+    <view class="signout-pill" bindtap="onLogout">
+      <text class="signout-text">退出登录</text>
+    </view>
+    <text class="version-text">VERSION 1.0.0</text>
+  </view>
+
+  <!-- 宠物列表弹窗（保留原有逻辑） -->
+  <view class="modal-mask" wx:if="{{showPetList}}" bindtap="hidePetList">
+    <view class="modal-content" catchtap>
+      <view class="modal-title">我的宠物</view>
+      <view class="pet-list-item" wx:for="{{pets}}" wx:key="_id">
+        <image class="pet-list-avatar" src="{{item.avatar || '/images/default/pet-avatar.png'}}" mode="aspectFill" />
+        <view class="pet-list-info">
+          <text class="pet-list-name">{{item.name}}</text>
+          <text class="pet-list-breed">{{item.breed || '未设置品种'}}</text>
+        </view>
+        <view class="pet-list-actions">
+          <view class="action-btn edit" data-id="{{item._id}}" bindtap="editPet">编辑</view>
+        </view>
+      </view>
+      <view class="add-pet-btn" bindtap="addPet">
+        <text class="add-icon">+</text>
+        <text>添加新宠物</text>
+      </view>
+      <view class="modal-close" bindtap="hidePetList">关闭</view>
+    </view>
+  </view>
+
+</view>

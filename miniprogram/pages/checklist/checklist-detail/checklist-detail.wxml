@@ -1,0 +1,85 @@
+<nav-bar title="清单详情" back="{{true}}" />
+
+<view class="detail-page">
+  <!-- 主白色大卡片 -->
+  <view class="detail-card">
+    <!-- 标题区：分类标签 + 进度百分比 -->
+    <view class="title-section">
+      <view class="title-main">
+        <!-- 分类标签行 -->
+        <view class="category-label">
+          <text class="label-icon">{{checklist.icon || '📋'}}</text>
+          <text class="label-text">清单详情</text>
+        </view>
+        <!-- 清单标题（可编辑） -->
+        <input
+          class="title-input"
+          value="{{checklist.title}}"
+          placeholder="清单标题"
+          bindblur="onTitleBlur"
+          maxlength="30"
+        />
+        <!-- 描述副文字 -->
+        <text class="title-sub">共 {{totalCount}} 项待办事项</text>
+      </view>
+      <!-- 右侧进度百分比 -->
+      <view class="progress-badge">
+        <text class="progress-num">{{progress}}</text>
+        <text class="progress-pct">%</text>
+        <text class="progress-label-sm">完成</text>
+      </view>
+    </view>
+
+    <!-- 进度条 -->
+    <view class="detail-progress-bar">
+      <view class="detail-progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+
+    <!-- 清单项列表 -->
+    <view class="items-section">
+      <view
+        class="item-card {{item.checked ? 'item-checked' : 'item-unchecked'}}"
+        wx:for="{{checklist.items}}"
+        wx:key="index"
+      >
+        <!-- 勾选区（点击整行切换） -->
+        <view class="item-main" data-index="{{index}}" bindtap="toggleItem">
+          <view class="item-checkbox {{item.checked ? 'checkbox-checked' : 'checkbox-unchecked'}}">
+            <text wx:if="{{item.checked}}" class="check-icon">✓</text>
+          </view>
+          <text class="item-name {{item.checked ? 'name-checked' : ''}}">{{item.name}}</text>
+        </view>
+        <!-- 删除按钮 -->
+        <view class="item-delete" data-index="{{index}}" bindtap="deleteItem">
+          <text class="delete-icon">×</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 添加新项目：虚线 pill -->
+    <view class="add-dashed" bindtap="focusAddInput">
+      <text class="add-plus">+</text>
+      <input
+        class="add-input"
+        id="addInput"
+        placeholder="添加新项目"
+        value="{{newItemName}}"
+        bindinput="onNewItemInput"
+        bindconfirm="addItem"
+        confirm-type="done"
+      />
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-actions">
+    <button class="btn-outline delete-list-btn" hover-class="btn-outline-hover" bindtap="deleteChecklist">
+      删除此清单
+    </button>
+  </view>
+</view>
+
+<!-- FAB 悬浮添加按钮 -->
+<view class="detail-fab" bindtap="addItem">
+  <text class="fab-icon">+</text>
+</view>

@@ -1,0 +1,304 @@
+.bill-page {
+  padding-bottom: 140rpx;
+}
+
+/* ===== 月份选择器 ===== */
+.month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 32rpx;
+}
+
+.month-arrow {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40rpx;
+  color: #E8875A;
+  font-weight: 300;
+}
+
+.month-arrow:active {
+  opacity: 0.6;
+}
+
+.month-display {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2D2D2D;
+  margin: 0 40rpx;
+  min-width: 200rpx;
+  text-align: center;
+}
+
+/* ===== 月度概览卡 ===== */
+.overview-card {
+  background: linear-gradient(135deg, #FFFFFF 60%, rgba(232, 135, 90, 0.07) 100%);
+  margin-top: 8rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 右上角渐变装饰圆 */
+.overview-deco-circle {
+  position: absolute;
+  top: -80rpx;
+  right: -80rpx;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  background-color: rgba(254, 157, 127, 0.2);
+  filter: blur(64rpx);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.overview-label {
+  font-size: 26rpx;
+  color: #888888;
+}
+
+/* 右上角钱包图标 */
+.overview-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background-color: rgba(190, 235, 231, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+/* 金额显示 */
+.overview-amount {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 28rpx;
+}
+
+.currency {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #6B2D1A;
+  margin-right: 4rpx;
+}
+
+.amount-main {
+  font-size: 72rpx;
+  font-weight: 800;
+  color: #6B2D1A;
+  line-height: 1;
+  letter-spacing: -2rpx;
+}
+
+.amount-cents {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #6B2D1A;
+  margin-left: 2rpx;
+  align-self: flex-end;
+  padding-bottom: 6rpx;
+}
+
+/* ===== 分段式横向 bar ===== */
+.segment-bar {
+  display: flex;
+  width: 100%;
+  height: 20rpx;
+  border-radius: 10rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  gap: 4rpx;
+}
+
+.segment {
+  height: 100%;
+  border-radius: 10rpx;
+  min-width: 8rpx;
+  transition: width 0.3s ease;
+}
+
+/* ===== 分类说明横排 ===== */
+.category-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.legend-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-name {
+  font-size: 22rpx;
+  color: #888888;
+  font-weight: 500;
+  letter-spacing: 1rpx;
+}
+
+.legend-pct {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #313333;
+}
+
+/* 查看月报链接（overview 底部） */
+.stats-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #EEE8E0;
+}
+
+.stats-link-text {
+  font-size: 26rpx;
+  color: #E8875A;
+  font-weight: 500;
+}
+
+.stats-link-arrow {
+  font-size: 28rpx;
+  color: #E8875A;
+}
+
+/* ===== 账单列表区 ===== */
+.bills-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 32rpx 32rpx 16rpx;
+}
+
+.bills-section-title {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #313333;
+  letter-spacing: -1rpx;
+  line-height: 1.2;
+}
+
+.bills-section-link {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding-bottom: 4rpx;
+}
+
+.bills-link-text {
+  font-size: 26rpx;
+  color: #954931;
+  font-weight: 600;
+}
+
+.bills-link-arrow {
+  font-size: 26rpx;
+  color: #954931;
+}
+
+.bill-list {
+  padding: 0 28rpx;
+}
+
+/* ===== 账单条目 ===== */
+.bill-item {
+  display: flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  padding: 28rpx;
+  border-radius: 32rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.bill-item-alt {
+  background-color: #F5F3F1;
+}
+
+/* 彩色圆形图标 */
+.bill-icon-circle {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+
+.bill-icon-emoji {
+  font-size: 36rpx;
+  line-height: 1;
+}
+
+/* 账单文字 */
+.bill-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bill-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #313333;
+  display: block;
+  margin-bottom: 6rpx;
+}
+
+.bill-subtitle {
+  font-size: 22rpx;
+  color: #888888;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 右侧金额 + 分类 tag */
+.bill-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  gap: 8rpx;
+}
+
+.bill-amount {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #313333;
+}
+
+.bill-category-tag {
+  font-size: 20rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  white-space: nowrap;
+}

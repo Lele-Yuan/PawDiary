@@ -1,0 +1,10 @@
+<view class="empty-state">
+  <view class="empty-icon-wrap">
+    <text class="empty-icon-text">{{icon || '📭'}}</text>
+  </view>
+  <view class="empty-title">{{title || '暂无数据'}}</view>
+  <view class="empty-desc" wx:if="{{description}}">{{description}}</view>
+  <view class="empty-action" wx:if="{{btnText}}" bindtap="onAction">
+    <button class="btn-primary btn-small" hover-class="btn-primary-hover">{{btnText}}</button>
+  </view>
+</view>

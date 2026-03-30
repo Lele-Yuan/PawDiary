@@ -1,0 +1,125 @@
+<nav-bar title="添加记录" back="{{true}}" />
+
+<view class="page-container">
+  <!-- 记录类型选择 -->
+  <view class="form-section card">
+    <view class="form-label">记录类型 <text class="required">*</text></view>
+    <view class="type-selector">
+      <view
+        class="type-item {{form.type === item.key ? 'active' : ''}}"
+        wx:for="{{typeList}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onSelectType"
+      >
+        <text class="type-icon">{{item.icon}}</text>
+        <text class="type-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 表单区域 -->
+  <view class="form-section card">
+    <!-- 日期 -->
+    <view class="form-group">
+      <view class="form-label">日期 <text class="required">*</text></view>
+      <picker mode="date" value="{{form.date}}" end="{{today}}" bindchange="onDateChange" data-field="date">
+        <view class="form-picker">
+          <text class="{{form.date ? '' : 'placeholder'}}">{{form.date || '请选择日期'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 标题 -->
+    <view class="form-group">
+      <view class="form-label">标题 <text class="required">*</text></view>
+      <input
+        class="form-input"
+        placeholder="如：体内驱虫-大宠爱"
+        value="{{form.title}}"
+        bindinput="onInputChange"
+        data-field="title"
+        maxlength="50"
+      />
+    </view>
+
+    <!-- 详细描述 -->
+    <view class="form-group">
+      <view class="form-label">详细描述</view>
+      <textarea
+        class="form-textarea"
+        placeholder="记录详细情况..."
+        value="{{form.description}}"
+        bindinput="onInputChange"
+        data-field="description"
+        maxlength="500"
+        auto-height
+      />
+    </view>
+
+    <!-- 地点 -->
+    <view class="form-group">
+      <view class="form-label">地点</view>
+      <input
+        class="form-input"
+        placeholder="如：xxx宠物医院"
+        value="{{form.location}}"
+        bindinput="onInputChange"
+        data-field="location"
+        maxlength="50"
+      />
+    </view>
+
+    <!-- 花费 -->
+    <view class="form-group">
+      <view class="form-label">花费（元）</view>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="请输入花费金额"
+        value="{{form.cost}}"
+        bindinput="onInputChange"
+        data-field="cost"
+      />
+    </view>
+
+    <!-- 下次预计日期 -->
+    <view class="form-group">
+      <view class="form-label">下次预计日期</view>
+      <picker mode="date" value="{{form.nextDate}}" start="{{today}}" bindchange="onDateChange" data-field="nextDate">
+        <view class="form-picker">
+          <text class="{{form.nextDate ? '' : 'placeholder'}}">{{form.nextDate || '选填，用于到期提醒'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 图片上传 -->
+  <view class="form-section card">
+    <view class="form-label">图片（最多9张）</view>
+    <view class="image-grid">
+      <view class="image-item" wx:for="{{form.images}}" wx:key="index">
+        <image class="preview-img" src="{{item}}" mode="aspectFill" />
+        <view class="image-delete" data-index="{{index}}" bindtap="deleteImage">×</view>
+      </view>
+      <view class="image-add" wx:if="{{form.images.length < 9}}" bindtap="chooseImage">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="btn-section">
+    <button
+      class="btn-primary submit-btn"
+      hover-class="btn-primary-hover"
+      bindtap="onSubmit"
+      loading="{{submitting}}"
+    >
+      保存记录
+    </button>
+  </view>
+</view>

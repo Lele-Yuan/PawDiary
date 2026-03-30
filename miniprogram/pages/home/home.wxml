@@ -1,0 +1,92 @@
+<view class="home-page">
+  <!-- 无宠物时的引导 -->
+  <view wx:if="{{!pets.length && loaded}}" class="guide-container fade-in">
+    <view class="home-safe-space" style="height: {{statusBarHeight}}px;"></view>
+    <text class="guide-icon">🐾</text>
+    <text class="guide-title">欢迎使用宠物管家</text>
+    <text class="guide-desc">添加你的第一只毛孩子，开始记录成长点滴吧</text>
+    <button class="btn-primary" hover-class="btn-primary-hover" bindtap="goAddPet">添加宠物</button>
+  </view>
+
+  <!-- 有宠物时的正常页面 -->
+  <view wx:if="{{pets.length}}" class="fade-in">
+    <!-- 宠物信息卡片 -->
+    <pet-card
+      wx:if="{{currentPet}}"
+      pet="{{currentPet}}"
+      statusBarHeight="{{statusBarHeight}}"
+      bind:edit="onEditPet"
+    />
+
+    <!-- 快捷功能入口 -->
+    <view class="quick-entry card">
+      <view class="entry-grid">
+        <view class="entry-item" bindtap="goChecklist">
+          <view class="entry-icon entry-icon-dark">📋</view>
+          <view class="entry-label">清单</view>
+        </view>
+        <view class="entry-item" bindtap="goRecord">
+          <view class="entry-icon entry-icon-teal">📝</view>
+          <view class="entry-label">记录</view>
+        </view>
+        <view class="entry-item" bindtap="goBill">
+          <view class="entry-icon entry-icon-beige">💰</view>
+          <view class="entry-label">账单</view>
+        </view>
+        <view class="entry-item" bindtap="goEditWeight">
+          <view class="entry-icon entry-icon-gray">⚖️</view>
+          <view class="entry-label">体重记录</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 指南模块 -->
+    <view class="guide-links">
+      <view class="guide-link guide-link-cat">
+        <view class="guide-link-copy">
+          <view class="guide-link-title">养猫指南</view>
+          <view class="guide-link-desc">了解猫咪养护知识</view>
+        </view>
+        <view class="guide-link-deco">🐱</view>
+      </view>
+      <view class="guide-link guide-link-dog">
+        <view class="guide-link-copy">
+          <view class="guide-link-title">养狗指南</view>
+          <view class="guide-link-desc">狗狗养育完全手册</view>
+        </view>
+        <view class="guide-link-deco">🐶</view>
+      </view>
+    </view>
+
+    <!-- 近期提醒 -->
+    <view class="reminders-section" wx:if="{{upcomingReminders.length}}">
+      <view class="section-header">
+        <text class="section-title">近期提醒</text>
+        <text class="section-more" bindtap="goRecord">查看全部 ›</text>
+      </view>
+
+      <view class="reminder-card card-sm" wx:for="{{upcomingReminders}}" wx:key="_id">
+        <view class="reminder-left">
+          <view class="reminder-dot" style="background-color: {{item.typeColor}};"></view>
+        </view>
+        <view class="reminder-content">
+          <view class="reminder-title">{{item.title}}</view>
+          <view class="reminder-info">
+            <text class="reminder-type tag {{item.tagClass}}">{{item.typeLabel}}</text>
+            <text class="reminder-date">{{item.nextDateStr}}</text>
+          </view>
+        </view>
+        <view class="reminder-countdown">
+          <text class="countdown-num">{{item.daysLeft}}</text>
+          <text class="countdown-label">天后</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 无提醒时的友好提示 -->
+    <view class="no-reminder card-sm" wx:if="{{!upcomingReminders.length && loaded}}">
+      <text class="no-reminder-icon">🎉</text>
+      <text class="no-reminder-text">暂无待处理提醒，毛孩子一切安好~</text>
+    </view>
+  </view>
+</view>

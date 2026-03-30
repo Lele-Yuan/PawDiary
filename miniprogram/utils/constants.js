@@ -1,0 +1,164 @@
+/**
+ * 记录类型
+ */
+const RECORD_TYPES = [
+  { key: 'deworm', label: '驱虫', color: '#249654', icon: '🐜' },
+  { key: 'checkup', label: '体检', color: '#3C6663', icon: '🩺' },
+  { key: 'vaccine', label: '疫苗', color: '#F5A623', icon: '💉' },
+  { key: 'bath', label: '洗澡', color: '#9C27B0', icon: '🛁' }
+];
+
+/**
+ * 记录类型映射（方便快速查找）
+ */
+const RECORD_TYPE_MAP = {};
+RECORD_TYPES.forEach(item => {
+  RECORD_TYPE_MAP[item.key] = item;
+});
+
+/**
+ * 账单分类
+ */
+const BILL_CATEGORIES = [
+  { key: 'food', label: '粮食', icon: '🍖' },
+  { key: 'medical', label: '医疗', icon: '💊' },
+  { key: 'toy', label: '玩具', icon: '🎾' },
+  { key: 'grooming', label: '美容', icon: '✂️' },
+  { key: 'daily', label: '日用', icon: '🧹' },
+  { key: 'other', label: '其他', icon: '📦' }
+];
+
+/**
+ * 账单分类映射
+ */
+const BILL_CATEGORY_MAP = {};
+BILL_CATEGORIES.forEach(item => {
+  BILL_CATEGORY_MAP[item.key] = item;
+});
+
+/**
+ * 账单分类颜色（用于图表）
+ */
+const BILL_CATEGORY_COLORS = {
+  food: '#FF6B35',
+  medical: '#249654',
+  toy: '#F5A623',
+  grooming: '#9C27B0',
+  daily: '#3C6663',
+  other: '#607D8B'
+};
+
+/**
+ * 宠物物种
+ */
+const PET_SPECIES = [
+  { key: 'cat', label: '猫咪', icon: '🐱' },
+  { key: 'dog', label: '狗狗', icon: '🐶' },
+  { key: 'other', label: '其他', icon: '🐾' }
+];
+
+/**
+ * 宠物性别
+ */
+const PET_GENDERS = [
+  { key: 'male', label: '弟弟', icon: '♂' },
+  { key: 'female', label: '妹妹', icon: '♀' }
+];
+
+/**
+ * 系统预设清单模板
+ */
+const DEFAULT_CHECKLIST_TEMPLATES = [
+  {
+    title: '接宠物必备',
+    icon: '🏠',
+    description: '迎接新成员回家前的必备物品清单',
+    isSystem: true,
+    sortOrder: 1,
+    items: [
+      { name: '猫粮/狗粮', category: 'food' },
+      { name: '食碗水碗', category: 'daily' },
+      { name: '猫砂/尿垫', category: 'daily' },
+      { name: '航空箱', category: 'daily' },
+      { name: '玩具', category: 'toy' },
+      { name: '牵引绳', category: 'daily' },
+      { name: '项圈', category: 'daily' },
+      { name: '驱虫药', category: 'medical' },
+      { name: '宠物沐浴露', category: 'grooming' }
+    ]
+  },
+  {
+    title: '徒步必备',
+    icon: '🥾',
+    description: '和毛孩子一起户外徒步需要准备的物品',
+    isSystem: true,
+    sortOrder: 2,
+    items: [
+      { name: '牵引绳', category: 'daily' },
+      { name: '水壶水碗', category: 'daily' },
+      { name: '零食', category: 'food' },
+      { name: '拾便袋', category: 'daily' },
+      { name: '急救包', category: 'medical' },
+      { name: '防蚊喷雾', category: 'medical' },
+      { name: '雨衣', category: 'daily' },
+      { name: '脚套', category: 'daily' }
+    ]
+  },
+  {
+    title: '去医院必备',
+    icon: '🏥',
+    description: '带宠物去医院看诊需要准备的物品和资料',
+    isSystem: true,
+    sortOrder: 3,
+    items: [
+      { name: '病历本', category: 'medical' },
+      { name: '疫苗本', category: 'medical' },
+      { name: '航空箱', category: 'daily' },
+      { name: '尿垫', category: 'daily' },
+      { name: '零食（安抚用）', category: 'food' },
+      { name: '牵引绳', category: 'daily' },
+      { name: '毛巾', category: 'daily' }
+    ]
+  },
+  {
+    title: '出行必备',
+    icon: '✈️',
+    description: '带宠物出行旅游需要准备的物品和证件',
+    isSystem: true,
+    sortOrder: 4,
+    items: [
+      { name: '航空箱/车载笼', category: 'daily' },
+      { name: '粮食', category: 'food' },
+      { name: '折叠碗', category: 'daily' },
+      { name: '牵引绳', category: 'daily' },
+      { name: '疫苗证明', category: 'medical' },
+      { name: '狂犬证', category: 'medical' },
+      { name: '玩具', category: 'toy' },
+      { name: '尿垫', category: 'daily' }
+    ]
+  }
+];
+
+/**
+ * 数据库集合名
+ */
+const COLLECTIONS = {
+  USERS: 'users',
+  PETS: 'pets',
+  CHECKLIST_TEMPLATES: 'checklist_templates',
+  CHECKLISTS: 'checklists',
+  RECORDS: 'records',
+  BILLS: 'bills'
+};
+
+module.exports = {
+  RECORD_TYPES,
+  RECORD_TYPE_MAP,
+  BILL_CATEGORIES,
+  BILL_CATEGORY_MAP,
+  BILL_CATEGORY_COLORS,
+  PET_SPECIES,
+  PET_GENDERS,
+  DEFAULT_CHECKLIST_TEMPLATES,
+  COLLECTIONS
+};

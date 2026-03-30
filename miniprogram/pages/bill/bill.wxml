@@ -1,0 +1,109 @@
+<view class="bill-page">
+  <nav-bar title="账单" />
+  <!-- 月份选择器 -->
+  <view class="month-selector card">
+    <view class="month-arrow" bindtap="prevMonth">‹</view>
+    <view class="month-display">{{currentYear}}年{{currentMonth}}月</view>
+    <view class="month-arrow" bindtap="nextMonth">›</view>
+  </view>
+
+  <!-- 月度概览卡 -->
+  <view class="overview-card card">
+    <!-- 右上角装饰圆 -->
+    <view class="overview-deco-circle"></view>
+    <!-- 标题行 + 右上角图标 -->
+    <view class="overview-header">
+      <text class="overview-label">本月总支出</text>
+      <view class="overview-icon">💳</view>
+    </view>
+
+    <!-- 金额：整数大号 + 小数小号 -->
+    <view class="overview-amount">
+      <text class="currency">¥</text>
+      <text class="amount-main">{{monthTotalMain}}</text>
+      <text class="amount-cents">{{monthTotalCents}}</text>
+    </view>
+
+    <!-- 分段式横向色块 bar -->
+    <view class="segment-bar" wx:if="{{categoryStats.length}}">
+      <view
+        class="segment"
+        wx:for="{{categoryStats}}"
+        wx:key="category"
+        style="width: {{item.percent}}%; background-color: {{item.color}};"
+      ></view>
+    </view>
+
+    <!-- 分类说明横排 -->
+    <view class="category-legend" wx:if="{{categoryStats.length}}">
+      <view class="legend-item" wx:for="{{categoryStats}}" wx:key="category">
+        <view class="legend-dot" style="background-color: {{item.color}};"></view>
+        <text class="legend-name">{{item.label}}</text>
+        <text class="legend-pct">{{item.percent}}%</text>
+      </view>
+    </view>
+
+    <!-- 查看月报链接 -->
+    <view class="stats-link" bindtap="goStats">
+      <text class="stats-link-text">查看月度报告</text>
+      <text class="stats-link-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 账单列表 -->
+  <view wx:if="{{groupedBills.length}}">
+    <!-- 节标题 -->
+    <view class="bills-section-header">
+      <text class="bills-section-title">近期支出</text>
+      <view class="bills-section-link" bindtap="goStats">
+        <text class="bills-link-text">查看月报</text>
+        <text class="bills-link-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 账单条目（平铺，不按日期分组显示） -->
+    <view class="bill-list">
+      <view wx:for="{{groupedBills}}" wx:key="date" wx:for-item="group">
+        <view
+          class="bill-item {{billIdx % 2 === 0 ? '' : 'bill-item-alt'}}"
+          wx:for="{{group.bills}}"
+          wx:for-item="bill"
+          wx:for-index="billIdx"
+          wx:key="_id"
+          data-id="{{bill._id}}"
+          bindlongpress="onLongPressBill"
+        >
+          <!-- 图标圆形 -->
+          <view class="bill-icon-circle" style="background-color: {{bill.categoryColor}}22;">
+            <text class="bill-icon-emoji">{{bill.categoryIcon}}</text>
+          </view>
+          <!-- 文字信息 -->
+          <view class="bill-info">
+            <text class="bill-title">{{bill.title}}</text>
+            <text class="bill-subtitle">{{bill.dateStr}}{{bill.note ? ' · ' + bill.note : ''}}</text>
+          </view>
+          <!-- 金额 + 分类 tag -->
+          <view class="bill-right">
+            <text class="bill-amount">¥{{bill.amountStr}}</text>
+            <view class="bill-category-tag" style="background-color: {{bill.categoryColor}}22; color: {{bill.categoryColor}};">
+              {{bill.categoryLabel}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state
+    wx:if="{{!groupedBills.length && loaded}}"
+    icon="💰"
+    title="本月还没有账单"
+    description="记录每一笔宠物消费，掌握花销情况"
+    btnText="记一笔"
+    bind:action="goAdd"
+  />
+
+  <!-- 悬浮添加按钮 -->
+  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="goAdd">+</view>
+</view>

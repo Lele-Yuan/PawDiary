@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "empty-state": "/components/empty-state/empty-state",
+    "nav-bar": "/components/nav-bar/nav-bar"
+  },
+  "navigationBarTitleText": "健康记录"
+}

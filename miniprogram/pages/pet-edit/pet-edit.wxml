@@ -1,0 +1,125 @@
+<nav-bar title="{{mode === 'add' ? '添加宠物' : '编辑宠物'}}" back="{{true}}" />
+
+<view class="page-container">
+  <!-- 头像上传 -->
+  <view class="avatar-section" bindtap="chooseAvatar">
+    <image
+      class="avatar-preview"
+      src="{{form.avatar || '/images/default/pet-avatar.png'}}"
+      mode="aspectFill"
+    />
+    <view class="avatar-tip">点击更换头像</view>
+  </view>
+
+  <!-- 表单 -->
+  <view class="form-section card">
+    <!-- 宠物名称 -->
+    <view class="form-group">
+      <view class="form-label">宠物名称 <text class="required">*</text></view>
+      <input
+        class="form-input"
+        placeholder="请输入宠物名称"
+        value="{{form.name}}"
+        bindinput="onInputChange"
+        data-field="name"
+        maxlength="20"
+      />
+    </view>
+
+    <!-- 物种选择 -->
+    <view class="form-group">
+      <view class="form-label">物种 <text class="required">*</text></view>
+      <view class="species-selector">
+        <view
+          class="species-item {{form.species === item.key ? 'active' : ''}}"
+          wx:for="{{speciesList}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onSelectSpecies"
+        >
+          <text class="species-icon">{{item.icon}}</text>
+          <text class="species-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 品种 -->
+    <view class="form-group">
+      <view class="form-label">品种</view>
+      <input
+        class="form-input"
+        placeholder="请输入品种（如金毛、布偶等）"
+        value="{{form.breed}}"
+        bindinput="onInputChange"
+        data-field="breed"
+        maxlength="20"
+      />
+    </view>
+
+    <!-- 性别 -->
+    <view class="form-group">
+      <view class="form-label">性别</view>
+      <view class="gender-selector">
+        <view
+          class="gender-item {{form.gender === item.key ? 'active' : ''}}"
+          wx:for="{{genderList}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onSelectGender"
+        >
+          <text class="gender-icon">{{item.icon}}</text>
+          <text class="gender-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 生日 -->
+    <view class="form-group">
+      <view class="form-label">生日</view>
+      <picker mode="date" value="{{form.birthday}}" end="{{today}}" bindchange="onDateChange" data-field="birthday">
+        <view class="form-picker">
+          <text class="{{form.birthday ? '' : 'placeholder'}}">{{form.birthday || '请选择生日'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 到家日期 -->
+    <view class="form-group">
+      <view class="form-label">到家日期</view>
+      <picker mode="date" value="{{form.adoptDate}}" end="{{today}}" bindchange="onDateChange" data-field="adoptDate">
+        <view class="form-picker">
+          <text class="{{form.adoptDate ? '' : 'placeholder'}}">{{form.adoptDate || '请选择到家日期'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 体重 -->
+    <view class="form-group">
+      <view class="form-label">体重（kg）</view>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="请输入当前体重"
+        value="{{form.weight}}"
+        bindinput="onInputChange"
+        data-field="weight"
+      />
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="btn-section">
+    <button class="btn-primary submit-btn" hover-class="btn-primary-hover" bindtap="onSubmit" loading="{{submitting}}">
+      {{mode === 'add' ? '添加宠物' : '保存修改'}}
+    </button>
+  </view>
+
+  <!-- 编辑模式下的归档按钮 -->
+  <view class="btn-section" wx:if="{{mode === 'edit'}}">
+    <button class="btn-outline archive-btn" hover-class="btn-outline-hover" bindtap="onArchive">
+      归档该宠物
+    </button>
+  </view>
+</view>
