@@ -6,6 +6,7 @@ Page({
     templates: [],
     currentPetName: '',
     navTitleOpacity: 1,
+    canEdit: true,
     showModal: false,
     customTitle: '',
     loaded: false,
@@ -22,6 +23,9 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 1 });
     }
+    var app = getApp();
+    var role = app.globalData.currentPetRole || 'creator';
+    this.setData({ canEdit: role === 'creator' || role === 'admin' });
     this.loadData();
   },
 
@@ -268,6 +272,11 @@ Page({
   // ==================== 创建清单 ====================
 
   async showCreateOptions() {
+    var app = getApp();
+    if (!app.globalData.currentPetId) {
+      wx.showToast({ title: '请先添加宠物', icon: 'none' });
+      return;
+    }
     if (!this.data.templates.length) {
       try {
         await wx.cloud.callFunction({

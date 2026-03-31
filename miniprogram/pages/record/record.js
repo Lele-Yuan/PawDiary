@@ -1,4 +1,4 @@
-const { formatDate, formatMoney } = require('../../utils/util');
+const { formatDate, formatMoney, showLoading, hideLoading, showSuccess, showError } = require('../../utils/util');
 const { RECORD_TYPES, RECORD_TYPE_MAP } = require('../../utils/constants');
 
 Page({
@@ -6,6 +6,7 @@ Page({
     activeType: 'all',
     currentPetName: '',
     navTitleOpacity: 1,
+    canEdit: true,
     records: [],
     typeList: [],
     loaded: false
@@ -23,6 +24,9 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
     }
+    var app = getApp();
+    var role = app.globalData.currentPetRole || 'creator';
+    this.setData({ canEdit: role === 'creator' || role === 'admin' });
     this.loadRecords();
   },
 
@@ -69,24 +73,78 @@ Page({
         .limit(50)
         .get();
 
-      const tagClassMap = {
+      var tagClassMap = {
         deworm: 'tag-success',
         checkup: 'tag-info',
         vaccine: 'tag-warning',
         bath: 'tag-purple'
       };
 
-      const records = data.map(r => {
-        const typeInfo = RECORD_TYPE_MAP[r.type] || {};
-        return {
-          ...r,
+      var now = new Date();
+      var nowTime = now.getTime();
+
+      var records = data.map(function (r) {
+        var typeInfo = RECORD_TYPE_MAP[r.type] || {};
+        var item = {
+          _id: r._id,
+          type: r.type,
+          title: r.title,
+          location: r.location,
+          cost: r.cost,
+          images: r.images,
+          date: r.date,
+          nextDate: r.nextDate,
+          enableRemind: r.enableRemind,
+          remindInterval: r.remindInterval,
           typeLabel: typeInfo.label || r.type,
           typeColor: typeInfo.color || '#999',
           tagClass: tagClassMap[r.type] || 'tag-primary',
           dateStr: formatDate(r.date, 'YYYY-MM-DD'),
+          shortDateStr: (function() {
+            var ds = formatDate(r.date, 'YYYY.MM.DD');
+            return ds ? ds.substring(2).replace(/-/g, '.') : '';
+          })(),
           costStr: formatMoney(r.cost),
-          nextDateStr: r.nextDate ? formatDate(r.nextDate, 'YYYY-MM-DD') : ''
+          nextDateStr: r.nextDate ? formatDate(r.nextDate, 'YYYY-MM-DD') : '',
+          hasRemind: !!r.enableRemind,
+          remindProgress: 0,
+          remindOverdue: false,
+          remindDaysText: '',
+          remindProgressColor: '#249654'
         };
+
+        // 提醒进度计算
+        if (r.enableRemind && r.nextDate && r.date) {
+          var dateTime = new Date(r.date).getTime();
+          var nextTime = new Date(r.nextDate).getTime();
+          var totalMs = nextTime - dateTime;
+
+          if (totalMs > 0) {
+            var elapsedMs = nowTime - dateTime;
+            var progress = Math.min(Math.round(elapsedMs / totalMs * 100), 100);
+            var remainDays = Math.ceil((nextTime - nowTime) / 86400000);
+
+            item.remindProgress = Math.max(0, progress);
+            item.remindOverdue = remainDays < 0;
+
+            if (remainDays >= 0) {
+              item.remindDaysText = '\u8fd8\u5269 ' + remainDays + ' \u5929';
+            } else {
+              item.remindDaysText = '\u5df2\u8d85\u671f ' + Math.abs(remainDays) + ' \u5929';
+              item.remindProgress = 100;
+            }
+
+            if (remainDays < 0 || progress >= 90) {
+              item.remindProgressColor = '#C0392B';
+            } else if (progress >= 60) {
+              item.remindProgressColor = '#F5A623';
+            } else {
+              item.remindProgressColor = '#249654';
+            }
+          }
+        }
+
+        return item;
       });
 
       this.setData({ records, loaded: true });
@@ -105,9 +163,103 @@ Page({
 
   // 跳转添加记录
   goAdd() {
+    var app = getApp();
+    if (!app.globalData.currentPetId) {
+      wx.showToast({ title: '请先添加宠物', icon: 'none' });
+      return;
+    }
     wx.navigateTo({
       url: '/pages/record/record-add/record-add'
     });
+  },
+
+  // 立即完成：携带当前记录数据跳转到添加页面
+  onCompleteRecord(e) {
+    var ds = e.currentTarget.dataset;
+    var params = 'prefill=1';
+    params += '&type=' + encodeURIComponent(ds.type || '');
+    params += '&title=' + encodeURIComponent(ds.title || '');
+    params += '&location=' + encodeURIComponent(ds.location || '');
+    params += '&enableRemind=' + (ds.enableRemind ? '1' : '0');
+    params += '&remindInterval=' + (ds.remindInterval || 0);
+    params += '&sourceId=' + (ds.id || '');
+    wx.navigateTo({
+      url: '/pages/record/record-add/record-add?' + params
+    });
+  },
+
+  // 跳转编辑记录
+  goEdit(e) {
+    var id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: '/pages/record/record-add/record-add?id=' + id
+    });
+  },
+
+  // 立即完成：新增当天记录，继承或结束提醒
+  async onComplete(e) {
+    var id = e.currentTarget.dataset.id;
+    var record = null;
+    var records = this.data.records;
+    for (var i = 0; i < records.length; i++) {
+      if (records[i]._id === id) { record = records[i]; break; }
+    }
+    if (!record) return;
+
+    var app = getApp();
+    var petId = app.globalData.currentPetId;
+    if (!petId) return;
+
+    var db = wx.cloud.database();
+    var now = new Date();
+    var todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
+    // 是否继续提醒：有提醒设置且未超期
+    var continueRemind = !!record.enableRemind && record.remindInterval > 0 && !record.remindOverdue;
+    var newNextDate = null;
+    if (continueRemind) {
+      var base = new Date(todayStr);
+      base.setDate(base.getDate() + record.remindInterval);
+      newNextDate = base;
+    }
+
+    try {
+      showLoading('完成中...');
+
+      // 新增完成记录
+      await db.collection('records').add({
+        data: {
+          petId: petId,
+          type: record.type,
+          date: new Date(todayStr),
+          title: record.title,
+          description: '',
+          location: record.location || '',
+          cost: 0,
+          nextDate: newNextDate,
+          enableRemind: continueRemind,
+          remindInterval: continueRemind ? record.remindInterval : 0,
+          images: [],
+          createdAt: new Date()
+        }
+      });
+
+      // 关闭原记录的提醒
+      await db.collection('records').doc(id).update({
+        data: {
+          enableRemind: false,
+          nextDate: null
+        }
+      });
+
+      hideLoading();
+      showSuccess('已完成');
+      this.loadRecords();
+    } catch (err) {
+      console.error('完成记录失败', err);
+      hideLoading();
+      showError('操作失败');
+    }
   },
 
   // 长按删除记录

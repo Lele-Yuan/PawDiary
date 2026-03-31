@@ -123,10 +123,10 @@
   </view>
 
   <!-- FAB：详情展开时添加条目，否则新建清单 -->
-  <view wx:if="{{expandedId && detailChecklist}}" class="detail-fab" bindtap="addItem">
+  <view wx:if="{{expandedId && detailChecklist && canEdit}}" class="detail-fab" bindtap="addItem">
     <text class="fab-icon">+</text>
   </view>
-  <view wx:else class="fab-btn" hover-class="fab-btn-hover" bindtap="showCreateOptions">+</view>
+  <view wx:elif="{{!expandedId && canEdit}}" class="fab-btn" hover-class="fab-btn-hover" bindtap="showCreateOptions">+</view>
 
   <!-- 模板选择弹窗 -->
   <view class="modal-mask" wx:if="{{showModal}}" bindtap="hideModal">

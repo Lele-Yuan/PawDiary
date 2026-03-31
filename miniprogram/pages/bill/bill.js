@@ -5,6 +5,7 @@ Page({
   data: {
     currentPetName: '',
     navTitleOpacity: 1,
+    canEdit: true,
     currentYear: 2026,
     currentMonth: 3,
     monthTotal: 0,
@@ -31,6 +32,9 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 3 });
     }
+    var app = getApp();
+    var role = app.globalData.currentPetRole || 'creator';
+    this.setData({ canEdit: role === 'creator' || role === 'admin' });
     this.loadMonthData();
   },
 
@@ -219,6 +223,11 @@ Page({
 
   // 跳转添加
   goAdd() {
+    var app = getApp();
+    if (!app.globalData.currentPetId) {
+      wx.showToast({ title: '请先添加宠物', icon: 'none' });
+      return;
+    }
     wx.navigateTo({
       url: '/pages/bill/bill-add/bill-add'
     });

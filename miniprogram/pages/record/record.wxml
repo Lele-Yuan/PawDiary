@@ -29,14 +29,16 @@
     <view class="timeline-item" wx:for="{{records}}" wx:key="_id">
       <!-- 左侧时间线 -->
       <view class="timeline-left">
+        <text class="timeline-date">{{item.shortDateStr}}</text>
         <view class="timeline-dot" style="background-color: {{item.typeColor}};"></view>
         <view class="timeline-line" wx:if="{{index < records.length - 1}}"></view>
       </view>
 
-      <!-- 右侧卡片：upcoming / completed 两种状态 -->
+      <!-- 右侧卡片 -->
       <view
         class="timeline-card {{item.nextDateStr ? 'card-upcoming' : 'card-completed'}}"
         data-id="{{item._id}}"
+        bindtap="goEdit"
         bindlongpress="onLongPressRecord"
       >
         <!-- upcoming 标签 -->
@@ -55,15 +57,14 @@
 
           <!-- 文字内容 -->
           <view class="card-content">
-            <text class="card-title">{{item.title}}</text>
+            <view class="card-title-row">
+              <text class="card-title">{{item.title}}</text>
+              <text class="remind-icon" wx:if="{{item.hasRemind}}">🔔</text>
+            </view>
             <!-- upcoming 副文字 -->
-            <text class="card-subtitle subtitle-upcoming" wx:if="{{item.nextDateStr}}">
-              下次：{{item.nextDateStr}}
-            </text>
+            <text class="card-subtitle subtitle-upcoming" wx:if="{{item.nextDateStr}}">下次：{{item.nextDateStr}}</text>
             <!-- completed 副文字 -->
-            <text class="card-subtitle subtitle-completed" wx:else>
-              已完成 · {{item.dateStr}}
-            </text>
+            <text class="card-subtitle subtitle-completed" wx:else>已完成</text>
             <!-- 地点/费用 -->
             <view class="card-details" wx:if="{{item.location || item.cost}}">
               <text class="detail-item" wx:if="{{item.location}}">📍 {{item.location}}</text>
@@ -84,16 +85,28 @@
                 bindtap="previewImage"
               />
             </view>
+            <!-- 提醒倒计时进度条 -->
+            <view class="remind-bar" wx:if="{{item.hasRemind}}">
+              <view class="remind-progress-track">
+                <view class="remind-progress-fill" style="width: {{item.remindProgress}}%; background-color: {{item.remindProgressColor}};"></view>
+              </view>
+              <text class="remind-days-text {{item.remindOverdue ? 'overdue' : ''}}">{{item.remindDaysText}}</text>
+            </view>
           </view>
         </view>
 
         <!-- upcoming 操作行 -->
-        <view class="card-actions" wx:if="{{item.nextDateStr}}">
+        <view class="card-actions" wx:if="{{item.nextDateStr && canEdit}}">
           <button
             class="complete-btn"
             hover-class="complete-btn-hover"
             data-id="{{item._id}}"
-            bindtap="goAdd"
+            data-type="{{item.type}}"
+            data-title="{{item.title}}"
+            data-location="{{item.location}}"
+            data-enable-remind="{{item.enableRemind}}"
+            data-remind-interval="{{item.remindInterval}}"
+            catchtap="onCompleteRecord"
           >立即完成</button>
           <view class="bell-btn">🔔</view>
         </view>
@@ -112,5 +125,5 @@
   />
 
   <!-- 悬浮添加按钮 -->
-  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="goAdd">+</view>
+  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="goAdd" wx:if="{{canEdit}}">+</view>
 </view>

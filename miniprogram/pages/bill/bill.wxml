@@ -111,5 +111,5 @@
   />
 
   <!-- 悬浮添加按钮 -->
-  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="goAdd">+</view>
+  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="goAdd" wx:if="{{canEdit}}">+</view>
 </view>

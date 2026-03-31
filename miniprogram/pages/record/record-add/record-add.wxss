@@ -119,3 +119,109 @@
   height: 88rpx;
   font-size: 32rpx;
 }
+
+/* ===== 提醒开关 ===== */
+.remind-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.remind-row .form-label {
+  margin-bottom: 0;
+}
+
+/* ===== 间隔选择 ===== */
+.interval-section {
+  margin-top: 16rpx;
+}
+
+.interval-tags {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+  flex-wrap: wrap;
+}
+
+.interval-tag {
+  padding: 16rpx 32rpx;
+  background-color: #F5F0E8;
+  border-radius: 60rpx;
+  font-size: 26rpx;
+  color: #6B6B80;
+  border: 2rpx solid transparent;
+}
+
+.interval-tag.active {
+  background-color: rgba(107, 45, 26, 0.1);
+  border-color: #6B2D1A;
+  color: #6B2D1A;
+  font-weight: 600;
+}
+
+.interval-custom {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+  gap: 12rpx;
+}
+
+.interval-input {
+  flex: 1;
+  height: 72rpx;
+  background-color: #F5F3F1;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #313333;
+}
+
+.interval-unit {
+  font-size: 28rpx;
+  color: #5E5F5D;
+  flex-shrink: 0;
+}
+
+.next-date-preview {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 20rpx;
+  padding: 16rpx 24rpx;
+  background-color: rgba(190, 235, 231, 0.3);
+  border-radius: 16rpx;
+}
+
+.preview-icon {
+  font-size: 28rpx;
+}
+
+.preview-text {
+  font-size: 26rpx;
+  color: #2E5956;
+  font-weight: 500;
+}
+
+/* ===== 删除按钮 ===== */
+.btn-delete {
+  width: 100%;
+  height: 88rpx;
+  font-size: 32rpx;
+  margin-top: 24rpx;
+  background-color: #FFFFFF;
+  color: #C0392B;
+  border: 2rpx solid #C0392B;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete::after {
+  border: none;
+}
+
+.btn-delete-hover {
+  opacity: 0.7;
+  background-color: rgba(192, 57, 43, 0.05);
+}

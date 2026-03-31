@@ -2,10 +2,12 @@ App({
   globalData: {
     userInfo: null,
     currentPetId: '',
-    openid: ''
+    currentPetRole: '',
+    openid: '',
+    pendingInvite: ''
   },
 
-  onLaunch: function () {
+  onLaunch: function (options) {
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力');
       return;
@@ -16,7 +18,18 @@ App({
       traceUser: true
     });
 
+    // 检测分享邀请参数
+    if (options && options.query && options.query.invitePetId) {
+      this.globalData.pendingInvite = options.query.invitePetId;
+    }
+
     this.initUser();
+  },
+
+  onShow: function (options) {
+    if (options && options.query && options.query.invitePetId) {
+      this.globalData.pendingInvite = options.query.invitePetId;
+    }
   },
 
   // 初始化用户信息

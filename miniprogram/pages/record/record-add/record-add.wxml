@@ -1,4 +1,4 @@
-<nav-bar title="添加记录" back="{{true}}" />
+<nav-bar title="{{pageTitle}}" back="{{true}}" />
 
 <view class="page-container">
   <!-- 记录类型选择 -->
@@ -85,7 +85,7 @@
     </view>
 
     <!-- 下次预计日期 -->
-    <view class="form-group">
+    <view class="form-group" wx:if="{{!form.enableRemind}}">
       <view class="form-label">下次预计日期</view>
       <picker mode="date" value="{{form.nextDate}}" start="{{today}}" bindchange="onDateChange" data-field="nextDate">
         <view class="form-picker">
@@ -93,6 +93,36 @@
           <text class="arrow">›</text>
         </view>
       </picker>
+    </view>
+
+    <!-- 提醒开关 -->
+    <view class="form-group remind-row">
+      <view class="form-label">下次提醒</view>
+      <switch checked="{{form.enableRemind}}" bindchange="onRemindChange" color="#6B2D1A" />
+    </view>
+
+    <!-- 间隔选择（仅提醒开启时显示） -->
+    <view class="interval-section" wx:if="{{form.enableRemind}}">
+      <view class="form-label">提醒间隔</view>
+      <view class="interval-tags">
+        <view class="interval-tag {{form.remindInterval === 30 ? 'active' : ''}}"
+          data-days="30" bindtap="onSelectInterval">30天</view>
+        <view class="interval-tag {{form.remindInterval === 60 ? 'active' : ''}}"
+          data-days="60" bindtap="onSelectInterval">60天</view>
+        <view class="interval-tag {{form.remindInterval === 90 ? 'active' : ''}}"
+          data-days="90" bindtap="onSelectInterval">90天</view>
+        <view class="interval-tag {{form.remindInterval === 180 ? 'active' : ''}}"
+          data-days="180" bindtap="onSelectInterval">180天</view>
+      </view>
+      <view class="interval-custom">
+        <input class="interval-input" type="number" placeholder="自定义天数"
+          value="{{customInterval}}" bindinput="onCustomInterval" />
+        <text class="interval-unit">天</text>
+      </view>
+      <view class="next-date-preview" wx:if="{{form.nextDate}}">
+        <text class="preview-icon">📅</text>
+        <text class="preview-text">下次提醒：{{form.nextDate}}</text>
+      </view>
     </view>
   </view>
 
@@ -119,7 +149,13 @@
       bindtap="onSubmit"
       loading="{{submitting}}"
     >
-      保存记录
+      {{editId ? '保存修改' : '保存记录'}}
     </button>
+    <button
+      class="btn-delete"
+      wx:if="{{editId}}"
+      hover-class="btn-delete-hover"
+      bindtap="onDelete"
+    >删除记录</button>
   </view>
 </view>

@@ -148,7 +148,23 @@ const COLLECTIONS = {
   CHECKLIST_TEMPLATES: 'checklist_templates',
   CHECKLISTS: 'checklists',
   RECORDS: 'records',
-  BILLS: 'bills'
+  BILLS: 'bills',
+  FAMILY_MEMBERS: 'pet_members'
+};
+
+/**
+ * 家庭成员角色
+ */
+const MEMBER_ROLES = {
+  CREATOR: 'creator',
+  ADMIN: 'admin',
+  MEMBER: 'member'
+};
+
+const MEMBER_ROLE_LABELS = {
+  creator: '创建者',
+  admin: '管理员',
+  member: '成员'
 };
 
 module.exports = {
@@ -160,5 +176,7 @@ module.exports = {
   PET_SPECIES,
   PET_GENDERS,
   DEFAULT_CHECKLIST_TEMPLATES,
-  COLLECTIONS
+  COLLECTIONS,
+  MEMBER_ROLES,
+  MEMBER_ROLE_LABELS
 };

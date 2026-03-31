@@ -7,6 +7,179 @@
   flex-shrink: 0;
 }
 
+/* ===== 无宠物欢迎页 ===== */
+.welcome-page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FBF9F7;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 背景装饰 */
+.deco-top {
+  position: absolute;
+  top: 216rpx;
+  right: -80rpx;
+  width: 624rpx;
+  height: 1083rpx;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.deco-bottom {
+  position: absolute;
+  bottom: 0;
+  left: -78rpx;
+  width: 468rpx;
+  height: 866rpx;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 顶部导航 */
+.welcome-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 32rpx;
+  padding-right: 32rpx;
+  padding-bottom: 16rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.welcome-nav-left {
+  display: flex;
+  align-items: center;
+}
+
+.welcome-logo {
+  width: 40rpx;
+  height: 38rpx;
+  margin-right: 16rpx;
+}
+
+.welcome-app-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #313331;
+  letter-spacing: -0.7rpx;
+}
+
+/* 主体内容 */
+.welcome-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 64rpx;
+  position: relative;
+  z-index: 1;
+}
+
+/* 插画 */
+.welcome-illust-wrap {
+  position: relative;
+  width: 652rpx;
+  height: 650rpx;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-illust-bg1 {
+  position: absolute;
+  top: 4rpx;
+  left: -3rpx;
+  width: 658rpx;
+  height: 641rpx;
+}
+
+.welcome-illust-bg2 {
+  position: absolute;
+  top: 10rpx;
+  left: 3rpx;
+  width: 646rpx;
+  height: 629rpx;
+}
+
+.welcome-illust {
+  position: relative;
+  width: 650rpx;
+  height: 650rpx;
+}
+
+/* 文案 */
+.welcome-text {
+  margin-top: 0;
+  padding-bottom: 96rpx;
+}
+
+.welcome-title {
+  font-size: 72rpx;
+  font-weight: 800;
+  color: #954931;
+  line-height: 90rpx;
+  letter-spacing: -3.6rpx;
+}
+
+.welcome-desc {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #5E5F5D;
+  line-height: 58rpx;
+}
+
+.welcome-desc:first-of-type {
+  margin-top: 8rpx;
+}
+
+/* 底部操作区 */
+.welcome-footer {
+  position: relative;
+  z-index: 2;
+  padding: 32rpx 64rpx 128rpx;
+  background: linear-gradient(0deg, rgba(251,249,247,1) 0%, rgba(251,249,247,0.9) 50%, rgba(251,249,247,0) 100%);
+}
+
+.welcome-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120rpx;
+  border-radius: 60rpx;
+  background-color: #954931;
+  margin-bottom: 48rpx;
+}
+
+.welcome-cta-hover {
+  opacity: 0.85;
+}
+
+.welcome-cta-text {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFF7F5;
+  margin-right: 16rpx;
+}
+
+.welcome-cta-arrow {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.welcome-slogan {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #5E5F5D;
+  text-align: center;
+  letter-spacing: 2rpx;
+  text-transform: uppercase;
+}
+
 /* ===== 快捷入口 ===== */
 .quick-entry {
   margin-top: 24rpx;
@@ -73,6 +246,116 @@
   font-weight: 500;
   color: #2D2D2D;
   text-align: center;
+}
+
+/* ===== 家庭成员 ===== */
+.family-section {
+  margin-top: 24rpx;
+  padding: 32rpx 24rpx 24rpx;
+  border-radius: 40rpx;
+}
+
+.family-section .section-header {
+  padding: 0;
+  margin-bottom: 20rpx;
+}
+
+.invite-btn {
+  font-size: 24rpx;
+  color: #E8875A;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1.5;
+  display: inline;
+}
+
+.invite-btn::after {
+  border: none;
+}
+
+.family-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.family-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.family-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 20rpx;
+  background-color: #F0EAD6;
+}
+
+.family-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.family-name {
+  font-size: 28rpx;
+  color: #2D2D2D;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.family-role {
+  font-size: 22rpx;
+  color: #888888;
+}
+
+.role-creator {
+  color: #6B2D1A;
+  font-weight: 500;
+}
+
+.role-admin {
+  color: #E8875A;
+  font-weight: 500;
+}
+
+.family-actions {
+  display: flex;
+  gap: 16rpx;
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+.family-action-btn {
+  font-size: 22rpx;
+  color: #6B2D1A;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  background-color: #F0EAD6;
+}
+
+.family-action-btn.danger {
+  color: #C0392B;
+  background-color: rgba(192, 57, 43, 0.08);
+}
+
+.family-empty {
+  padding: 16rpx 0 8rpx;
+  text-align: center;
+}
+
+.family-empty-text {
+  font-size: 24rpx;
+  color: #AAAAAA;
 }
 
 /* ===== 指南模块 ===== */

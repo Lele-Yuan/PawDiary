@@ -45,11 +45,30 @@ async function addPet(openid, data) {
 
   const res = await db.collection('pets').add({ data: petData });
 
+  // 自动创建 creator 的家庭成员记录（pet_members 集合可能不存在，不影响主流程）
+  try {
+    var userRes = await db.collection('users').where({ _openid: openid }).limit(1).get();
+    var user = userRes.data.length > 0 ? userRes.data[0] : {};
+    await db.collection('pet_members').add({
+      data: {
+        _openid: openid,
+        petId: res._id,
+        role: 'creator',
+        nickName: user.nickName || '宠物主人',
+        avatarUrl: user.avatarUrl || '',
+        createdAt: new Date()
+      }
+    });
+  } catch (e) {
+    console.warn('创建 creator 成员记录失败（pet_members 集合可能未创建）：', e);
+  }
+
   // 如果是用户的第一只宠物，自动设为当前宠物
-  const { total } = await db.collection('pets').where({
+  var countRes = await db.collection('pets').where({
     _openid: openid,
     status: 'active'
   }).count();
+  var total = countRes ? countRes.total : 0;
 
   if (total === 1) {
     await db.collection('users').where({ _openid: openid }).update({

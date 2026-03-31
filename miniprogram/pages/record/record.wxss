@@ -70,11 +70,20 @@
 }
 
 .timeline-left {
-  width: 72rpx;
+  width: 96rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
+}
+
+.timeline-date {
+  font-size: 16rpx;
+  color: #999999;
+  margin-top: 24rpx;
+  margin-bottom: 8rpx;
+  white-space: nowrap;
+  letter-spacing: 0.5rpx;
 }
 
 .timeline-dot {
@@ -82,7 +91,6 @@
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  margin-top: 40rpx;
   flex-shrink: 0;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
 }
@@ -207,6 +215,9 @@
   border-radius: 40rpx;
   text-align: center;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .complete-btn::after {
@@ -241,4 +252,55 @@
   width: 120rpx;
   height: 120rpx;
   border-radius: 16rpx;
+}
+
+/* ===== 提醒标题行 ===== */
+.card-title-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.card-title-row .card-title {
+  margin-bottom: 0;
+}
+
+.remind-icon {
+  font-size: 28rpx;
+  margin-left: 8rpx;
+  flex-shrink: 0;
+}
+
+/* ===== 提醒进度条 ===== */
+.remind-bar {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+}
+
+.remind-progress-track {
+  flex: 1;
+  height: 12rpx;
+  background-color: #E8E2D8;
+  border-radius: 6rpx;
+  overflow: hidden;
+  margin-right: 16rpx;
+}
+
+.remind-progress-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+.remind-days-text {
+  font-size: 22rpx;
+  color: #888888;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.remind-days-text.overdue {
+  color: #C0392B;
+  font-weight: 600;
 }

@@ -24,10 +24,18 @@ Page({
 
   onLoad(options) {
     const today = new Date();
-    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
     this.setData({ today: todayStr });
 
     if (options.mode === 'edit' && options.id) {
+      // 编辑模式下检查权限
+      var app = getApp();
+      var role = app.globalData.currentPetRole || '';
+      if (role === 'member') {
+        wx.showToast({ title: '暂无编辑权限', icon: 'none' });
+        setTimeout(function () { wx.navigateBack(); }, 1500);
+        return;
+      }
       this.setData({ mode: 'edit', petId: options.id });
       this.loadPetInfo(options.id);
     }
