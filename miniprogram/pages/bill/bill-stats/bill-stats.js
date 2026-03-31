@@ -71,7 +71,9 @@ Page({
       });
 
       const categoryStats = Object.entries(categoryMap)
-        .map(([category, amount]) => {
+        .map(function (entry) {
+          var category = entry[0];
+          var amount = entry[1];
           const info = BILL_CATEGORY_MAP[category] || {};
           return {
             category,
@@ -142,10 +144,11 @@ Page({
       }
 
       // 计算高度百分比
-      const trendsWithHeight = trends.map(t => ({
-        ...t,
-        heightPercent: maxTotal > 0 ? Math.max(Math.round(t.total / maxTotal * 100), 2) : 2
-      }));
+      var trendsWithHeight = trends.map(function (t) {
+        var item = { year: t.year, month: t.month, label: t.label, total: t.total, totalStr: t.totalStr };
+        item.heightPercent = maxTotal > 0 ? Math.max(Math.round(t.total / maxTotal * 100), 2) : 2;
+        return item;
+      });
 
       this.setData({ trends: trendsWithHeight });
     } catch (err) {

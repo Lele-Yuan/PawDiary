@@ -8,7 +8,14 @@ Page({
     billCount: 0,
     pets: [],
     currentPetId: '',
-    showPetList: false
+    showPetList: false,
+    navTitleOpacity: 1,
+    // 登录相关
+    isGuest: true,
+    showLoginModal: false,
+    tempAvatarUrl: '',
+    tempNickName: '',
+    tempPhone: ''
   },
 
   onShow() {
@@ -20,15 +27,26 @@ Page({
     this.loadPets();
   },
 
+  onPageScroll(e) {
+    const threshold = 150;
+    const opacity = Math.max(0, 1 - e.scrollTop / threshold);
+    if (Math.abs(opacity - this.data.navTitleOpacity) > 0.05 || opacity === 0 || opacity === 1) {
+      this.setData({ navTitleOpacity: Math.round(opacity * 100) / 100 });
+    }
+  },
+
   // 加载用户信息
   async loadUserInfo() {
     const app = getApp();
     if (app.globalData.userInfo) {
-      this.setData({ userInfo: app.globalData.userInfo });
+      const userInfo = app.globalData.userInfo;
+      const isGuest = !userInfo.nickName || userInfo.nickName === '宠物主人';
+      this.setData({ userInfo, isGuest });
     } else {
       // 等待初始化完成
       app.userInfoReadyCallback = (userInfo) => {
-        this.setData({ userInfo });
+        const isGuest = !userInfo.nickName || userInfo.nickName === '宠物主人';
+        this.setData({ userInfo, isGuest });
       };
     }
   },
@@ -95,46 +113,175 @@ Page({
     });
   },
 
-  // 登录
+  // 登录 - 打开登录弹窗
   onLogin() {
-    if (this.data.userInfo && this.data.userInfo.nickName && this.data.userInfo.nickName !== '宠物主人') {
-      return; // 已登录
+    if (!this.data.isGuest) return;
+    this.setData({
+      showLoginModal: true,
+      tempAvatarUrl: '',
+      tempNickName: '',
+      tempPhone: ''
+    });
+  },
+
+  // 关闭登录弹窗
+  closeLoginModal() {
+    this.setData({ showLoginModal: false });
+  },
+
+  // 选择头像
+  onChooseAvatar(e) {
+    this.setData({ tempAvatarUrl: e.detail.avatarUrl });
+  },
+
+  // 昵称输入
+  onNicknameInput(e) {
+    this.setData({ tempNickName: e.detail.value });
+  },
+
+  // 获取手机号
+  async onGetPhoneNumber(e) {
+    if (e.detail.errMsg !== 'getPhoneNumber:ok') return;
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'userManage',
+        data: { action: 'getPhoneNumber', data: { code: e.detail.code } }
+      });
+      if (res.result && res.result.code === 0) {
+        this.setData({ tempPhone: res.result.data.purePhoneNumber || res.result.data.phoneNumber });
+        showSuccess('手机号已获取');
+      } else {
+        showError('获取手机号失败');
+      }
+    } catch (err) {
+      console.error('获取手机号失败：', err);
+      showError('获取手机号失败');
+    }
+  },
+
+  // 确认登录
+  async confirmLogin() {
+    const { tempAvatarUrl, tempNickName, tempPhone } = this.data;
+    if (!tempNickName || !tempNickName.trim()) {
+      wx.showToast({ title: '请输入昵称', icon: 'none' });
+      return;
     }
 
-    wx.getUserProfile({
-      desc: '用于展示个人信息',
-      success: async (res) => {
-        const { nickName, avatarUrl } = res.userInfo;
-        try {
-          const app = getApp();
-          const db = wx.cloud.database();
+    showLoading('登录中...');
+    try {
+      const app = getApp();
+      const db = wx.cloud.database();
 
-          // 更新用户信息
-          const { data: users } = await db.collection('users')
-            .where({ _openid: app.globalData.openid })
-            .limit(1)
-            .get();
-
-          if (users.length > 0) {
-            await db.collection('users').doc(users[0]._id).update({
-              data: { nickName, avatarUrl, updatedAt: new Date() }
-            });
-          }
-
-          const userInfo = { ...this.data.userInfo, nickName, avatarUrl };
-          this.setData({ userInfo });
-          app.globalData.userInfo = userInfo;
-
-          showSuccess('登录成功');
-        } catch (err) {
-          console.error('更新用户信息失败：', err);
-          showError('登录失败');
-        }
-      },
-      fail: () => {
-        // 用户拒绝授权
+      // 上传头像到云存储
+      let avatarUrl = tempAvatarUrl;
+      if (tempAvatarUrl && (tempAvatarUrl.startsWith('http://tmp') || tempAvatarUrl.startsWith('wxfile://'))) {
+        const ext = tempAvatarUrl.includes('.') ? tempAvatarUrl.split('.').pop().split('?')[0] : 'jpg';
+        const cloudPath = `avatars/${app.globalData.openid}_${Date.now()}.${ext}`;
+        const uploadRes = await wx.cloud.uploadFile({
+          cloudPath,
+          filePath: tempAvatarUrl
+        });
+        avatarUrl = uploadRes.fileID;
       }
-    });
+
+      // 更新数据库
+      const { data: users } = await db.collection('users')
+        .where({ _openid: app.globalData.openid })
+        .limit(1)
+        .get();
+
+      const updateData = {
+        nickName: tempNickName.trim(),
+        avatarUrl: avatarUrl || '',
+        updatedAt: new Date()
+      };
+      if (tempPhone) updateData.phone = tempPhone;
+
+      if (users.length > 0) {
+        await db.collection('users').doc(users[0]._id).update({ data: updateData });
+      }
+
+      // 更新全局状态
+      const userInfo = { ...app.globalData.userInfo, ...updateData };
+      app.globalData.userInfo = userInfo;
+      this.setData({
+        userInfo,
+        isGuest: false,
+        showLoginModal: false
+      });
+
+      hideLoading();
+
+      // 检查游客数据
+      await this.checkGuestData();
+    } catch (err) {
+      hideLoading();
+      console.error('登录失败：', err);
+      showError('登录失败');
+    }
+  },
+
+  // 检查游客期间的数据
+  async checkGuestData() {
+    try {
+      const db = wx.cloud.database();
+      const results = await Promise.all([
+        db.collection('pets').where({ status: 'active' }).count(),
+        db.collection('records').count(),
+        db.collection('bills').count(),
+        db.collection('checklists').count()
+      ]);
+      const total = results[0].total + results[1].total + results[2].total + results[3].total;
+
+      if (total === 0) {
+        showSuccess('登录成功');
+        return;
+      }
+
+      wx.showModal({
+        title: '发现已有数据',
+        content: `检测到您在游客模式下已录入 ${total} 条数据（包括宠物、记录、账单、清单），是否保留这些数据到当前账户？`,
+        confirmText: '保留数据',
+        cancelText: '清除数据',
+        success: async (res) => {
+          if (res.cancel) {
+            showLoading('清除中...');
+            await this.clearAllGuestData();
+            hideLoading();
+            this.loadStats();
+            this.loadPets();
+          }
+          showSuccess('登录成功');
+        }
+      });
+    } catch (err) {
+      console.error('检查游客数据失败：', err);
+      showSuccess('登录成功');
+    }
+  },
+
+  // 清除所有游客数据
+  async clearAllGuestData() {
+    try {
+      const db = wx.cloud.database();
+      const collections = ['pets', 'records', 'bills', 'checklists'];
+
+      for (var i = 0; i < collections.length; i++) {
+        var col = collections[i];
+        var res = await db.collection(col).limit(100).get();
+        for (var j = 0; j < res.data.length; j++) {
+          await db.collection(col).doc(res.data[j]._id).remove();
+        }
+      }
+
+      // 重置当前宠物
+      const app = getApp();
+      app.globalData.currentPetId = '';
+      app.globalData.currentPet = null;
+      this.setData({ currentPetId: '', pets: [] });
+    } catch (err) {
+      console.error('清除数据失败：', err);
+    }
   },
 
   // 我的宠物
@@ -211,7 +358,7 @@ Page({
   onLogout() {
     wx.showModal({
       title: '确认退出',
-      content: '退出登录后需要重新授权，确定退出吗？',
+      content: '退出登录后将恢复游客身份，已有数据不会被删除，确定退出吗？',
       success: async (res) => {
         if (res.confirm) {
           try {
@@ -227,6 +374,7 @@ Page({
                 data: {
                   nickName: '宠物主人',
                   avatarUrl: '',
+                  phone: '',
                   updatedAt: new Date()
                 }
               });
@@ -235,11 +383,13 @@ Page({
             app.globalData.userInfo = {
               ...app.globalData.userInfo,
               nickName: '宠物主人',
-              avatarUrl: ''
+              avatarUrl: '',
+              phone: ''
             };
 
             this.setData({
-              userInfo: app.globalData.userInfo
+              userInfo: app.globalData.userInfo,
+              isGuest: true
             });
 
             wx.clearStorageSync();

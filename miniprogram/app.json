@@ -29,35 +29,36 @@
       {
         "pagePath": "pages/home/home",
         "text": "首页",
-        "iconPath": "images/tab/home.png",
-        "selectedIconPath": "images/tab/home-active.png"
+        "iconPath": "images/tab/tab-home.png",
+        "selectedIconPath": "images/tab/tab-home-active.png"
       },
       {
         "pagePath": "pages/checklist/checklist",
         "text": "清单",
-        "iconPath": "images/tab/checklist.png",
-        "selectedIconPath": "images/tab/checklist-active.png"
+        "iconPath": "images/tab/tab-checklist.png",
+        "selectedIconPath": "images/tab/tab-checklist-active.png"
       },
       {
         "pagePath": "pages/record/record",
         "text": "记录",
-        "iconPath": "images/tab/record.png",
-        "selectedIconPath": "images/tab/record-active.png"
+        "iconPath": "images/tab/tab-record.png",
+        "selectedIconPath": "images/tab/tab-record-active.png"
       },
       {
         "pagePath": "pages/bill/bill",
         "text": "账单",
-        "iconPath": "images/tab/bill.png",
-        "selectedIconPath": "images/tab/bill-active.png"
+        "iconPath": "images/tab/tab-bill.png",
+        "selectedIconPath": "images/tab/tab-bill-active.png"
       },
       {
         "pagePath": "pages/profile/profile",
         "text": "我的",
-        "iconPath": "images/tab/profile.png",
-        "selectedIconPath": "images/tab/profile-active.png"
+        "iconPath": "images/tab/tab-profile.png",
+        "selectedIconPath": "images/tab/tab-profile-active.png"
       }
     ]
   },
   "sitemapLocation": "sitemap.json",
-  "style": "v2"
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
 }

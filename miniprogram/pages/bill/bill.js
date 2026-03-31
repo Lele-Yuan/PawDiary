@@ -3,6 +3,8 @@ const { BILL_CATEGORY_MAP, BILL_CATEGORY_COLORS } = require('../../utils/constan
 
 Page({
   data: {
+    currentPetName: '',
+    navTitleOpacity: 1,
     currentYear: 2026,
     currentMonth: 3,
     monthTotal: 0,
@@ -30,6 +32,14 @@ Page({
       this.getTabBar().setData({ selected: 3 });
     }
     this.loadMonthData();
+  },
+
+  onPageScroll(e) {
+    const threshold = 150;
+    const opacity = Math.max(0, 1 - e.scrollTop / threshold);
+    if (Math.abs(opacity - this.data.navTitleOpacity) > 0.05 || opacity === 0 || opacity === 1) {
+      this.setData({ navTitleOpacity: Math.round(opacity * 100) / 100 });
+    }
   },
 
   // 上一月
@@ -65,6 +75,18 @@ Page({
   async loadMonthData() {
     const app = getApp();
     const petId = app.globalData.currentPetId;
+
+    // 获取当前宠物名称
+    if (app.globalData.currentPet) {
+      this.setData({ currentPetName: app.globalData.currentPet.name });
+    } else if (petId) {
+      try {
+        const { data: pet } = await wx.cloud.database().collection('pets').doc(petId).get();
+        this.setData({ currentPetName: pet.name || '' });
+      } catch (e) {
+        console.error('获取宠物名称失败', e);
+      }
+    }
 
     if (!petId) {
       this.setData({ groupedBills: [], categoryStats: [], monthTotal: 0, monthTotalStr: '0.00', loaded: true });
@@ -120,7 +142,9 @@ Page({
       });
 
       const categoryStats = Object.entries(categoryMap)
-        .map(([category, amount]) => {
+        .map(function (entry) {
+          var category = entry[0];
+          var amount = entry[1];
           const info = BILL_CATEGORY_MAP[category] || {};
           return {
             category,

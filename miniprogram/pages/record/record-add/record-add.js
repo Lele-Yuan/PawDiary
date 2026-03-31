@@ -56,7 +56,7 @@ Page({
       sizeType: ['compressed'],
       success: (res) => {
         const newImages = res.tempFiles.map(f => f.tempFilePath);
-        const images = [...this.data.form.images, ...newImages].slice(0, 9);
+        const images = this.data.form.images.concat(newImages).slice(0, 9);
         this.setData({ 'form.images': images });
       }
     });
@@ -72,16 +72,16 @@ Page({
 
   // 表单校验
   validateForm() {
-    const { type, date, title } = this.data.form;
-    if (!type) {
+    var form = this.data.form;
+    if (!form.type) {
       showError('请选择记录类型');
       return false;
     }
-    if (!date) {
+    if (!form.date) {
       showError('请选择日期');
       return false;
     }
-    if (!title || !title.trim()) {
+    if (!form.title || !form.title.trim()) {
       showError('请输入标题');
       return false;
     }

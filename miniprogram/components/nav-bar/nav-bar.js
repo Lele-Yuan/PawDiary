@@ -11,6 +11,10 @@ Component({
     back: {
       type: Boolean,
       value: false
+    },
+    titleOpacity: {
+      type: Number,
+      value: 1
     }
   },
 

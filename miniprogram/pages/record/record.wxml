@@ -1,5 +1,11 @@
 <view class="record-page">
-  <nav-bar title="健康记录" />
+  <nav-bar title="健康记录" titleOpacity="{{navTitleOpacity}}" />
+  <!-- 当前宠物 -->
+  <view class="top-bar">
+    <view class="current-pet" wx:if="{{currentPetName}}">
+      <text class="pet-tag">🐾 {{currentPetName}}</text>
+    </view>
+  </view>
   <!-- 标签筛选栏 -->
   <scroll-view class="type-tabs" scroll-x enable-flex>
     <view

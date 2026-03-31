@@ -11,7 +11,7 @@
       <view class="tab-item-inner {{selected === index ? 'tab-pill' : ''}}">
         <image
           class="tab-icon"
-          src="{{item.iconPath}}"
+          src="{{selected === index ? item.selectedIconPath : item.iconPath}}"
           mode="aspectFit"
         />
         <text class="tab-label {{selected === index ? 'tab-label-active' : ''}}">{{item.text}}</text>

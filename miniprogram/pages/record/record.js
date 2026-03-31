@@ -4,12 +4,19 @@ const { RECORD_TYPES, RECORD_TYPE_MAP } = require('../../utils/constants');
 Page({
   data: {
     activeType: 'all',
+    currentPetName: '',
+    navTitleOpacity: 1,
     records: [],
-    typeList: [
-      { key: 'all', label: '全部' },
-      ...RECORD_TYPES.map(t => ({ key: t.key, label: t.label }))
-    ],
+    typeList: [],
     loaded: false
+  },
+
+  onLoad() {
+    const typeList = [{ key: 'all', label: '全部' }];
+    RECORD_TYPES.forEach(function (t) {
+      typeList.push({ key: t.key, label: t.label });
+    });
+    this.setData({ typeList: typeList });
   },
 
   onShow() {
@@ -19,11 +26,31 @@ Page({
     this.loadRecords();
   },
 
+  onPageScroll(e) {
+    const threshold = 150;
+    const opacity = Math.max(0, 1 - e.scrollTop / threshold);
+    if (Math.abs(opacity - this.data.navTitleOpacity) > 0.05 || opacity === 0 || opacity === 1) {
+      this.setData({ navTitleOpacity: Math.round(opacity * 100) / 100 });
+    }
+  },
+
   // 加载记录列表
   async loadRecords() {
     try {
       const app = getApp();
       const petId = app.globalData.currentPetId;
+
+      // 获取当前宠物名称
+      if (app.globalData.currentPet) {
+        this.setData({ currentPetName: app.globalData.currentPet.name });
+      } else if (petId) {
+        try {
+          const { data: pet } = await wx.cloud.database().collection('pets').doc(petId).get();
+          this.setData({ currentPetName: pet.name || '' });
+        } catch (e) {
+          console.error('获取宠物名称失败', e);
+        }
+      }
 
       if (!petId) {
         this.setData({ records: [], loaded: true });

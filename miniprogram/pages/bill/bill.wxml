@@ -1,5 +1,11 @@
 <view class="bill-page">
-  <nav-bar title="账单" />
+  <nav-bar title="账单" titleOpacity="{{navTitleOpacity}}" />
+  <!-- 当前宠物 -->
+  <view class="top-bar">
+    <view class="current-pet" wx:if="{{currentPetName}}">
+      <text class="pet-tag">🐾 {{currentPetName}}</text>
+    </view>
+  </view>
   <!-- 月份选择器 -->
   <view class="month-selector card">
     <view class="month-arrow" bindtap="prevMonth">‹</view>

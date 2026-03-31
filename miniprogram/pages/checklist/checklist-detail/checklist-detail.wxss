@@ -264,7 +264,7 @@
 .detail-fab {
   position: fixed;
   right: 40rpx;
-  bottom: 136rpx;
+  bottom: 200rpx;
   width: 112rpx;
   height: 112rpx;
   border-radius: 50%;

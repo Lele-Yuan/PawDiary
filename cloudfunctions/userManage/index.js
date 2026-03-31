@@ -13,6 +13,8 @@ exports.main = async (event, context) => {
       return await updateUser(OPENID, data);
     case 'getInfo':
       return await getUserInfo(OPENID);
+    case 'getPhoneNumber':
+      return await getPhoneNumber(event);
     default:
       return { code: -1, message: '未知操作类型' };
   }
@@ -85,4 +87,23 @@ async function getUserInfo(openid) {
   }
 
   return { code: 0, data: users[0] };
+}
+
+// 获取手机号（通过云开发内置能力解密）
+async function getPhoneNumber(event) {
+  try {
+    const res = await cloud.getPhoneNumber({
+      event
+    });
+    return {
+      code: 0,
+      data: {
+        phoneNumber: res.phoneNumber,
+        purePhoneNumber: res.purePhoneNumber,
+        countryCode: res.countryCode
+      }
+    };
+  } catch (err) {
+    return { code: -1, message: '获取手机号失败', error: err.message };
+  }
 }

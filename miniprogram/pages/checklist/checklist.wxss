@@ -60,6 +60,7 @@
   flex-shrink: 0;
   box-sizing: border-box;
   transition: opacity 0.2s ease;
+  position: relative;
 }
 
 .checklist-card:active {
@@ -67,8 +68,15 @@
 }
 
 /* 选中态：更深边框 */
-.card-active {
-  box-shadow: 0 0 8rpx 8rpx rgba(60, 102, 99, 0.1);
+.card-active:after {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 64rpx;
+  border: 6rpx solid #3C6663;
 }
 
 /* 米黄色变体 */
@@ -412,11 +420,11 @@
 .detail-fab {
   position: fixed;
   right: 40rpx;
-  bottom: 136rpx;
+  bottom: 200rpx;
   width: 112rpx;
   height: 112rpx;
   border-radius: 50%;
-  background-color: #FE9D7F;
+  background-color: var(--primary-color);
   display: flex;
   justify-content: center;
   align-items: center;

@@ -2,12 +2,29 @@
   padding-bottom: 140rpx;
 }
 
+/* ===== 顶部宠物标签 ===== */
+.top-bar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 24rpx 32rpx 8rpx;
+}
+
+.pet-tag {
+  font-size: 26rpx;
+  color: #6B2D1A;
+  background-color: #F5EDD0;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+}
+
 /* ===== 标签筛选栏 ===== */
 .type-tabs {
   display: flex;
   white-space: nowrap;
   padding: 20rpx 28rpx;
   width: auto;
+  height: 72rpx;
 }
 
 .tab-item {

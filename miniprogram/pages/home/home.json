@@ -1,6 +1,5 @@
 {
   "usingComponents": {
-    "pet-switcher": "/components/pet-switcher/pet-switcher",
     "empty-state": "/components/empty-state/empty-state",
     "pet-card": "./components/pet-card/pet-card"
   },

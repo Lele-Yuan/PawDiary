@@ -5,6 +5,7 @@ Page({
     checklists: [],
     templates: [],
     currentPetName: '',
+    navTitleOpacity: 1,
     showModal: false,
     customTitle: '',
     loaded: false,
@@ -24,7 +25,18 @@ Page({
     this.loadData();
   },
 
+  onPageScroll(e) {
+    const threshold = 150;
+    const opacity = Math.max(0, 1 - e.scrollTop / threshold);
+    if (Math.abs(opacity - this.data.navTitleOpacity) > 0.05 || opacity === 0 || opacity === 1) {
+      this.setData({ navTitleOpacity: Math.round(opacity * 100) / 100 });
+    }
+  },
+
   async loadData() {
+    // 切换宠物时清空展开状态
+    this.setData({ expandedId: null, detailChecklist: null, detailNewItemName: '' });
+
     const app = getApp();
     const petId = app.globalData.currentPetId;
 
