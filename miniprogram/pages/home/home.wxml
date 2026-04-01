@@ -1,48 +1,47 @@
-<view class="home-page">
-  <!-- 无宠物时的引导页（Figma 设计稿还原） -->
-  <view wx:if="{{!pets.length && loaded}}" class="welcome-page">
-    <!-- 背景装饰图 -->
-    <image class="deco-top" src="/images/guide/deco-top.png" mode="aspectFit" />
-    <image class="deco-bottom" src="/images/guide/deco-bottom.png" mode="aspectFit" />
+<!-- 无宠物时的引导页（Figma 设计稿还原） -->
+<view wx:if="{{!pets.length && loaded}}" class="welcome-page">
+  <!-- 背景装饰 -->
+  <view class="deco-top"></view>
+  <view class="deco-bottom"></view>
 
-    <!-- 顶部导航栏 -->
-    <view class="welcome-nav" style="padding-top: {{statusBarHeight}}px;">
-      <view class="welcome-nav-left">
-        <image class="welcome-logo" src="/images/tab/tab-home.png" mode="aspectFit" />
-        <text class="welcome-app-name">PawDiary</text>
-      </view>
-    </view>
-
-    <!-- 主体内容 -->
-    <view class="welcome-body">
-      <!-- 插画区域 -->
-      <view class="welcome-illust-wrap">
-        <image class="welcome-illust-bg1" src="/images/guide/illust-bg-1.png" mode="aspectFit" />
-        <image class="welcome-illust-bg2" src="/images/guide/illust-bg-2.png" mode="aspectFit" />
-        <image class="welcome-illust" src="/images/guide/illust-main.png" mode="aspectFit" />
-      </view>
-
-      <!-- 文案区域 -->
-      <view class="welcome-text">
-        <view class="welcome-title">欢迎来到</view>
-        <view class="welcome-title">宠物管家</view>
-        <view class="welcome-desc">让您的爱宠享受高端定制的贴心</view>
-        <view class="welcome-desc">管家服务。</view>
-      </view>
-    </view>
-
-    <!-- 底部操作区 -->
-    <view class="welcome-footer">
-      <view class="welcome-cta" hover-class="welcome-cta-hover" bindtap="goAddPet">
-        <text class="welcome-cta-text">开启宠爱之旅</text>
-        <image class="welcome-cta-arrow" src="/images/guide/arrow-right.png" mode="aspectFit" />
-      </view>
-      <view class="welcome-slogan">LUXURY PET MANAGEMENT • ESTABLISHED 2024</view>
+  <!-- 顶部导航栏 -->
+  <view class="welcome-nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="welcome-nav-left">
+      <image class="welcome-logo" src="/images/tab/tab-profile-active.png" mode="aspectFit" />
+      <text class="welcome-app-name">PawDiary</text>
     </view>
   </view>
 
+  <!-- 主体内容 -->
+  <view class="welcome-body">
+    <!-- 插画区域 -->
+    <view class="welcome-illust-wrap">
+      <view class="welcome-illust-bg1"></view>
+      <view class="welcome-illust-bg2"></view>
+      <image class="welcome-illust" src="/images/guide/illust-main.png" mode="aspectFit" />
+    </view>
+
+    <!-- 文案区域 -->
+    <view class="welcome-text">
+      <view class="welcome-title">欢迎来到</view>
+      <view class="welcome-title">宠物管家</view>
+      <view class="welcome-desc">让您的爱宠享受高端定制的贴心</view>
+      <view class="welcome-desc">管家服务。</view>
+    </view>
+  </view>
+
+  <!-- 底部操作区 -->
+  <view class="welcome-footer">
+    <view class="welcome-cta" hover-class="welcome-cta-hover" bindtap="goAddPet">
+      <text class="welcome-cta-text">开启宠爱之旅</text>
+    </view>
+    <view class="welcome-slogan">LUXURY PET MANAGEMENT • ESTABLISHED 2024</view>
+  </view>
+</view>
+
+<view class="home-page" wx:if="{{pets.length}}">
   <!-- 有宠物时的正常页面 -->
-  <view wx:if="{{pets.length}}" class="fade-in">
+  <view class="fade-in">
     <!-- 宠物信息卡片 -->
     <pet-card
       wx:if="{{currentPet}}"
@@ -70,6 +69,10 @@
           <view class="entry-icon entry-icon-gray">⚖️</view>
           <view class="entry-label">体重记录</view>
         </view>
+        <view class="entry-item" bindtap="goMap">
+          <view class="entry-icon entry-icon-teal">🗺️</view>
+          <view class="entry-label">地图</view>
+        </view>
       </view>
     </view>
 
@@ -77,32 +80,32 @@
     <view class="family-section card" wx:if="{{currentPet}}">
       <view class="section-header">
         <text class="section-title">家庭成员</text>
-        <button class="invite-btn" open-type="share" wx:if="{{canEdit}}">邀请 +</button>
       </view>
-      <view class="family-list">
-        <view class="family-item" wx:for="{{familyMembers}}" wx:key="_id">
-          <image class="family-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
-          <view class="family-info">
-            <text class="family-name">{{item.nickName}}</text>
-            <text class="family-role role-{{item.role}}">{{item.roleLabel}}</text>
-          </view>
-          <view class="family-actions" wx:if="{{isCreator && item.role !== 'creator'}}">
-            <text
-              class="family-action-btn"
+      <view class="family-row">
+        <view
+          class="family-member {{item.role === 'creator' || item.role === 'admin' ? 'family-member-active' : ''}}"
+          wx:for="{{familyMembers}}"
+          wx:key="_id"
+          data-openid="{{item._openid}}"
+          data-role="{{item.role}}"
+          bindlongpress="onMemberLongPress"
+        >
+          <view class="family-member-avatar-wrap {{item.role === 'creator' ? 'avatar-border-active' : ''}}">
+            <image
+              class="family-member-avatar"
+              src="{{item.avatarUrl || '/images/default-avatar.png'}}"
+              mode="aspectFill"
               data-openid="{{item._openid}}"
-              data-role="{{item.role}}"
-              bindtap="onToggleRole"
-            >{{item.role === 'admin' ? '取消管理' : '设为管理'}}</text>
-            <text
-              class="family-action-btn danger"
-              data-openid="{{item._openid}}"
-              bindtap="onRemoveMember"
-            >移除</text>
+              binderror="onAvatarError"
+            />
           </view>
+          <text class="family-member-name {{item.role === 'creator' ? 'name-active' : ''}}">{{item.nickName}}</text>
         </view>
-      </view>
-      <view class="family-empty" wx:if="{{familyMembers.length <= 1}}">
-        <text class="family-empty-text">暂无其他家庭成员，邀请家人一起照顾毛孩子吧</text>
+        <!-- 邀请按钮，当成员不足5个且有编辑权限时显示 -->
+        <button class="family-member family-member-add" open-type="share" wx:if="{{familyMembers.length < 5 && canEdit}}">
+          <view class="family-member-avatar-wrap avatar-border-dashed">+</view>
+          <text class="family-member-name name-muted">邀请成员</text>
+        </button>
       </view>
     </view>
 

@@ -310,7 +310,26 @@
   font-size: 36rpx;
   font-weight: 700;
   color: #313333;
+}
+
+.pet-card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
   margin-bottom: 6rpx;
+}
+
+.pet-role-tag {
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 2rpx 12rpx;
+  border-radius: 16rpx;
+  flex-shrink: 0;
+}
+
+.pet-role-joined {
+  background-color: rgba(190, 235, 231, 0.5);
+  color: #2E5956;
 }
 
 .pet-card-desc {
@@ -338,7 +357,7 @@
 }
 
 .edit-icon {
-  font-size: 28rpx;
+  font-size: 38rpx;
   color: #5E5F5D;
 }
 
@@ -525,6 +544,9 @@
   padding: 8rpx 24rpx;
   border-radius: 24rpx;
   font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-btn.edit {

@@ -18,5 +18,25 @@
     "checkInvalidKey": true,
     "ignoreDevUnusedFiles": true,
     "bigPackageSizeSupport": false
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "加载中",
+          "pathName": "pages/loading/loading",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
+          "name": "「秋田」邀请成员",
+          "pathName": "pages/invite/invite",
+          "query": "id=c3459b2a69cb7d8402568ae66e789ab4",
+          "launchMode": "default",
+          "scene": null
+        }
+      ]
+    }
   }
 }

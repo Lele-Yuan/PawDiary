@@ -1,0 +1,8 @@
+<nav-bar title="加载中" back="{{false}}" />
+
+<view class="loading-page">
+  <view class="loading-content">
+    <view class="loading-icon">⟳</view>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

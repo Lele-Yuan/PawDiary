@@ -1,0 +1,92 @@
+<nav-bar title="{{mode === 'edit' ? '编辑地点' : '添加宠物友好地点'}}" back="{{true}}" />
+
+<view class="page-container">
+  <!-- 选择位置 -->
+  <view class="form-section card">
+    <view class="form-label">地点位置 <text class="required">*</text></view>
+    <view class="location-picker {{mode === 'edit' ? 'readonly' : ''}}" bindtap="onChooseLocation">
+      <view class="location-info" wx:if="{{locationPicked}}">
+        <text class="location-icon">📍</text>
+        <text class="location-address">{{form.address || '已选择位置'}}</text>
+      </view>
+      <view class="location-placeholder" wx:else>
+        <text class="location-icon">📍</text>
+        <text class="location-hint">点击选择地点位置</text>
+      </view>
+      <text class="arrow" wx:if="{{mode !== 'edit'}}">›</text>
+      <text class="readonly-hint" wx:if="{{mode === 'edit'}}">编辑模式下不可更改</text>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="form-section card">
+    <!-- 名称 -->
+    <view class="form-group">
+      <view class="form-label">地点名称 <text class="required">*</text></view>
+      <input
+        class="form-input"
+        placeholder="如：汪星人友好咖啡馆"
+        value="{{form.name}}"
+        bindinput="onInputChange"
+        data-field="name"
+        maxlength="30"
+      />
+    </view>
+
+    <!-- 分类 -->
+    <view class="form-group">
+      <view class="form-label">地点分类</view>
+      <view class="category-selector">
+        <view
+          class="category-item {{form.category === item.key ? 'active' : ''}}"
+          wx:for="{{categoryList}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onSelectCategory"
+        >
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 描述 -->
+    <view class="form-group">
+      <view class="form-label">描述</view>
+      <textarea
+        class="form-textarea"
+        placeholder="介绍一下这个地方对宠物的友好之处..."
+        value="{{form.description}}"
+        bindinput="onInputChange"
+        data-field="description"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+  </view>
+
+  <!-- 图片上传 -->
+  <view class="form-section card">
+    <view class="form-label">图片（最多3张）</view>
+    <view class="image-grid">
+      <view class="image-item" wx:for="{{form.images}}" wx:key="index">
+        <image class="preview-img" src="{{item}}" mode="aspectFill" />
+        <view class="image-delete" data-index="{{index}}" bindtap="deleteImage">×</view>
+      </view>
+      <view class="image-add" wx:if="{{form.images.length < 3}}" bindtap="chooseImage">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="btn-section">
+    <button
+      class="btn-primary submit-btn"
+      hover-class="btn-primary-hover"
+      bindtap="onSubmit"
+      loading="{{submitting}}"
+    >{{mode === 'edit' ? '保存修改' : '添加地点'}}</button>
+  </view>
+</view>

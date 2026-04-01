@@ -40,7 +40,7 @@
 }
 
 .back-icon {
-  font-size: 44rpx;
+  font-size: 54rpx;
   color: #2D2D2D;
   font-weight: 300;
   line-height: 1;

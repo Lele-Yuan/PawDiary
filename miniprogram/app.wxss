@@ -88,6 +88,9 @@ page {
   line-height: 1.5;
   letter-spacing: 2rpx;
   box-shadow: 0 8rpx 24rpx rgba(107, 45, 26, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-primary::after {

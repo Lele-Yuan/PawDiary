@@ -1,0 +1,194 @@
+.map-page {
+  padding-bottom: 140rpx;
+  min-height: 100vh;
+}
+
+/* ===== 模式切换栏 ===== */
+.mode-tabs {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 32rpx;
+}
+
+.mode-tab {
+  padding: 14rpx 36rpx;
+  margin-right: 16rpx;
+  border-radius: 60rpx;
+  font-size: 26rpx;
+  color: #6B2D1A;
+  background-color: #F0EAD6;
+}
+
+.mode-tab.active {
+  background: #6B2D1A;
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 4rpx 16rpx rgba(107, 45, 26, 0.25);
+}
+
+.mode-tab-text {
+  font-size: 26rpx;
+}
+
+/* ===== 地图视图 ===== */
+.map-view {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 200rpx);
+}
+
+.pet-map {
+  width: 100%;
+  height: 100%;
+}
+
+.location-btn {
+  position: absolute;
+  bottom: 60rpx;
+  right: 120rpx;
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+
+.location-btn-icon {
+  font-size: 36rpx;
+}
+
+/* ===== 列表视图 ===== */
+.list-view {
+  padding: 0 24rpx;
+}
+
+.section {
+  margin-top: 24rpx;
+}
+
+.section-header {
+  padding: 16rpx 8rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #313333;
+}
+
+/* ===== 地点卡片 ===== */
+.place-card {
+  margin-bottom: 20rpx;
+  padding: 28rpx;
+  border-radius: 24rpx;
+  background-color: #FFFFFF;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.place-card-main {
+  display: flex;
+  align-items: center;
+}
+
+.place-icon-circle {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background-color: #FFF3E0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+  margin-right: 20rpx;
+}
+
+.place-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.place-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #313333;
+  margin-bottom: 8rpx;
+}
+
+.place-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.place-category-tag {
+  font-size: 22rpx;
+  color: #E8875A;
+  background-color: rgba(232, 135, 90, 0.12);
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+}
+
+.place-distance {
+  font-size: 22rpx;
+  color: #888888;
+}
+
+.place-online-count {
+  display: flex;
+  align-items: center;
+  background-color: #E8F5E9;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+}
+
+.online-dot-small {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background-color: #4CAF50;
+  margin-right: 6rpx;
+}
+
+.place-online-count text {
+  font-size: 20rpx;
+  color: #2E7D32;
+}
+
+.place-address {
+  font-size: 24rpx;
+  color: #888888;
+  margin-top: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.place-arrow {
+  font-size: 48rpx;
+  color: #CCCCCC;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}
+
+/* ===== FAB 按钮 ===== */
+.fab-btn {
+  position: fixed;
+  bottom: 60rpx;
+  right: 40rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E8875A, #D4734A);
+  color: #FFFFFF;
+  font-size: 52rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8rpx 24rpx rgba(232, 135, 90, 0.4);
+  z-index: 100;
+}

@@ -4,8 +4,10 @@ App({
     currentPetId: '',
     currentPetRole: '',
     openid: '',
-    pendingInvite: ''
+    userReady: false
   },
+
+  _initUserPromise: null,
 
   onLaunch: function (options) {
     if (!wx.cloud) {
@@ -18,22 +20,37 @@ App({
       traceUser: true
     });
 
-    // 检测分享邀请参数
+    // 检测分享邀请参数（保留给邀请页面使用）
     if (options && options.query && options.query.invitePetId) {
       this.globalData.pendingInvite = options.query.invitePetId;
     }
 
-    this.initUser();
+    this._initUserPromise = this.initUser();
   },
 
   onShow: function (options) {
+    // 检测分享邀请参数（保留给邀请页面使用）
     if (options && options.query && options.query.invitePetId) {
       this.globalData.pendingInvite = options.query.invitePetId;
     }
+  },
+
+  // 等待用户初始化完成
+  async waitForUserReady() {
+    if (this.globalData.userReady) {
+      return true;
+    }
+    if (this._initUserPromise) {
+      await this._initUserPromise;
+    }
+    return this.globalData.userReady;
   },
 
   // 初始化用户信息
   async initUser() {
+    // 标记用户初始化开始
+    this.globalData.userReady = false;
+
     try {
       // 调用登录云函数获取 openid
       const loginRes = await wx.cloud.callFunction({ name: 'login' });
@@ -66,10 +83,8 @@ App({
         this.globalData.userInfo = newUser;
       }
 
-      // 加载当前选中宠物
-      if (this.globalData.currentPetId) {
-        await this.loadCurrentPet();
-      }
+      // 标记用户初始化完成
+      this.globalData.userReady = true;
 
       // 触发回调
       if (this.userInfoReadyCallback) {
@@ -77,15 +92,23 @@ App({
       }
     } catch (err) {
       console.error('用户初始化失败：', err);
+      // 即使失败也标记为完成，避免无限等待
+      this.globalData.userReady = true;
     }
   },
 
   // 加载当前宠物信息
   async loadCurrentPet() {
     try {
-      const db = wx.cloud.database();
-      const { data } = await db.collection('pets').doc(this.globalData.currentPetId).get();
-      this.globalData.currentPet = data;
+      const res = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'get', data: { _id: this.globalData.currentPetId } }
+      });
+      if (res.result && res.result.code === 0) {
+        this.globalData.currentPet = res.result.data;
+      } else {
+        this.globalData.currentPetId = '';
+      }
       // 跳转到首页
       wx.switchTab({
         url: '/pages/home/home'

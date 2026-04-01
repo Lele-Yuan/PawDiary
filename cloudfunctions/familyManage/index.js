@@ -95,6 +95,7 @@ async function listMembers(openid, data) {
       }
     } catch (e) {
       // 查询失败则保留快照数据
+      console.error('查询用户信息失败:', e);
     }
   }
 

@@ -14,6 +14,8 @@ exports.main = async (event, context) => {
       return await updatePet(OPENID, data);
     case 'delete':
       return await deletePet(OPENID, data);
+    case 'get':
+      return await getPet(OPENID, data);
     case 'list':
       return await listPets(OPENID);
     default:
@@ -135,12 +137,78 @@ async function deletePet(openid, data) {
   return { code: 0, message: '归档成功' };
 }
 
-// 获取宠物列表
+// 按ID获取单个宠物
+async function getPet(openid, data) {
+  if (!data || !data._id) {
+    return { code: -1, message: '缺少宠物ID' };
+  }
+
+  try {
+    const res = await db.collection('pets').doc(data._id).get();
+    return { code: 0, data: res.data };
+  } catch (e) {
+    return { code: -1, message: '宠物不存在或已失效' };
+  }
+}
+
+// 获取宠物列表（包含创建的和加入的）
 async function listPets(openid) {
-  const { data: pets } = await db.collection('pets').where({
+  // 1. 查询自己创建的活跃宠物
+  const { data: ownPets } = await db.collection('pets').where({
     _openid: openid,
     status: 'active'
   }).orderBy('createdAt', 'asc').get();
 
-  return { code: 0, data: pets };
+  // 2. 查询 pet_members 获取角色映射
+  var roleMap = {};
+  var joinedPetIds = [];
+  try {
+    const { data: members } = await db.collection('pet_members')
+      .where({ _openid: openid })
+      .get();
+    for (var i = 0; i < members.length; i++) {
+      roleMap[members[i].petId] = members[i].role;
+      joinedPetIds.push(members[i].petId);
+    }
+  } catch (e) {
+    // pet_members 集合可能不存在
+  }
+
+  // 3. 为自有宠物标记角色，补建缺失的 creator 记录
+  var ownIdSet = {};
+  for (var j = 0; j < ownPets.length; j++) {
+    var pid = ownPets[j]._id;
+    ownIdSet[pid] = true;
+    ownPets[j].role = roleMap[pid] || 'creator';
+    if (!roleMap[pid]) {
+      db.collection('pet_members').add({
+        data: {
+          _openid: openid,
+          petId: pid,
+          role: 'creator',
+          createdAt: new Date()
+        }
+      }).catch(function() {});
+    }
+  }
+
+  // 4. 查询加入但非自己创建的宠物
+  var extraIds = [];
+  for (var k = 0; k < joinedPetIds.length; k++) {
+    if (!ownIdSet[joinedPetIds[k]]) {
+      extraIds.push(joinedPetIds[k]);
+    }
+  }
+  var joinedPets = [];
+  if (extraIds.length > 0) {
+    const { data: extraPets } = await db.collection('pets')
+      .where({ _id: _.in(extraIds), status: 'active' })
+      .get();
+    for (var m = 0; m < extraPets.length; m++) {
+      extraPets[m].role = roleMap[extraPets[m]._id] || 'member';
+    }
+    joinedPets = extraPets;
+  }
+
+  return { code: 0, data: ownPets.concat(joinedPets) };
 }

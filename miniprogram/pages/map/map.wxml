@@ -1,0 +1,75 @@
+<nav-bar title="宠物友好地图" back="{{true}}" />
+
+<view class="map-page">
+  <!-- 模式切换栏 -->
+  <view class="mode-tabs">
+    <view class="mode-tab {{viewMode === 'list' ? 'active' : ''}}" data-mode="list" bindtap="onSwitchMode">
+      <text class="mode-tab-text">列表模式</text>
+    </view>
+    <view class="mode-tab {{viewMode === 'map' ? 'active' : ''}}" data-mode="map" bindtap="onSwitchMode">
+      <text class="mode-tab-text">地图模式</text>
+    </view>
+  </view>
+
+  <!-- 地图模式 -->
+  <view class="map-view" wx:if="{{viewMode === 'map'}}">
+    <map
+      id="petMap"
+      class="pet-map"
+      latitude="{{myLatitude}}"
+      longitude="{{myLongitude}}"
+      scale="15"
+      markers="{{markers}}"
+      show-location
+      enable-zoom
+      enable-scroll
+    ></map>
+    <!-- 回到当前位置按钮 -->
+    <view class="location-btn" bindtap="onMoveToLocation">
+      <text class="location-btn-icon">📍</text>
+    </view>
+  </view>
+
+  <!-- 列表模式 -->
+  <view class="list-view" wx:if="{{viewMode === 'list'}}">
+    <!-- 宠物友好地点列表 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">宠物友好地点</text>
+      </view>
+
+      <empty-state
+        wx:if="{{!places.length && loaded}}"
+        icon="📍"
+        title="附近暂无地点"
+        description="成为第一个标记宠物友好地点的人吧"
+        btnText="添加地点"
+        bind:action="goAddPlace"
+      />
+
+      <view class="place-card card" wx:for="{{places}}" wx:key="_id" data-id="{{item._id}}" bindtap="onTapPlace">
+        <view class="place-card-main">
+          <view class="place-icon-circle">
+            <text>{{item.categoryIcon}}</text>
+          </view>
+          <view class="place-info">
+            <view class="place-name">{{item.name}}</view>
+            <view class="place-meta">
+              <text class="place-category-tag">{{item.categoryLabel}}</text>
+              <text class="place-distance">{{item.distanceText}}</text>
+              <view class="place-online-count" wx:if="{{item.onlineCount > 0}}">
+                <view class="online-dot-small"></view>
+                <text>{{item.onlineCount}}人在线</text>
+              </view>
+            </view>
+            <view class="place-address" wx:if="{{item.address}}">{{item.address}}</view>
+          </view>
+          <view class="place-arrow">›</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加地点 FAB -->
+  <view class="fab-btn" bindtap="goAddPlace">+</view>
+</view>

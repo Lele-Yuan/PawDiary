@@ -24,10 +24,21 @@ Page({
     isCreator: false,
     currentPetRole: '',
     loaded: false,
-    statusBarHeight: 20
+    statusBarHeight: 20,
+    userReady: false
   },
 
-  onLoad() {
+  onLoad(options) {
+    // 检查是否需要等待用户信息
+    var app = getApp();
+    if (!app.globalData.userReady) {
+      this.setData({ userReady: false });
+      wx.redirectTo({
+        url: '/pages/loading/loading'
+      });
+      return;
+    }
+
     try {
       const systemInfo = wx.getSystemInfoSync();
       this.setData({
@@ -40,78 +51,54 @@ Page({
   },
 
   onShow() {
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setData({ selected: 0 });
+    var app = getApp();
+
+    // 检查用户信息是否就绪
+    if (!app.globalData.userReady) {
+      this.setData({ userReady: false });
+      wx.redirectTo({
+        url: '/pages/loading/loading'
+      });
+      return;
     }
+
+    this.setData({ userReady: true });
+
+    // 无宠物时（欢迎页）不显示底部导航栏
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      if (this.data.pets && this.data.pets.length > 0) {
+        this.getTabBar().setData({ selected: 0 });
+      } else {
+        this.getTabBar().setData({ selected: '' });
+      }
+    }
+
     this.loadData();
-    this.checkPendingInvite();
   },
 
   // 加载所有数据
   async loadData() {
     try {
       var app = getApp();
-      var db = wx.cloud.database();
-      var _cmd = db.command;
       var openid = app.globalData.openid;
 
-      // 1. 自己创建的宠物
-      var ownRes = await db.collection('pets')
-        .where({ status: 'active' })
-        .orderBy('createdAt', 'asc')
-        .get();
-      var ownPets = ownRes.data;
-
-      // 2. 查询 pet_members 获取加入的宠物
-      var memberRoleMap = {};
-      var sharedPetIds = [];
-      if (openid) {
-        var memberRes = await db.collection('pet_members')
-          .where({ _openid: openid })
-          .get();
-        for (var i = 0; i < memberRes.data.length; i++) {
-          var m = memberRes.data[i];
-          memberRoleMap[m.petId] = m.role;
-          sharedPetIds.push(m.petId);
-        }
-      }
-
-      // 标记自己创建的宠物为 creator（如果没有 pet_members 记录则自动补建）
-      for (var j = 0; j < ownPets.length; j++) {
-        var ownPetId = ownPets[j]._id;
-        if (!memberRoleMap[ownPetId]) {
-          memberRoleMap[ownPetId] = 'creator';
-          // 自动补建 creator 记录
-          this.ensureCreatorMember(ownPetId, app);
-        }
-      }
-
-      // 3. 查询被邀请加入但不属于自己创建的宠物
-      var ownIdSet = {};
-      for (var oi = 0; oi < ownPets.length; oi++) {
-        ownIdSet[ownPets[oi]._id] = true;
-      }
-      var extraIds = [];
-      for (var k = 0; k < sharedPetIds.length; k++) {
-        if (!ownIdSet[sharedPetIds[k]]) {
-          extraIds.push(sharedPetIds[k]);
-        }
-      }
-
-      var sharedPets = [];
-      if (extraIds.length > 0) {
-        var spRes = await db.collection('pets')
-          .where({ _id: _cmd.in(extraIds), status: 'active' })
-          .get();
-        sharedPets = spRes.data;
-      }
-
-      var allPets = ownPets.concat(sharedPets);
-
-      if (allPets.length === 0) {
-        this.setData({ pets: [], currentPet: null, loaded: true });
-        app.globalData.currentPetRole = '';
+      // 检查登录状态
+      if (!openid) {
+        this.setData({ loaded: true });
         return;
+      }
+
+      // 通过云函数获取所有关联宠物（含角色信息）
+      var listRes = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'list' }
+      });
+      var allPets = (listRes.result && listRes.result.code === 0) ? listRes.result.data : [];
+
+      // 构建 roleMap
+      var memberRoleMap = {};
+      for (var ri = 0; ri < allPets.length; ri++) {
+        memberRoleMap[allPets[ri]._id] = allPets[ri].role || 'member';
       }
 
       // 确定当前选中的宠物
@@ -121,11 +108,11 @@ Page({
         if (allPets[fi]._id === currentPetId) { found = true; break; }
       }
       if (!currentPetId || !found) {
-        currentPetId = allPets[0]._id;
+        currentPetId = allPets.length > 0 ? allPets[0]._id : '';
         app.globalData.currentPetId = currentPetId;
       }
 
-      var currentPet = allPets[0];
+      var currentPet = allPets.length > 0 ? allPets[0] : null;
       for (var ci = 0; ci < allPets.length; ci++) {
         if (allPets[ci]._id === currentPetId) { currentPet = allPets[ci]; break; }
       }
@@ -139,19 +126,26 @@ Page({
       this.setData({
         pets: allPets,
         currentPetId: currentPetId,
-        currentPet: serializePet(currentPet),
+        currentPet: currentPet ? serializePet(currentPet) : null,
         canEdit: canEdit,
         isCreator: isCreator,
         currentPetRole: currentRole,
         loaded: true
       });
 
+      // 更新底部导航栏状态
+      if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+        this.getTabBar().setData({ selected: 0 });
+      }
+
       // 保存 roleMap 供切换宠物使用
       this._memberRoleMap = memberRoleMap;
 
       // 加载近期提醒和家庭成员
-      this.loadReminders(currentPetId);
-      this.loadFamilyMembers(currentPetId);
+      if (currentPetId) {
+        this.loadReminders(currentPetId);
+        this.loadFamilyMembers(currentPetId);
+      }
     } catch (err) {
       console.error('加载首页数据失败：', err);
       this.setData({ loaded: true });
@@ -270,7 +264,7 @@ Page({
     });
   },
 
-  // 添加宠物
+  // 添加宠物 / 跳转添加页面
   goAddPet() {
     wx.navigateTo({
       url: '/pages/pet-edit/pet-edit?mode=add'
@@ -301,85 +295,75 @@ Page({
     }
   },
 
+  // 快捷入口 - 地图
+  goMap() {
+    wx.navigateTo({ url: '/pages/map/map' });
+  },
+
   // 加载家庭成员
   async loadFamilyMembers(petId) {
+    var app = getApp();
+    if (!app.globalData.openid) return;
+
     try {
       var res = await wx.cloud.callFunction({
         name: 'familyManage',
         data: { action: 'list', data: { petId: petId } }
       });
+      console.log('loadFamilyMembers 云函数返回:', JSON.stringify(res.result));
       var members = res.result.data || [];
       var roleLabels = { creator: '创建者', admin: '管理员', member: '成员' };
       for (var i = 0; i < members.length; i++) {
         members[i].roleLabel = roleLabels[members[i].role] || '成员';
+        members[i].avatarUrl = members[i].avatarUrl || '';
       }
+      console.log('loadFamilyMembers setData 前:', members);
       this.setData({ familyMembers: members });
     } catch (err) {
       console.error('加载家庭成员失败', err);
     }
   },
 
-  // 分享小程序（邀请成员）
+  // 分享小程序（邀请成员）- 跳转到邀请页面
   onShareAppMessage: function () {
     var pet = this.data.currentPet;
     var petName = pet ? pet.name : '宠物';
     return {
       title: '邀请你加入「' + petName + '」的照顾家庭',
-      path: '/pages/home/home?invitePetId=' + this.data.currentPetId,
+      path: '/pages/invite/invite?id=' + this.data.currentPetId,
       imageUrl: (pet && pet.avatar) ? pet.avatar : ''
     };
   },
 
-  // 处理待处理的邀请
-  async checkPendingInvite() {
-    var app = getApp();
-    var invitePetId = app.globalData.pendingInvite;
-    if (!invitePetId) return;
-    app.globalData.pendingInvite = '';
+  // 长按成员弹出管理菜单（创建者）
+  onMemberLongPress: function(e) {
+    if (!this.data.isCreator) return;
+    var openid = e.currentTarget.dataset.openid;
+    var role = e.currentTarget.dataset.role;
+    if (role === 'creator') return;
 
-    // 等待 openid 就绪
-    if (!app.globalData.openid) {
-      var that = this;
-      app.userInfoReadyCallback = function () {
-        that.checkPendingInvite();
-      };
-      app.globalData.pendingInvite = invitePetId;
-      return;
-    }
-
-    try {
-      var db = wx.cloud.database();
-      var petRes = await db.collection('pets').doc(invitePetId).get();
-      var pet = petRes.data;
-      if (!pet || pet.status !== 'active') return;
-
-      var modalRes = await wx.showModal({
-        title: '加入宠物家庭',
-        content: '你被邀请加入「' + pet.name + '」的照顾家庭，加入后可查看该宠物的所有数据。',
-        confirmText: '加入',
-        cancelText: '取消'
-      });
-      if (!modalRes.confirm) return;
-
-      var res = await wx.cloud.callFunction({
-        name: 'familyManage',
-        data: { action: 'join', data: { petId: invitePetId } }
-      });
-      if (res.result.code === 0) {
-        wx.showToast({ title: res.result.message, icon: 'success' });
-        this.loadData();
-      } else {
-        wx.showToast({ title: res.result.message || '加入失败', icon: 'none' });
+    var items = [role === 'admin' ? '取消管理员' : '设为管理员', '移除成员'];
+    var that = this;
+    wx.showActionSheet({
+      itemList: items,
+      success: function(res) {
+        if (res.tapIndex === 0) {
+          that.toggleMemberRole(openid, role);
+        } else if (res.tapIndex === 1) {
+          that.removeMember(openid);
+        }
       }
-    } catch (err) {
-      console.error('处理邀请失败', err);
-    }
+    });
   },
 
   // 切换成员角色（创建者操作）
-  async onToggleRole(e) {
-    var targetOpenid = e.currentTarget.dataset.openid;
-    var currentRole = e.currentTarget.dataset.role;
+  async toggleMemberRole(targetOpenid, currentRole) {
+    var app = getApp();
+    if (!app.globalData.openid) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+
     var newRole = currentRole === 'admin' ? 'member' : 'admin';
     var label = newRole === 'admin' ? '设为管理员' : '取消管理员';
 
@@ -403,8 +387,13 @@ Page({
   },
 
   // 移除成员（创建者操作）
-  async onRemoveMember(e) {
-    var targetOpenid = e.currentTarget.dataset.openid;
+  async removeMember(targetOpenid) {
+    var app = getApp();
+    if (!app.globalData.openid) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+
     try {
       var confirmRes = await wx.showModal({
         title: '确认移除',
@@ -422,6 +411,28 @@ Page({
     } catch (err) {
       console.error('移除成员失败', err);
       wx.showToast({ title: '操作失败', icon: 'none' });
+    }
+  },
+
+  // 头像加载失败处理
+  onAvatarError(e) {
+    var openid = e.currentTarget.dataset.openid;
+    var members = this.data.familyMembers;
+    var updated = false;
+
+    console.log('头像加载失败 openid:', openid, 'error:', e.detail);
+
+    for (var i = 0; i < members.length; i++) {
+      if (members[i]._openid === openid) {
+        // 将该成员的头像 URL 设置为空字符串，触发重新渲染为默认头像
+        members[i].avatarUrl = '';
+        updated = true;
+        break;
+      }
+    }
+
+    if (updated) {
+      this.setData({ familyMembers: members });
     }
   }
 });

@@ -1,0 +1,83 @@
+<nav-bar title="加入宠物家庭" back="{{true}}" />
+
+<view class="invite-page">
+  <!-- 加载中 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-icon">⟳</view>
+  </view>
+
+  <!-- 宠物信息 -->
+  <view class="invite-content fade-in" wx:if="{{loaded && pet}}">
+    <!-- 宠物头像 -->
+    <view class="pet-avatar-section">
+      <view class="pet-avatar-wrap" bindtap="onPreviewImage">
+        <image class="pet-avatar" src="{{pet.avatar}}" mode="aspectFill" wx:if="{{pet.avatar}}" />
+        <view class="pet-avatar-placeholder" wx:else>{{pet.name.charAt(0)}}</view>
+      </view>
+    </view>
+
+    <!-- 宠物信息卡片 -->
+    <view class="pet-info-card card">
+      <view class="pet-name-row">
+        <text class="pet-name">{{pet.name}}</text>
+        <view class="pet-tag">{{pet.species === 'cat' ? '猫咪' : '狗狗'}}</view>
+      </view>
+
+      <view class="pet-detail-row" wx:if="{{pet.breed}}">
+        <text class="pet-label">品种</text>
+        <text class="pet-value">{{pet.breed}}</text>
+      </view>
+
+      <view class="pet-detail-row" wx:if="{{pet.gender}}">
+        <text class="pet-label">性别</text>
+        <text class="pet-value">{{pet.gender === 'male' ? '公' : (pet.gender === 'female' ? '母' : '未知')}}</text>
+      </view>
+
+      <view class="pet-detail-row">
+        <text class="pet-label">年龄</text>
+        <text class="pet-value">{{age}}</text>
+      </view>
+
+      <view class="pet-desc" wx:if="{{pet.description}}">
+        <text>{{pet.description}}</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮区 -->
+    <view class="action-buttons">
+      <!-- 已加入当前宠物 -->
+      <button class="action-btn joined-btn" disabled wx:if="{{isJoined && isCurrentPet}}">
+        <text class="btn-icon">🤝</text>
+        <text class="btn-text">已加入</text>
+      </button>
+
+      <!-- 已加入但非当前宠物 -->
+      <button class="action-btn switch-btn" wx:if="{{isJoined && !isCurrentPet}}" hover-class="btn-hover" bindtap="onJoin">
+        <text class="btn-icon">🔄</text>
+        <text class="btn-text">切换到该宠物</text>
+      </button>
+
+      <!-- 未加入 -->
+      <button class="action-btn join-btn" wx:if="{{!isJoined}}" hover-class="btn-hover" bindtap="onJoin" loading="{{false}}">
+        <text class="btn-icon">🤝</text>
+        <text class="btn-text">加入宠物家庭</text>
+      </button>
+
+      <button class="action-btn cancel-btn" hover-class="btn-hover" bindtap="onCancel">
+        <text class="btn-icon">✕</text>
+        <text class="btn-text">取消</text>
+      </button>
+    </view>
+
+    <!-- 提示文案 -->
+    <view class="invite-tip">
+      <text class="tip-text">加入后您可以查看该宠物的所有数据，包括喂食、健康、记录和账单信息。</text>
+    </view>
+  </view>
+
+  <!-- 加载失败 -->
+  <view class="error-container" wx:if="{{loaded && !pet}}">
+    <text class="error-icon">😕</text>
+    <text class="error-text">宠物不存在或已失效</text>
+  </view>
+</view>

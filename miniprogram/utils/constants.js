@@ -149,7 +149,9 @@ const COLLECTIONS = {
   CHECKLISTS: 'checklists',
   RECORDS: 'records',
   BILLS: 'bills',
-  FAMILY_MEMBERS: 'pet_members'
+  FAMILY_MEMBERS: 'pet_members',
+  PET_PLACES: 'pet_places',
+  USER_LOCATIONS: 'user_locations'
 };
 
 /**
@@ -167,6 +169,26 @@ const MEMBER_ROLE_LABELS = {
   member: '成员'
 };
 
+/**
+ * 宠物友好地点分类
+ */
+const PLACE_CATEGORIES = [
+  { key: 'cafe', label: '咖啡厅', icon: '☕' },
+  { key: 'park', label: '公园', icon: '🌳' },
+  { key: 'hospital', label: '宠物医院', icon: '🏥' },
+  { key: 'shop', label: '宠物店', icon: '🏪' },
+  { key: 'restaurant', label: '餐厅', icon: '🍽️' },
+  { key: 'other', label: '其他', icon: '📍' }
+];
+
+/**
+ * 地点分类映射
+ */
+const PLACE_CATEGORY_MAP = {};
+PLACE_CATEGORIES.forEach(item => {
+  PLACE_CATEGORY_MAP[item.key] = item;
+});
+
 module.exports = {
   RECORD_TYPES,
   RECORD_TYPE_MAP,
@@ -178,5 +200,7 @@ module.exports = {
   DEFAULT_CHECKLIST_TEMPLATES,
   COLLECTIONS,
   MEMBER_ROLES,
-  MEMBER_ROLE_LABELS
+  MEMBER_ROLE_LABELS,
+  PLACE_CATEGORIES,
+  PLACE_CATEGORY_MAP
 };

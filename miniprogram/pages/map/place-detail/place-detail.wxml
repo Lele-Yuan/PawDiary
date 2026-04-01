@@ -1,0 +1,122 @@
+<nav-bar title="地点详情" back="{{true}}" />
+
+<view class="detail-page">
+  <empty-state
+    wx:if="{{!loaded}}"
+    icon="📍"
+    title="加载中..."
+  />
+
+  <view wx:if="{{loaded && place}}">
+    <!-- 地点基本信息卡片 -->
+    <view class="card place-header-card">
+      <view class="place-header-main">
+        <view class="place-icon-large">
+          <text>{{place.categoryIcon}}</text>
+        </view>
+        <view class="place-title-section">
+          <view class="place-name">{{place.name}}</view>
+          <view class="place-meta-row">
+            <text class="place-tag">{{place.categoryLabel}}</text>
+            <text class="place-distance">{{place.distanceText}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="online-count-badge">
+        <view class="online-dot"></view>
+        <text>{{onlineUsers.length}}人在线</text>
+      </view>
+    </view>
+
+    <!-- 地址信息 -->
+    <view class="card" wx:if="{{place.address}}">
+      <view class="card-title">
+        <text class="title-icon">📍</text>
+        <text>地址</text>
+      </view>
+      <view class="address-text">{{place.address}}</view>
+    </view>
+
+    <!-- 描述 -->
+    <view class="card" wx:if="{{place.description}}">
+      <view class="card-title">
+        <text class="title-icon">📝</text>
+        <text>描述</text>
+      </view>
+      <view class="desc-text">{{place.description}}</view>
+    </view>
+
+    <!-- 图片 -->
+    <view class="card" wx:if="{{place.images.length}}">
+      <view class="card-title">
+        <text class="title-icon">📷</text>
+        <text>图片</text>
+      </view>
+      <view class="images-grid">
+        <image
+          class="detail-image"
+          wx:for="{{place.images}}"
+          wx:key="*this"
+          src="{{item}}"
+          mode="aspectFill"
+          data-url="{{item}}"
+          bindtap="onPreviewImage"
+        />
+      </view>
+    </view>
+
+    <!-- 在线用户列表 -->
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">👥</text>
+        <text>附近在线 ({{onlineUsers.length}})</text>
+      </view>
+      <empty-state
+        wx:if="{{!onlineUsers.length}}"
+        icon="🚶"
+        title="暂时无人在线"
+        description="该地点附近暂时没有在线用户"
+        size="small"
+      />
+      <view class="online-users-list" wx:else>
+        <view class="online-user-row" wx:for="{{onlineUsers}}" wx:key="index">
+          <image
+            class="user-avatar"
+            src="{{item.avatarUrl || '/images/default-avatar.png'}}"
+            mode="aspectFill"
+            data-index="{{index}}"
+            binderror="onOnlineAvatarError"
+          />
+          <view class="user-info">
+            <text class="user-name">{{item.nickName}}</text>
+            <text class="user-distance">{{item.distanceText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 创建者信息 -->
+    <view class="card creator-card">
+      <view class="creator-info">
+        <image
+          class="creator-avatar"
+          src="{{place.creatorAvatar || '/images/default-avatar.png'}}"
+          mode="aspectFill"
+          binderror="onCreatorAvatarError"
+        />
+        <view class="creator-detail">
+          <text class="creator-label">由</text>
+          <text class="creator-name">{{place.creatorName}}</text>
+          <text class="creator-label">添加</text>
+        </view>
+      </view>
+      <view class="creator-time">{{place._createTime}}</view>
+    </view>
+
+    <!-- 创建者操作按钮 -->
+    <view class="action-section" wx:if="{{isOwner}}">
+      <button class="action-btn edit-btn" bindtap="onEdit" hover-class="btn-hover">编辑地点</button>
+      <button class="action-btn delete-btn" bindtap="onDelete" loading="{{deleting}}" hover-class="btn-hover">删除地点</button>
+    </view>
+  </view>
+</view>

@@ -77,11 +77,11 @@ Page({
   async loadPets() {
     try {
       const app = getApp();
-      const db = wx.cloud.database();
-      const { data: pets } = await db.collection('pets')
-        .where({ status: 'active' })
-        .orderBy('createdAt', 'asc')
-        .get();
+      const res = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'list' }
+      });
+      const pets = (res.result && res.result.code === 0) ? res.result.data : [];
 
       let currentPetId = app.globalData.currentPetId;
       if (!currentPetId || !pets.find(p => p._id === currentPetId)) {
@@ -192,9 +192,17 @@ Page({
 
       const updateData = {
         nickName: tempNickName.trim(),
-        avatarUrl: avatarUrl || '',
         updatedAt: new Date()
       };
+      // 只在上传新头像时更新 avatarUrl
+      if (tempAvatarUrl && (tempAvatarUrl.startsWith('http://tmp') || tempAvatarUrl.startsWith('wxfile://'))) {
+        updateData.avatarUrl = avatarUrl;
+      } else if (users.length > 0 && users[0].avatarUrl) {
+        // 保持原有头像不变
+        updateData.avatarUrl = users[0].avatarUrl;
+      } else {
+        updateData.avatarUrl = '';
+      }
       if (tempPhone) updateData.phone = tempPhone;
 
       if (users.length > 0) {
@@ -288,11 +296,11 @@ Page({
   async goMyPets() {
     showLoading('加载中...');
     try {
-      const db = wx.cloud.database();
-      const { data: pets } = await db.collection('pets')
-        .where({ status: 'active' })
-        .orderBy('createdAt', 'asc')
-        .get();
+      const res = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'list' }
+      });
+      const pets = (res.result && res.result.code === 0) ? res.result.data : [];
 
       this.setData({ pets, showPetList: true });
     } catch (err) {

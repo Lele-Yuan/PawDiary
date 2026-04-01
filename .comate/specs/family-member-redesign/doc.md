@@ -61,9 +61,7 @@ Figma 设计稿呈现的视觉要素：
     </view>
     <!-- 邀请按钮，当成员不足5个且有编辑权限时显示 -->
     <button class="family-member family-member-add" open-type="share" wx:if="{{familyMembers.length < 5 && canEdit}}">
-      <view class="family-member-avatar-wrap avatar-border-dashed">
-        <image class="family-add-icon" src="/images/guide/icon-add-member.png" mode="aspectFit" />
-      </view>
+      <view class="family-member-avatar-wrap avatar-border-dashed">+</view>
       <text class="family-member-name name-muted">邀请成员</text>
     </button>
   </view>

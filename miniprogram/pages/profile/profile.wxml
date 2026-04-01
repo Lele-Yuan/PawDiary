@@ -64,11 +64,15 @@
       />
       <!-- 宠物信息 -->
       <view class="pet-card-info">
-        <text class="pet-card-name">{{item.name}}</text>
+        <view class="pet-card-name-row">
+          <text class="pet-card-name">{{item.name}}</text>
+          <text class="pet-role-tag pet-role-joined" wx:if="{{item.role !== 'creator'}}">已加入</text>
+        </view>
         <text class="pet-card-desc">{{item.breed || '未知品种'}}{{item.age ? ' · ' + item.age + '岁' : ''}}</text>
       </view>
       <!-- 编辑按钮 -->
       <view
+        wx:if="{{ item._id === currentPetId && item.role === 'creator'}}"
         class="pet-card-edit {{item._id === currentPetId ? 'edit-btn-selected' : 'edit-btn-normal'}}"
         data-id="{{item._id}}"
         bindtap="editPet"

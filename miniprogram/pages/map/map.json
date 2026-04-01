@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarTitleText": "宠物友好地图",
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/nav-bar",
+    "empty-state": "/components/empty-state/empty-state"
+  }
+}

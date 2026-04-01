@@ -1,0 +1,238 @@
+.detail-page {
+  padding: 0 24rpx 180rpx;
+  min-height: 100vh;
+}
+
+/* ===== 卡片通用样式 ===== */
+.card {
+  margin-top: 20rpx;
+  padding: 28rpx;
+  border-radius: 24rpx;
+  background-color: #FFFFFF;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.title-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+/* ===== 地点头部卡片 ===== */
+.place-header-card {
+  position: relative;
+}
+
+.place-header-main {
+  display: flex;
+  align-items: flex-start;
+}
+
+.place-icon-large {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background-color: #FFF3E0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.place-title-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.place-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #313333;
+  margin-bottom: 12rpx;
+}
+
+.place-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.place-tag {
+  font-size: 24rpx;
+  color: #E8875A;
+  background-color: rgba(232, 135, 90, 0.12);
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+}
+
+.place-distance {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.online-count-badge {
+  position: absolute;
+  top: 28rpx;
+  right: 28rpx;
+  display: flex;
+  align-items: center;
+  background-color: #E8F5E9;
+  padding: 10rpx 20rpx;
+  border-radius: 24rpx;
+}
+
+.online-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background-color: #4CAF50;
+  margin-right: 8rpx;
+}
+
+.online-count-badge text {
+  font-size: 24rpx;
+  color: #2E7D32;
+}
+
+/* ===== 地址 ===== */
+.address-text {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.6;
+}
+
+/* ===== 描述 ===== */
+.desc-text {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.6;
+}
+
+/* ===== 图片网格 ===== */
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.detail-image {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16rpx;
+}
+
+/* ===== 在线用户列表 ===== */
+.online-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.online-user-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx;
+  background-color: #FAFAFA;
+  border-radius: 16rpx;
+}
+
+.user-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  border: 3rpx solid #4CAF50;
+  margin-right: 16rpx;
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-name {
+  font-size: 28rpx;
+  color: #313333;
+}
+
+.user-distance {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+/* ===== 创建者卡片 ===== */
+.creator-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.creator-info {
+  display: flex;
+  align-items: center;
+}
+
+.creator-avatar {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+
+.creator-detail {
+  font-size: 26rpx;
+  color: #888888;
+}
+
+.creator-name {
+  margin: 0 8rpx;
+  color: #313333;
+  font-weight: 500;
+}
+
+.creator-time {
+  font-size: 22rpx;
+  color: #BBBBBB;
+}
+
+/* ===== 操作按钮 ===== */
+.action-section {
+  margin-top: 40rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 24rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #E8875A, #D4734A);
+  color: #FFFFFF;
+}
+
+.delete-btn {
+  background-color: #FFF0F0;
+  color: #C0392B;
+}
+
+.btn-hover {
+  opacity: 0.8;
+}
