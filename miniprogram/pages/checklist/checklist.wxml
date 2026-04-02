@@ -47,6 +47,7 @@
     description="从模板快速创建或自定义新建一个清单吧"
     btnText="创建清单"
     bind:action="showCreateOptions"
+    canEdit="{{canEdit}}"
   />
 
   <!-- 内联详情区域（样式与详情页完全一致） -->
@@ -88,19 +89,19 @@
           wx:key="index"
         >
           <view class="item-main" data-index="{{index}}" bindtap="toggleItem">
-            <view class="item-checkbox {{item.checked ? 'checkbox-checked' : 'checkbox-unchecked'}}">
+            <view wx:if="{{canEdit}}" class="item-checkbox {{item.checked ? 'checkbox-checked' : 'checkbox-unchecked'}}">
               <text wx:if="{{item.checked}}" class="check-icon">✓</text>
             </view>
             <text class="item-name {{item.checked ? 'name-checked' : ''}}">{{item.name}}</text>
           </view>
-          <view class="item-delete" data-index="{{index}}" bindtap="deleteItem">
+          <view class="item-delete" data-index="{{index}}" bindtap="deleteItem" wx-if="{{canEdit}}">
             <text class="delete-icon">×</text>
           </view>
         </view>
       </view>
 
       <!-- 添加新项目：虚线 pill -->
-      <view class="add-dashed" bindtap="focusAddInput">
+      <view class="add-dashed" bindtap="focusAddInput" wx-if="{{canEdit}}">
         <text class="add-plus">+</text>
         <input
           class="add-input"
@@ -115,7 +116,7 @@
     </view>
 
     <!-- 底部操作 -->
-    <view class="bottom-actions">
+    <view class="bottom-actions" wx-if="{{canEdit}}">
       <button class="btn-outline delete-list-btn" hover-class="btn-outline-hover" bindtap="deleteChecklist">
         删除此清单
       </button>

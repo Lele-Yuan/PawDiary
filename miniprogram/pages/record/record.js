@@ -49,10 +49,21 @@ Page({
         this.setData({ currentPetName: app.globalData.currentPet.name });
       } else if (petId) {
         try {
-          const { data: pet } = await wx.cloud.database().collection('pets').doc(petId).get();
-          this.setData({ currentPetName: pet.name || '' });
+          const res = await wx.cloud.callFunction({
+            name: 'petManage',
+            data: { action: 'list' }
+          });
+          const pets = (res.result && res.result.code === 0) ? res.result.data : [];
+          const pet = pets.find(p => p._id === petId);
+          if (pet) {
+            app.globalData.currentPet = pet;
+            this.setData({ currentPetName: pet.name || '' });
+          } else {
+            this.setData({ currentPetName: '' });
+          }
         } catch (e) {
           console.error('获取宠物名称失败', e);
+          this.setData({ currentPetName: '' });
         }
       }
 
@@ -61,17 +72,19 @@ Page({
         return;
       }
 
-      const db = wx.cloud.database();
-      const where = { petId };
-      if (this.data.activeType !== 'all') {
-        where.type = this.data.activeType;
-      }
+      // 通过云函数获取记录数据
+      const res = await wx.cloud.callFunction({
+        name: 'recordManage',
+        data: {
+          action: 'list',
+          data: {
+            petId,
+            type: this.data.activeType
+          }
+        }
+      });
 
-      const { data } = await db.collection('records')
-        .where(where)
-        .orderBy('date', 'desc')
-        .limit(50)
-        .get();
+      const data = res.result && res.result.code === 0 ? res.result.data : [];
 
       var tagClassMap = {
         deworm: 'tag-success',
@@ -190,6 +203,10 @@ Page({
 
   // 跳转编辑记录
   goEdit(e) {
+    if (!this.data.canEdit) {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      return;
+    }
     var id = e.currentTarget.dataset.id;
     wx.navigateTo({
       url: '/pages/record/record-add/record-add?id=' + id
@@ -264,6 +281,11 @@ Page({
 
   // 长按删除记录
   onLongPressRecord(e) {
+    if (!this.data.canEdit) {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      return;
+    }
+
     const id = e.currentTarget.dataset.id;
     wx.showActionSheet({
       itemList: ['删除此记录'],

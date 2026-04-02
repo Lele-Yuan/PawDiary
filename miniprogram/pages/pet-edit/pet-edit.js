@@ -44,28 +44,38 @@ Page({
   // 加载宠物信息（编辑模式）
   async loadPetInfo(petId) {
     showLoading('加载中...');
+    const app = getApp();
     try {
-      const db = wx.cloud.database();
-      const { data: pet } = await db.collection('pets').doc(petId).get();
-      
-      const formatDate = (d) => {
-        if (!d) return '';
-        const date = new Date(d);
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      };
-
-      this.setData({
-        form: {
-          avatar: pet.avatar || '',
-          name: pet.name || '',
-          species: pet.species || '',
-          breed: pet.breed || '',
-          gender: pet.gender || 'male',
-          birthday: formatDate(pet.birthday),
-          adoptDate: formatDate(pet.adoptDate),
-          weight: pet.weight ? String(pet.weight) : ''
-        }
+      // 通过云函数获取宠物信息
+      const res = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'get', data: { _id: app.globalData.currentPetId } }
       });
+      if (res.result && res.result.code === 0) {
+        const pet = res.result.data;
+
+        const formatDate = (d) => {
+          if (!d) return '';
+          const date = new Date(d);
+          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        };
+
+        this.setData({
+          form: {
+            avatar: pet.avatar || '',
+            name: pet.name || '',
+            species: pet.species || '',
+            breed: pet.breed || '',
+            gender: pet.gender || 'male',
+            birthday: formatDate(pet.birthday),
+            adoptDate: formatDate(pet.adoptDate),
+            weight: pet.weight ? String(pet.weight) : ''
+          }
+        });
+      } else {
+        showError('宠物不存在');
+      }
+
     } catch (err) {
       console.error('加载宠物信息失败：', err);
       showError('加载失败');

@@ -33,7 +33,7 @@ Page({
     var app = getApp();
     var role = app.globalData.currentPetRole || '';
     if (role === 'member') {
-      wx.showToast({ title: '暂无编辑权限', icon: 'none' });
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
       setTimeout(function () { wx.navigateBack(); }, 1500);
       return;
     }
@@ -76,9 +76,20 @@ Page({
   async loadRecord(id) {
     try {
       showLoading('加载中...');
-      var db = wx.cloud.database();
-      var res = await db.collection('records').doc(id).get();
-      var r = res.data;
+
+      // 通过云函数获取详情
+      const res = await wx.cloud.callFunction({
+        name: 'recordManage',
+        data: { action: 'get', data: { _id: id } }
+      });
+
+      if (!res.result || res.result.code !== 0) {
+        hideLoading();
+        showError('加载失败');
+        return;
+      }
+
+      var r = res.result.data;
       var formatD = function(d) {
         if (!d) return '';
         var dt = new Date(d);
@@ -239,7 +250,6 @@ Page({
         }
       }
 
-      var db = wx.cloud.database();
       var fields = {
         type: form.type,
         date: new Date(form.date),
@@ -254,19 +264,30 @@ Page({
       };
 
       if (this.data.editId) {
-        // 编辑模式：更新
-        await db.collection('records').doc(this.data.editId).update({ data: fields });
+        // 编辑模式：通过云函数更新
+        fields._id = this.data.editId;
+        await wx.cloud.callFunction({
+          name: 'recordManage',
+          data: { action: 'update', data: fields }
+        });
       } else {
-        // 新增模式
+        // 新增模式：通过云函数添加
         fields.petId = petId;
         fields.createdAt = new Date();
-        await db.collection('records').add({ data: fields });
+        await wx.cloud.callFunction({
+          name: 'recordManage',
+          data: { action: 'add', data: fields }
+        });
 
         // 如果来自"立即完成"，关闭原记录的提醒
         if (this._sourceRecordId) {
           try {
-            await db.collection('records').doc(this._sourceRecordId).update({
-              data: { enableRemind: false, nextDate: null }
+            await wx.cloud.callFunction({
+              name: 'recordManage',
+              data: {
+                action: 'update',
+                data: { _id: this._sourceRecordId, enableRemind: false, nextDate: null }
+              }
             });
           } catch (e) {
             console.error('关闭原记录提醒失败', e);
@@ -296,8 +317,11 @@ Page({
       success: function(res) {
         if (res.confirm) {
           showLoading('删除中...');
-          var db = wx.cloud.database();
-          db.collection('records').doc(that.data.editId).remove().then(function() {
+          // 通过云函数删除
+          wx.cloud.callFunction({
+            name: 'recordManage',
+            data: { action: 'delete', data: { _id: that.data.editId } }
+          }).then(function() {
             hideLoading();
             showSuccess('已删除');
             setTimeout(function() { wx.navigateBack(); }, 1500);

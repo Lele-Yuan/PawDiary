@@ -85,10 +85,21 @@ Page({
       this.setData({ currentPetName: app.globalData.currentPet.name });
     } else if (petId) {
       try {
-        const { data: pet } = await wx.cloud.database().collection('pets').doc(petId).get();
-        this.setData({ currentPetName: pet.name || '' });
+        const res = await wx.cloud.callFunction({
+          name: 'petManage',
+          data: { action: 'list' }
+        });
+        const pets = (res.result && res.result.code === 0) ? res.result.data : [];
+        const pet = pets.find(p => p._id === petId);
+        if (pet) {
+          app.globalData.currentPet = pet;
+          this.setData({ currentPetName: pet.name || '' });
+        } else {
+          this.setData({ currentPetName: '' });
+        }
       } catch (e) {
         console.error('获取宠物名称失败', e);
+        this.setData({ currentPetName: '' });
       }
     }
 
@@ -99,35 +110,31 @@ Page({
 
     try {
       const { currentYear, currentMonth } = this.data;
-      const db = wx.cloud.database();
-      const _ = db.command;
 
-      const startDate = new Date(currentYear, currentMonth - 1, 1);
-      const endDate = new Date(currentYear, currentMonth, 1);
-
-      // 查询当月账单
-      const { data: bills } = await db.collection('bills')
-        .where({
-          petId,
-          date: _.gte(startDate).and(_.lt(endDate))
-        })
-        .orderBy('date', 'desc')
-        .get();
+      // 通过云函数获取当月账单
+      const res = await wx.cloud.callFunction({
+        name: 'billManage',
+        data: {
+          action: 'list',
+          data: { petId, year: currentYear, month: currentMonth }
+        }
+      });
+      const bills = res.result && res.result.code === 0 ? res.result.data : [];
 
       const monthTotal = bills.reduce((sum, b) => sum + b.amount, 0);
 
-      // 查询上月账单
+      // 获取上月账单
       const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
       const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
-      const prevStartDate = new Date(prevYear, prevMonth - 1, 1);
-      const prevEndDate = new Date(prevYear, prevMonth, 1);
 
-      const { data: prevBills } = await db.collection('bills')
-        .where({
-          petId,
-          date: _.gte(prevStartDate).and(_.lt(prevEndDate))
-        })
-        .get();
+      const prevRes = await wx.cloud.callFunction({
+        name: 'billManage',
+        data: {
+          action: 'list',
+          data: { petId, year: prevYear, month: prevMonth }
+        }
+      });
+      const prevBills = prevRes.result && prevRes.result.code === 0 ? prevRes.result.data : [];
 
       const lastMonthTotal = prevBills.reduce((sum, b) => sum + b.amount, 0);
 
@@ -235,6 +242,11 @@ Page({
 
   // 长按删除
   onLongPressBill(e) {
+    if (!this.data.canEdit) {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      return;
+    }
+
     const id = e.currentTarget.dataset.id;
     wx.showActionSheet({
       itemList: ['删除此账单'],
@@ -247,8 +259,11 @@ Page({
             success: async (modalRes) => {
               if (modalRes.confirm) {
                 try {
-                  const db = wx.cloud.database();
-                  await db.collection('bills').doc(id).remove();
+                  // 通过云函数删除
+                  await wx.cloud.callFunction({
+                    name: 'billManage',
+                    data: { action: 'delete', data: { _id: id } }
+                  });
                   wx.showToast({ title: '已删除', icon: 'success' });
                   this.loadMonthData();
                 } catch (err) {

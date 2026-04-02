@@ -1,4 +1,4 @@
-const { daysBetween, formatDate } = require('../../utils/util');
+const { daysBetween, formatDate, handleAvatarError } = require('../../utils/util');
 const { RECORD_TYPE_MAP } = require('../../utils/constants');
 
 // 将宠物对象中的 Date 字段序列化为 ISO 字符串，避免 setData 跨线程传输时 Date → {} 的问题
@@ -183,18 +183,21 @@ Page({
   // 加载近期提醒（来自 records 表中有 nextDate 的记录）
   async loadReminders(petId) {
     try {
-      const db = wx.cloud.database();
-      const _ = db.command;
+      // 通过云函数获取记录数据
+      const res = await wx.cloud.callFunction({
+        name: 'recordManage',
+        data: { action: 'list', data: { petId, limit: 50 } }
+      });
+
+      const records = (res.result && res.result.code === 0) ? res.result.data : [];
+
       const now = new Date();
 
-      const { data: reminders } = await db.collection('records')
-        .where({
-          petId,
-          nextDate: _.gte(now)
-        })
-        .orderBy('nextDate', 'asc')
-        .limit(3)
-        .get();
+      // 筛选有提醒且未过期的记录
+      const reminders = records
+        .filter(r => r.enableRemind && r.nextDate && new Date(r.nextDate) >= now)
+        .sort((a, b) => new Date(a.nextDate) - new Date(b.nextDate))
+        .slice(0, 3);
 
       // 格式化提醒数据
       const upcomingReminders = reminders.map(r => {

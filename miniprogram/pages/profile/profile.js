@@ -409,5 +409,28 @@ Page({
         }
       }
     });
+  },
+
+
+  // 头像加载失败处理
+  onAvatarError(e) {
+    var openid = e.currentTarget.dataset.openid;
+    var members = this.data.familyMembers;
+    var updated = false;
+
+    console.log('头像加载失败 openid:', openid, 'error:', e.detail);
+
+    for (var i = 0; i < members.length; i++) {
+      if (members[i]._openid === openid) {
+        // 将该成员的头像 URL 设置为空字符串，触发重新渲染为默认头像
+        members[i].avatarUrl = '';
+        updated = true;
+        break;
+      }
+    }
+
+    if (updated) {
+      this.setData({ familyMembers: members });
+    }
   }
 });

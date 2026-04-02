@@ -22,6 +22,15 @@ Page({
       today: todayStr,
       'form.date': todayStr
     });
+
+    // 权限校验
+    const app = getApp();
+    const role = app.globalData.currentPetRole || '';
+    if (role === 'member') {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      setTimeout(() => wx.navigateBack(), 1500);
+      return;
+    }
   },
 
   // 金额输入
@@ -89,17 +98,20 @@ Page({
 
     try {
       const { form } = this.data;
-      const db = wx.cloud.database();
 
-      await db.collection('bills').add({
+      // 通过云函数添加账单
+      await wx.cloud.callFunction({
+        name: 'billManage',
         data: {
-          petId,
-          amount: Number(form.amount),
-          category: form.category,
-          title: form.title.trim(),
-          date: new Date(form.date),
-          note: form.note.trim(),
-          createdAt: new Date()
+          action: 'add',
+          data: {
+            petId,
+            amount: Number(form.amount),
+            category: form.category,
+            title: form.title.trim(),
+            date: form.date,
+            note: form.note.trim()
+          }
         }
       });
 

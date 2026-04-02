@@ -84,6 +84,8 @@ exports.main = async (event, context) => {
       return await initTemplates();
     case 'getTemplates':
       return await getTemplates();
+    case 'get':
+      return await getChecklist(OPENID, data);
     case 'createFromTemplate':
       return await createFromTemplate(OPENID, data);
     case 'create':
@@ -133,6 +135,21 @@ async function createFromTemplate(openid, data) {
     return { code: -1, message: '缺少模板ID或宠物ID' };
   }
 
+  // 验证用户权限
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: data.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权操作' };
+  }
+
+  const role = memberRes.data[0].role || 'member';
+  if (role !== 'creator' && role !== 'admin') {
+    return { code: -1, message: '无权限请联系宠物主' };
+  }
+
   // 获取模板
   const { data: template } = await db.collection('checklist_templates')
     .doc(data.templateId)
@@ -172,6 +189,21 @@ async function createChecklist(openid, data) {
     return { code: -1, message: '清单标题和宠物ID为必填项' };
   }
 
+  // 验证用户权限
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: data.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权操作' };
+  }
+
+  const role = memberRes.data[0].role || 'member';
+  if (role !== 'creator' && role !== 'admin') {
+    return { code: -1, message: '无权限请联系宠物主' };
+  }
+
   const res = await db.collection('checklists').add({
     data: {
       _openid: openid,
@@ -189,10 +221,30 @@ async function createChecklist(openid, data) {
   return { code: 0, message: '创建成功', data: { _id: res._id } };
 }
 
-// 更新清单（标题、项目列表等）
+// 更新清单（标题、项目列表等，支持家庭成员操作）
 async function updateChecklist(openid, data) {
   if (!data || !data._id) {
     return { code: -1, message: '缺少清单ID' };
+  }
+
+  // 验证用户是否是该宠物的成员
+  const { data: checklist } = await db.collection('checklists').doc(data._id).get();
+  if (!checklist) {
+    return { code: -1, message: '清单不存在' };
+  }
+
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: checklist.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权操作' };
+  }
+
+  const role = memberRes.data[0].role || 'member';
+  if (role !== 'creator' && role !== 'admin') {
+    return { code: -1, message: '无权限请联系宠物主' };
   }
 
   const updateData = { updatedAt: new Date() };
@@ -212,25 +264,79 @@ async function updateChecklist(openid, data) {
   return { code: 0, message: '更新成功' };
 }
 
-// 删除清单
+// 删除清单（支持家庭成员操作）
 async function deleteChecklist(openid, data) {
   if (!data || !data._id) {
     return { code: -1, message: '缺少清单ID' };
+  }
+
+  // 验证用户是否是该宠物的成员
+  const { data: checklist } = await db.collection('checklists').doc(data._id).get();
+  if (!checklist) {
+    return { code: -1, message: '清单不存在' };
+  }
+
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: checklist.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权操作' };
+  }
+
+  const role = memberRes.data[0].role || 'member';
+  if (role !== 'creator' && role !== 'admin') {
+    return { code: -1, message: '无权限请联系宠物主' };
   }
 
   await db.collection('checklists').doc(data._id).remove();
   return { code: 0, message: '删除成功' };
 }
 
-// 获取用户清单列表
-async function listChecklists(openid, data) {
-  const where = { _openid: openid };
-  if (data && data.petId) {
-    where.petId = data.petId;
+// 获取清单详情（支持家庭成员查看）
+async function getChecklist(openid, data) {
+  if (!data || !data._id) {
+    return { code: -1, message: '缺少清单ID' };
   }
 
+  // 验证用户是否是该宠物的成员
+  const { data: checklist } = await db.collection('checklists').doc(data._id).get();
+  if (!checklist) {
+    return { code: -1, message: '清单不存在' };
+  }
+
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: checklist.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权访问' };
+  }
+
+  return { code: 0, data: checklist };
+}
+
+// 获取用户清单列表（支持家庭成员查看）
+async function listChecklists(openid, data) {
+  if (!data || !data.petId) {
+    return { code: -1, message: '缺少宠物ID' };
+  }
+
+  // 验证用户是否是该宠物的成员
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: data.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权访问' };
+  }
+
+  // 成员可以查看该宠物的所有清单
   const { data: checklists } = await db.collection('checklists')
-    .where(where)
+    .where({ petId: data.petId })
     .orderBy('createdAt', 'desc')
     .get();
 

@@ -15,6 +15,10 @@ Component({
     btnText: {
       type: String,
       value: ''
+    },
+    canEdit: {
+      type: Boolean,
+      value: false
     }
   },
 

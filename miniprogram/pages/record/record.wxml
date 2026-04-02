@@ -122,6 +122,7 @@
     description="记录毛孩子的每次驱虫、体检、疫苗和洗澡吧"
     btnText="添加记录"
     bind:action="goAdd"
+    canEdit="{{canEdit}}"
   />
 
   <!-- 悬浮添加按钮 -->

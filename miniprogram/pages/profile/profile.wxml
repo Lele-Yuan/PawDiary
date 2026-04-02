@@ -9,6 +9,7 @@
         class="user-avatar"
         src="{{userInfo.avatarUrl || '/images/default/pet-avatar.png'}}"
         mode="aspectFill"
+        binderror="onAvatarError"
       />
     </view>
 

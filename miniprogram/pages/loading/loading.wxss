@@ -13,20 +13,41 @@
   gap: 32rpx;
 }
 
-.loading-icon {
-  width: 120rpx;
-  height: 120rpx;
+.loading-dots {
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 80rpx;
-  color: #6B2D1A;
-  animation: spin 1s linear infinite;
+  gap: 16rpx;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background-color: #6B2D1A;
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.dot-1 {
+  animation-delay: 0s;
+}
+
+.dot-2 {
+  animation-delay: 0.2s;
+}
+
+.dot-3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .loading-text {

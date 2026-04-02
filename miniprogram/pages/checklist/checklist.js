@@ -46,11 +46,15 @@ Page({
 
     if (app.globalData.currentPet) {
       this.setData({ currentPetName: app.globalData.currentPet.name });
-    } else {
+    } else if (petId) {
       try {
-        const db = wx.cloud.database();
-        if (petId) {
-          const { data: pet } = await db.collection('pets').doc(petId).get();
+        // 通过云函数获取宠物列表信息
+        const res = await wx.cloud.callFunction({
+          name: 'petManage',
+          data: { action: 'get', data: { _id: app.globalData.currentPetId } }
+        });
+        if (res.result && res.result.code === 0) {
+          const pet = res.result.data;
           this.setData({ currentPetName: pet.name || '' });
         }
       } catch (e) {
@@ -65,7 +69,6 @@ Page({
   async loadChecklists() {
     try {
       const app = getApp();
-      const db = wx.cloud.database();
       const petId = app.globalData.currentPetId;
 
       if (!petId) {
@@ -73,10 +76,13 @@ Page({
         return;
       }
 
-      const { data } = await db.collection('checklists')
-        .where({ petId })
-        .orderBy('createdAt', 'desc')
-        .get();
+      // 通过云函数获取清单数据
+      const res = await wx.cloud.callFunction({
+        name: 'checklistManage',
+        data: { action: 'list', data: { petId } }
+      });
+
+      const data = res.result && res.result.code === 0 ? res.result.data : [];
 
       const checklists = data.map(cl => ({
         ...cl,
@@ -111,8 +117,18 @@ Page({
 
   async loadDetail(id) {
     try {
-      const db = wx.cloud.database();
-      const { data: checklist } = await db.collection('checklists').doc(id).get();
+      // 通过云函数获取详情
+      const res = await wx.cloud.callFunction({
+        name: 'checklistManage',
+        data: { action: 'get', data: { _id: id } }
+      });
+
+      if (!res.result || res.result.code !== 0) {
+        showError('加载失败');
+        return;
+      }
+
+      const checklist = res.result.data;
       const totalCount = checklist.items.length;
       const checkedCount = checklist.items.filter(i => i.checked).length;
       const progress = totalCount > 0 ? Math.round(checkedCount / totalCount * 100) : 0;
@@ -141,14 +157,18 @@ Page({
 
   async saveDetailItems() {
     try {
-      const db = wx.cloud.database();
       const items = this.data.detailChecklist.items;
       const totalCount = items.length;
       const checkedCount = items.filter(i => i.checked).length;
       const progress = totalCount > 0 ? Math.round(checkedCount / totalCount * 100) : 0;
 
-      await db.collection('checklists').doc(this.data.expandedId).update({
-        data: { items, progress, updatedAt: new Date() }
+      // 通过云函数更新
+      await wx.cloud.callFunction({
+        name: 'checklistManage',
+        data: {
+          action: 'update',
+          data: { _id: this.data.expandedId, items }
+        }
       });
 
       // 同步更新卡片列表中的进度数据
@@ -170,9 +190,13 @@ Page({
     if (!title || title === this.data.detailChecklist.title) return;
 
     try {
-      const db = wx.cloud.database();
-      await db.collection('checklists').doc(this.data.expandedId).update({
-        data: { title, updatedAt: new Date() }
+      // 通过云函数更新
+      await wx.cloud.callFunction({
+        name: 'checklistManage',
+        data: {
+          action: 'update',
+          data: { _id: this.data.expandedId, title }
+        }
       });
       this.setData({ 'detailChecklist.title': title });
 
@@ -188,6 +212,11 @@ Page({
 
   // 勾选/取消勾选
   toggleItem(e) {
+    // 权限校验
+    if (!this.data.canEdit) {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      return;
+    }
     const index = e.currentTarget.dataset.index;
     const key = `detailChecklist.items[${index}].checked`;
     const currentVal = this.data.detailChecklist.items[index].checked;
@@ -253,8 +282,11 @@ Page({
         if (res.confirm) {
           showLoading('删除中...');
           try {
-            const db = wx.cloud.database();
-            await db.collection('checklists').doc(this.data.expandedId).remove();
+            // 通过云函数删除
+            await wx.cloud.callFunction({
+              name: 'checklistManage',
+              data: { action: 'delete', data: { _id: this.data.expandedId } }
+            });
             hideLoading();
             showSuccess('已删除');
             this.setData({ expandedId: null, detailChecklist: null });
@@ -272,6 +304,12 @@ Page({
   // ==================== 创建清单 ====================
 
   async showCreateOptions() {
+    // 权限校验
+    if (!this.data.canEdit) {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      return;
+    }
+
     var app = getApp();
     if (!app.globalData.currentPetId) {
       wx.showToast({ title: '请先添加宠物', icon: 'none' });

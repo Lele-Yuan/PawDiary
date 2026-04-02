@@ -108,6 +108,7 @@
     description="记录每一笔宠物消费，掌握花销情况"
     btnText="记一笔"
     bind:action="goAdd"
+    canEdit="{{canEdit}}"
   />
 
   <!-- 悬浮添加按钮 -->

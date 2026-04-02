@@ -3,7 +3,6 @@
   "pages": [
     "pages/home/home",
     "pages/checklist/checklist",
-    "pages/checklist/checklist-detail/checklist-detail",
     "pages/record/record",
     "pages/record/record-add/record-add",
     "pages/bill/bill",

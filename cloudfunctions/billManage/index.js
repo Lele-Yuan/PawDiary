@@ -10,6 +10,8 @@ exports.main = async (event, context) => {
   switch (action) {
     case 'add':
       return await addBill(OPENID, data);
+    case 'update':
+      return await updateBill(OPENID, data);
     case 'list':
       return await listBills(OPENID, data);
     case 'stats':
@@ -25,6 +27,21 @@ exports.main = async (event, context) => {
 async function addBill(openid, data) {
   if (!data || !data.petId || !data.amount || !data.category || !data.title || !data.date) {
     return { code: -1, message: '宠物ID、金额、分类、描述和日期为必填项' };
+  }
+
+  // 验证用户权限
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: data.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权操作' };
+  }
+
+  const role = memberRes.data[0].role || 'member';
+  if (role !== 'creator' && role !== 'admin') {
+    return { code: -1, message: '无权限请联系宠物主' };
   }
 
   const validCategories = ['food', 'medical', 'toy', 'grooming', 'daily', 'other'];
@@ -47,16 +64,61 @@ async function addBill(openid, data) {
   return { code: 0, message: '添加成功', data: { _id: res._id } };
 }
 
-// 获取账单列表（按月份）
+// 更新账单（支持家庭成员操作）
+async function updateBill(openid, data) {
+  if (!data || !data._id) {
+    return { code: -1, message: '缺少账单ID' };
+  }
+
+  // 验证用户是否是该宠物的成员
+  const { data: bill } = await db.collection('bills').doc(data._id).get();
+  if (!bill) {
+    return { code: -1, message: '账单不存在' };
+  }
+
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: bill.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权操作' };
+  }
+
+  const role = memberRes.data[0].role || 'member';
+  if (role !== 'creator' && role !== 'admin') {
+    return { code: -1, message: '无权限请联系宠物主' };
+  }
+
+  const updateData = {};
+  if (data.amount !== undefined) updateData.amount = Number(data.amount);
+  if (data.category !== undefined) updateData.category = data.category;
+  if (data.title !== undefined) updateData.title = data.title;
+  if (data.date !== undefined) updateData.date = new Date(data.date);
+  if (data.note !== undefined) updateData.note = data.note;
+
+  await db.collection('bills').doc(data._id).update({ data: updateData });
+  return { code: 0, message: '更新成功' };
+}
+
+// 获取账单列表（按月份，支持家庭成员查看）
 async function listBills(openid, data) {
   if (!data || !data.petId) {
     return { code: -1, message: '缺少宠物ID' };
   }
 
-  const where = {
-    _openid: openid,
-    petId: data.petId
-  };
+  // 验证用户是否是该宠物的成员
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: data.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权访问' };
+  }
+
+  // 成员可以查看该宠物的所有账单
+  const where = { petId: data.petId };
 
   // 按月份筛选
   if (data.year && data.month) {
@@ -78,10 +140,20 @@ async function listBills(openid, data) {
   return { code: 0, data: bills };
 }
 
-// 统计数据
+// 统计数据（支持家庭成员查看）
 async function getStats(openid, data) {
   if (!data || !data.petId) {
     return { code: -1, message: '缺少宠物ID' };
+  }
+
+  // 验证用户是否是该宠物的成员
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: data.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权访问' };
   }
 
   const result = {};
@@ -93,7 +165,6 @@ async function getStats(openid, data) {
 
     const { data: bills } = await db.collection('bills')
       .where({
-        _openid: openid,
         petId: data.petId,
         date: _.gte(startDate).and(_.lt(endDate))
       })
@@ -116,14 +187,13 @@ async function getStats(openid, data) {
       .sort((a, b) => b.amount - a.amount);
 
     // 上个月数据
-    const prevMonth = data.month === 1 ? 12 : data.month - 1;
+    const prevMonth = data.month ===1 ? 12 : data.month - 1;
     const prevYear = data.month === 1 ? data.year - 1 : data.year;
     const prevStartDate = new Date(prevYear, prevMonth - 1, 1);
     const prevEndDate = new Date(prevYear, prevMonth, 1);
 
     const { data: prevBills } = await db.collection('bills')
       .where({
-        _openid: openid,
         petId: data.petId,
         date: _.gte(prevStartDate).and(_.lt(prevEndDate))
       })
@@ -146,7 +216,6 @@ async function getStats(openid, data) {
 
       const { data: mBills } = await db.collection('bills')
         .where({
-          _openid: openid,
           petId: data.petId,
           date: _.gte(mStart).and(_.lt(mEnd))
         })
@@ -169,6 +238,26 @@ async function getStats(openid, data) {
 async function deleteBill(openid, data) {
   if (!data || !data._id) {
     return { code: -1, message: '缺少账单ID' };
+  }
+
+  // 验证用户是否是该宠物的成员
+  const { data: bill } = await db.collection('bills').doc(data._id).get();
+  if (!bill) {
+    return { code: -1, message: '账单不存在' };
+  }
+
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: bill.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权操作' };
+  }
+
+  const role = memberRes.data[0].role || 'member';
+  if (role !== 'creator' && role !== 'admin') {
+    return { code: -1, message: '无权限请联系宠物主' };
   }
 
   await db.collection('bills').doc(data._id).remove();
