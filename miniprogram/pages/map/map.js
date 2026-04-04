@@ -134,8 +134,10 @@ Page({
   // 点击地点卡片
   onTapPlace(e) {
     var placeId = e.currentTarget.dataset.id;
+    var lat = e.currentTarget.dataset.lat;
+    var lng = e.currentTarget.dataset.lng;
     wx.navigateTo({
-      url: '/pages/map/place-detail/place-detail?id=' + placeId
+      url: '/pages/map/place-detail/place-detail?id=' + placeId + '&placeLat=' + lat + '&placeLng=' + lng
     });
   },
 

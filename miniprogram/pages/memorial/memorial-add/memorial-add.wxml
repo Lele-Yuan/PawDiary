@@ -1,0 +1,142 @@
+<view class="add-page">
+  <nav-bar title="记录 TA" />
+
+  <scroll-view scroll-y class="add-scroll">
+    <!-- 头像上传 -->
+    <view class="avatar-section">
+      <view class="avatar-upload" bindtap="chooseAvatar">
+        <image
+          wx:if="{{form.petAvatar}}"
+          class="avatar-img"
+          src="{{form.petAvatar}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="avatar-placeholder">
+          <text class="avatar-plus">+</text>
+          <text class="avatar-hint">添加照片</text>
+        </view>
+        <view wx:if="{{form.petAvatar}}" class="avatar-edit-mask">
+          <text class="avatar-edit-text">更换</text>
+        </view>
+      </view>
+      <text class="avatar-label">TA 的照片</text>
+    </view>
+
+    <!-- 表单 -->
+    <view class="form-section">
+
+      <!-- 宠物名字 -->
+      <view class="form-item">
+        <text class="form-label">名字 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          placeholder="它叫什么名字"
+          placeholder-class="form-placeholder"
+          value="{{form.petName}}"
+          bindinput="onInput"
+          data-field="petName"
+          maxlength="20"
+        />
+      </view>
+
+      <!-- 物种 -->
+      <view class="form-item">
+        <text class="form-label">物种</text>
+        <picker
+          mode="selector"
+          range="{{speciesList}}"
+          value="{{speciesIndex}}"
+          bindchange="onSpeciesChange"
+        >
+          <view class="form-picker">
+            <text class="form-picker-text">{{speciesList[speciesIndex]}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 性别 -->
+      <view class="form-item">
+        <text class="form-label">性别</text>
+        <view class="radio-group">
+          <view
+            class="radio-item {{form.gender === 'male' ? 'radio-active' : ''}}"
+            bindtap="onGenderChange"
+            data-value="male"
+          >公</view>
+          <view
+            class="radio-item {{form.gender === 'female' ? 'radio-active' : ''}}"
+            bindtap="onGenderChange"
+            data-value="female"
+          >母</view>
+          <view
+            class="radio-item {{form.gender === 'unknown' ? 'radio-active' : ''}}"
+            bindtap="onGenderChange"
+            data-value="unknown"
+          >不知道</view>
+        </view>
+      </view>
+
+      <!-- 出生日期 -->
+      <view class="form-item">
+        <text class="form-label">出生日期</text>
+        <picker
+          mode="date"
+          value="{{form.birthday}}"
+          end="{{today}}"
+          bindchange="onDateChange"
+          data-field="birthday"
+        >
+          <view class="form-picker">
+            <text class="form-picker-text {{form.birthday ? '' : 'form-placeholder'}}">{{form.birthday || '选择出生日期（可选）'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 离开日期 -->
+      <view class="form-item">
+        <text class="form-label">离开日期 <text class="required">*</text></text>
+        <picker
+          mode="date"
+          value="{{form.passDate}}"
+          end="{{today}}"
+          bindchange="onDateChange"
+          data-field="passDate"
+        >
+          <view class="form-picker {{!form.passDate ? 'picker-empty' : ''}}">
+            <text class="form-picker-text {{form.passDate ? '' : 'form-placeholder'}}">{{form.passDate || '选择离开日期'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 纪念寄语 -->
+      <view class="form-item form-item-textarea">
+        <text class="form-label">寄语</text>
+        <textarea
+          class="form-textarea"
+          placeholder="说说它的故事，或留下想对它说的话..."
+          placeholder-class="form-placeholder"
+          value="{{form.description}}"
+          bindinput="onInput"
+          data-field="description"
+          maxlength="200"
+          auto-height
+        />
+      </view>
+
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-area">
+      <view
+        class="submit-btn {{submitting ? 'submit-btn-disabled' : ''}}"
+        bindtap="onSubmit"
+      >
+        <text class="submit-text">{{submitting ? '记录中...' : '记录 TA'}}</text>
+      </view>
+    </view>
+
+  </scroll-view>
+</view>

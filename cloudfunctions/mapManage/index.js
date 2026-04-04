@@ -76,7 +76,7 @@ async function addPlace(openid, data) {
       longitude: data.longitude,
       address: data.address || '',
       images: data.images || [],
-      creatorName: user.nickName || '宠物主人',
+      creatorName: user.nickName || '未知游客',
       creatorAvatar: user.avatarUrl || '',
       status: 'active',
       createdAt: now,
@@ -257,7 +257,7 @@ async function reportLocation(openid, data) {
   var locationData = {
     latitude: data.latitude,
     longitude: data.longitude,
-    nickName: user.nickName || '宠物主人',
+    nickName: user.nickName || '未知游客',
     avatarUrl: user.avatarUrl || '',
     lastActiveTime: now,
     updatedAt: now

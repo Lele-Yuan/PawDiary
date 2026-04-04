@@ -40,12 +40,12 @@ Page({
     const app = getApp();
     if (app.globalData.userInfo) {
       const userInfo = app.globalData.userInfo;
-      const isGuest = !userInfo.nickName || userInfo.nickName === '宠物主人';
+      const isGuest = !userInfo.nickName || userInfo.nickName === '未知游客';
       this.setData({ userInfo, isGuest });
     } else {
       // 等待初始化完成
       app.userInfoReadyCallback = (userInfo) => {
-        const isGuest = !userInfo.nickName || userInfo.nickName === '宠物主人';
+        const isGuest = !userInfo.nickName || userInfo.nickName === '未知游客';
         this.setData({ userInfo, isGuest });
       };
     }
@@ -331,6 +331,11 @@ Page({
     });
   },
 
+  // 纪念馆
+  goMemorial() {
+    wx.navigateTo({ url: '/pages/memorial/memorial' });
+  },
+
   // 消费统计
   goStats() {
     wx.navigateTo({
@@ -380,7 +385,7 @@ Page({
             if (users.length > 0) {
               await db.collection('users').doc(users[0]._id).update({
                 data: {
-                  nickName: '宠物主人',
+                  nickName: '未知游客',
                   avatarUrl: '',
                   phone: '',
                   updatedAt: new Date()
@@ -390,7 +395,7 @@ Page({
 
             app.globalData.userInfo = {
               ...app.globalData.userInfo,
-              nickName: '宠物主人',
+              nickName: '未知游客',
               avatarUrl: '',
               phone: ''
             };

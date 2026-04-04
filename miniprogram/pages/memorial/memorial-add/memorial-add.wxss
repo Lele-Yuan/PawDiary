@@ -1,0 +1,208 @@
+.add-page {
+  min-height: 100vh;
+  background-color: #FBF9F7;
+}
+
+.add-scroll {
+  height: 100vh;
+  padding-bottom: 60rpx;
+}
+
+/* ===== 头像上传区 ===== */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0 32rpx;
+}
+
+.avatar-upload {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 80rpx;
+  overflow: hidden;
+  position: relative;
+  background-color: #F0EBE6;
+  border: 4rpx dashed #D4B5A0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-img {
+  width: 160rpx;
+  height: 160rpx;
+}
+
+.avatar-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.avatar-plus {
+  font-size: 48rpx;
+  color: #D4B5A0;
+  line-height: 1;
+}
+
+.avatar-hint {
+  font-size: 20rpx;
+  color: #D4B5A0;
+}
+
+.avatar-edit-mask {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50rpx;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-edit-text {
+  font-size: 20rpx;
+  color: #ffffff;
+}
+
+.avatar-label {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #888888;
+}
+
+/* ===== 表单区 ===== */
+.form-section {
+  margin: 0 32rpx;
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid #F3EDE8;
+  min-height: 96rpx;
+}
+
+.form-item:last-child {
+  border-bottom: none;
+}
+
+.form-item-textarea {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #313333;
+  width: 140rpx;
+  flex-shrink: 0;
+}
+
+.required {
+  color: #E8875A;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #313333;
+  text-align: right;
+}
+
+.form-placeholder {
+  color: #BBBBBB;
+}
+
+.form-picker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.form-picker-text {
+  font-size: 28rpx;
+  color: #313333;
+}
+
+.picker-arrow {
+  font-size: 36rpx;
+  color: #CCCCCC;
+  margin-left: 8rpx;
+}
+
+.picker-empty .form-picker-text {
+  color: #BBBBBB;
+}
+
+/* 性别单选 */
+.radio-group {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  gap: 16rpx;
+}
+
+.radio-item {
+  padding: 8rpx 24rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: #888888;
+  background-color: #F5F0EC;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+}
+
+.radio-active {
+  color: #E8875A;
+  background-color: #FFF0E8;
+  border-color: #E8875A;
+  font-weight: 600;
+}
+
+/* 寄语文本域 */
+.form-textarea {
+  width: 100%;
+  font-size: 28rpx;
+  color: #313333;
+  min-height: 160rpx;
+  line-height: 1.6;
+}
+
+/* ===== 提交按钮 ===== */
+.submit-area {
+  padding: 48rpx 32rpx 80rpx;
+}
+
+.submit-btn {
+  background-color: #6B2D1A;
+  border-radius: 64rpx;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-btn-disabled {
+  opacity: 0.6;
+}
+
+.submit-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 4rpx;
+}

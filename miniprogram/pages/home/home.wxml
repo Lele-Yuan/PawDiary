@@ -111,19 +111,19 @@
 
     <!-- 指南模块 -->
     <view class="guide-links">
-      <view class="guide-link guide-link-cat">
-        <view class="guide-link-copy">
-          <view class="guide-link-title">养猫指南</view>
-          <view class="guide-link-desc">了解猫咪养护知识</view>
-        </view>
-        <view class="guide-link-deco">🐱</view>
-      </view>
       <view class="guide-link guide-link-dog">
         <view class="guide-link-copy">
           <view class="guide-link-title">养狗指南</view>
           <view class="guide-link-desc">狗狗养育完全手册</view>
         </view>
         <view class="guide-link-deco">🐶</view>
+      </view>
+      <view class="guide-link guide-link-cat">
+        <view class="guide-link-copy">
+          <view class="guide-link-title">养猫指南</view>
+          <view class="guide-link-desc">了解猫咪养护知识</view>
+        </view>
+        <view class="guide-link-deco">🐱</view>
       </view>
     </view>
 

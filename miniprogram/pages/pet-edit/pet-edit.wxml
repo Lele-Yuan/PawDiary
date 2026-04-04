@@ -5,7 +5,7 @@
   <view class="avatar-section" bindtap="chooseAvatar">
     <image
       class="avatar-preview"
-      src="{{form.avatar || '/images/default/pet-avatar.png'}}"
+      src="{{form.avatar || '/images/default-avatar.png'}}"
       mode="aspectFill"
     />
     <view class="avatar-tip">点击更换头像</view>

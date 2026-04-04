@@ -1,0 +1,112 @@
+<view class="detail-page">
+
+  <!-- 背景图 -->
+  <image class="bg-image" src="/images/memorial.jpg" mode="aspectFill" />
+  <!-- 半透明白色蒙版 -->
+  <view class="bg-mask" />
+
+  <!-- 导航栏 -->
+  <nav-bar title="收到的祝福" back="{{true}}" />
+
+  <!-- 宠物信息头部（紧凑横排） -->
+  <view class="pet-header">
+    <view class="pet-avatar-wrap">
+      <image
+        class="pet-avatar"
+        src="{{petAvatar || '/images/default-avatar.png'}}"
+        mode="aspectFill"
+      />
+      <view class="avatar-ring" />
+    </view>
+    <view class="pet-header-info">
+      <text class="pet-name">{{petName}}</text>
+      <view class="blessing-summary">
+        <text class="summary-icon">✦</text>
+        <text class="summary-text" wx:if="{{blessingsCount > 0}}">收到了 {{blessingsCount}} 条祝福</text>
+        <text class="summary-text" wx:else>还没有祝福</text>
+        <text class="summary-icon">✦</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分隔 -->
+  <view class="section-divider">
+    <view class="divider-line" />
+    <text class="divider-icon">🕯️</text>
+    <view class="divider-line" />
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-area">
+    <view class="loading-spinner" />
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{blessings.length === 0}}" class="empty-area">
+    <text class="empty-icon">🌙</text>
+    <text class="empty-title">还没有人留言</text>
+    <text class="empty-desc">TA 在等待第一条祝福</text>
+  </view>
+
+  <!-- 祝福 Swiper -->
+  <block wx:else>
+    <swiper
+      class="blessing-swiper"
+      current="{{currentIndex}}"
+      bindchange="onSwiperChange"
+      duration="300"
+      easing-function="easeInOutCubic"
+    >
+      <swiper-item
+        class="swiper-item"
+        wx:for="{{blessings}}"
+        wx:key="_id"
+      >
+        <view class="blessing-card">
+          <!-- 左引号装饰 -->
+          <text class="quote-mark quote-open">"</text>
+
+          <!-- 祝福正文 -->
+          <text class="blessing-text">{{item.content}}</text>
+
+          <!-- 右引号装饰 -->
+          <text class="quote-mark quote-close">"</text>
+
+          <!-- 发送人信息（低调底部） -->
+          <view class="sender-row">
+            <image
+              class="sender-avatar"
+              src="{{item.avatarUrl || '/images/default-avatar.png'}}"
+              mode="aspectFill"
+            />
+            <text class="sender-nick">{{item.nickName}}</text>
+            <text class="sender-dot">·</text>
+            <text class="sender-time">{{item.createdAtStr}}</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+
+    <!-- 翻页指示器 -->
+    <view class="page-indicator">
+      <!-- 点点 -->
+      <view class="dots-row">
+        <view
+          class="dot {{index === currentIndex ? 'dot-active' : ''}}"
+          wx:for="{{blessings}}"
+          wx:key="index"
+          wx:for-index="index"
+        />
+      </view>
+      <!-- 计数 -->
+      <text class="page-count">{{currentIndex + 1}} / {{blessings.length}}</text>
+    </view>
+
+    <!-- 左右滑动提示（首次显示） -->
+    <view class="swipe-hint" wx:if="{{showHint}}">
+      <text class="hint-text">← 左右滑动翻看祝福 →</text>
+    </view>
+  </block>
+
+</view>

@@ -8,6 +8,35 @@
   flex-direction: column;
   align-items: center;
   padding: 48rpx 32rpx 40rpx;
+  position: relative;
+}
+
+/* 纪念馆悬浮入口 */
+.memorial-float-btn {
+  position: absolute;
+  top: 22rpx;
+  right: 36rpx;
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 26rpx;
+  background-color: rgb(107 45 26 / 73%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 14rpx rgba(107, 45, 26, 0.38);
+  z-index: 1;
+  animation: memorial-float 3.6s ease-in-out infinite;
+}
+
+@keyframes memorial-float {
+  0%   { transform: translateY(0)     scale(1);    box-shadow: 0 4rpx 14rpx rgba(107, 45, 26, 0.38); }
+  45%  { transform: translateY(-5rpx) scale(1.07); box-shadow: 0 10rpx 20rpx rgba(107, 45, 26, 0.22); }
+  100% { transform: translateY(0)     scale(1);    box-shadow: 0 4rpx 14rpx rgba(107, 45, 26, 0.38); }
+}
+
+.memorial-float-icon {
+  font-size: 26rpx;
+  line-height: 1;
 }
 
 .user-avatar-wrap {
@@ -25,7 +54,7 @@
 }
 
 .user-name {
-  font-size: 60rpx;
+  font-size: 40rpx;
   font-weight: 800;
   color: #313333;
   letter-spacing: -1rpx;
@@ -209,6 +238,9 @@
   text-align: center;
   border: none;
   margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-confirm-btn::after {
@@ -292,8 +324,8 @@
 }
 
 .pet-card-avatar {
-  width: 128rpx;
-  height: 128rpx;
+  width: 80rpx;
+  height: 80rpx;
   border-radius: 64rpx;
   overflow: hidden;
   flex-shrink: 0;
@@ -407,8 +439,6 @@
 }
 
 .menu-icon-circle {
-  width: 80rpx;
-  height: 80rpx;
   border-radius: 50%;
   display: flex;
   justify-content: center;

@@ -1,0 +1,345 @@
+/* ===== 整体页面 ===== */
+.detail-page {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 背景图（固定铺满） */
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* 半透明白色蒙版 */
+.bg-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.82);
+  z-index: 1;
+}
+
+/* nav-bar 层级提升 */
+nav-bar {
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+/* ===== 宠物头部（横排紧凑） ===== */
+.pet-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 28rpx 40rpx 20rpx;
+  flex-shrink: 0;
+}
+
+.pet-avatar-wrap {
+  position: relative;
+  width: 96rpx;
+  height: 96rpx;
+  flex-shrink: 0;
+}
+
+.pet-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4rpx 16rpx rgba(107, 45, 26, 0.18);
+  filter: grayscale(15%);
+}
+
+.avatar-ring {
+  position: absolute;
+  top: -6rpx;
+  left: -6rpx;
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 54rpx;
+  border: 2rpx solid rgba(232, 135, 90, 0.4);
+  animation: ring-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+.pet-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.pet-name {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #313333;
+  letter-spacing: 1rpx;
+}
+
+.blessing-summary {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.summary-icon {
+  font-size: 18rpx;
+  color: #E8875A;
+}
+
+.summary-text {
+  font-size: 22rpx;
+  color: #888888;
+}
+
+/* ===== 分隔线 ===== */
+.section-divider {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 0 40rpx 0;
+  flex-shrink: 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1rpx;
+  background: linear-gradient(to right, transparent, rgba(107, 45, 26, 0.18), transparent);
+}
+
+.divider-icon {
+  font-size: 28rpx;
+}
+
+/* ===== 加载中 ===== */
+.loading-area {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  gap: 20rpx;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid rgba(232, 135, 90, 0.2);
+  border-top-color: #E8875A;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: #888888;
+}
+
+/* ===== 空状态 ===== */
+.empty-area {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.empty-icon {
+  font-size: 88rpx;
+  line-height: 1;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #313333;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #888888;
+}
+
+/* ===== Swiper 翻页 ===== */
+.blessing-swiper {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  width: 100%;
+  /* 高度由 JS 动态设置或用 flex 撑开 */
+}
+
+.swiper-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40rpx 80rpx;
+  box-sizing: border-box;
+}
+
+/* ===== 祝福卡片 ===== */
+.blessing-card {
+  width: 100%;
+  min-height: 360rpx;
+  max-height: 70%;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 32rpx;
+  padding: 56rpx 48rpx 44rpx;
+  box-shadow:
+    0 12rpx 48rpx rgba(107, 45, 26, 0.10),
+    0 2rpx 8rpx rgba(107, 45, 26, 0.05);
+  border: 1rpx solid rgba(255, 255, 255, 0.98);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* 引号装饰 */
+.quote-mark {
+  font-size: 80rpx;
+  line-height: 1;
+  color: rgba(232, 135, 90, 0.22);
+  font-family: Georgia, serif;
+  font-weight: 900;
+  position: absolute;
+}
+
+.quote-open {
+  top: 20rpx;
+  left: 36rpx;
+}
+
+.quote-close {
+  bottom: 72rpx;
+  right: 36rpx;
+}
+
+/* 祝福正文 */
+.blessing-text {
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #2A2A2A;
+  line-height: 1.9;
+  text-align: center;
+  letter-spacing: 1rpx;
+  padding: 0 24rpx;
+  flex: 1;
+  max-height: 100%;
+  overflow: auto;
+}
+
+/* 发送人信息（低调） */
+.sender-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 36rpx;
+  opacity: 0.45;
+}
+
+.sender-avatar {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 18rpx;
+}
+
+.sender-nick {
+  font-size: 20rpx;
+  color: #5E5F5D;
+}
+
+.sender-dot {
+  font-size: 20rpx;
+  color: #BBBBBB;
+}
+
+.sender-time {
+  font-size: 20rpx;
+  color: #AAAAAA;
+}
+
+/* ===== 翻页指示器 ===== */
+.page-indicator {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 0 12rpx;
+  flex-shrink: 0;
+}
+
+.dots-row {
+  display: flex;
+  gap: 10rpx;
+  align-items: center;
+}
+
+.dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 5rpx;
+  background-color: rgba(107, 45, 26, 0.18);
+  transition: all 0.3s ease;
+}
+
+.dot-active {
+  width: 28rpx;
+  background-color: #E8875A;
+}
+
+.page-count {
+  font-size: 20rpx;
+  color: #AAAAAA;
+  letter-spacing: 2rpx;
+}
+
+/* ===== 滑动提示 ===== */
+.swipe-hint {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding-bottom: 24rpx;
+  flex-shrink: 0;
+  animation: hint-fade 3s ease forwards;
+}
+
+@keyframes hint-fade {
+  0%   { opacity: 0.7; }
+  60%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+.hint-text {
+  font-size: 20rpx;
+  color: #AAAAAA;
+  letter-spacing: 2rpx;
+}

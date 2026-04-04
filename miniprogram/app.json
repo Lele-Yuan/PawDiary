@@ -14,7 +14,10 @@
     "pages/map/place-add/place-add",
     "pages/map/place-detail/place-detail",
     "pages/invite/invite",
-    "pages/loading/loading"
+    "pages/loading/loading",
+    "pages/memorial/memorial",
+    "pages/memorial/memorial-add/memorial-add",
+    "pages/memorial/blessing-detail/blessing-detail"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -35,7 +35,7 @@ async function loginOrRegister(openid, data) {
   // 新用户注册
   const newUser = {
     _openid: openid,
-    nickName: (data && data.nickName) || '宠物主人',
+    nickName: (data && data.nickName) || '未知游客',
     avatarUrl: (data && data.avatarUrl) || '',
     phone: '',
     currentPetId: '',

@@ -56,7 +56,7 @@ async function addPet(openid, data) {
         _openid: openid,
         petId: res._id,
         role: 'creator',
-        nickName: user.nickName || '宠物主人',
+        nickName: user.nickName || '未知游客',
         avatarUrl: user.avatarUrl || '',
         createdAt: new Date()
       }

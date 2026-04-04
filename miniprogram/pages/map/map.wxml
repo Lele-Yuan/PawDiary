@@ -47,7 +47,7 @@
         bind:action="goAddPlace"
       />
 
-      <view class="place-card card" wx:for="{{places}}" wx:key="_id" data-id="{{item._id}}" bindtap="onTapPlace">
+      <view class="place-card card" wx:for="{{places}}" wx:key="_id" data-id="{{item._id}}" data-lat="{{item.latitude}}" data-lng="{{item.longitude}}" bindtap="onTapPlace">
         <view class="place-card-main">
           <view class="place-icon-circle">
             <text>{{item.categoryIcon}}</text>

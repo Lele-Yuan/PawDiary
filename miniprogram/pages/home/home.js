@@ -172,7 +172,7 @@ Page({
         .get();
       if (res.data.length > 0) {
         await db.collection('pet_members').doc(res.data[0]._id).update({
-          data: { role: 'creator', nickName: userInfo.nickName || '宠物主人', avatarUrl: userInfo.avatarUrl || '' }
+          data: { role: 'creator', nickName: userInfo.nickName || '未知游客', avatarUrl: userInfo.avatarUrl || '' }
         });
       }
     } catch (e) {

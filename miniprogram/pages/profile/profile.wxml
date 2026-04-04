@@ -7,10 +7,13 @@
     <view class="user-avatar-wrap" bindtap="onLogin">
       <image
         class="user-avatar"
-        src="{{userInfo.avatarUrl || '/images/default/pet-avatar.png'}}"
+        src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}"
         mode="aspectFill"
         binderror="onAvatarError"
       />
+    </view>
+    <view class="memorial-float-btn" bindtap="goMemorial">
+      <text class="memorial-float-icon">🕯️</text>
     </view>
 
     <!-- 游客态 -->
@@ -60,7 +63,7 @@
       <!-- 宠物头像 -->
       <image
         class="pet-card-avatar"
-        src="{{item.avatar || '/images/default/pet-avatar.png'}}"
+        src="{{item.avatar || '/images/default-avatar.png'}}"
         mode="aspectFill"
       />
       <!-- 宠物信息 -->
@@ -96,35 +99,16 @@
 
       <!-- 清除缓存 -->
       <view class="menu-item" bindtap="clearCache">
-        <view class="menu-icon-circle" style="background-color: #F5E6CC;">
+        <view class="menu-icon-circle">
           <text class="menu-icon-emoji">🔄</text>
         </view>
         <text class="menu-text">清除缓存</text>
         <text class="menu-arrow">›</text>
       </view>
 
-      <!-- 提醒通知（展示用） -->
-      <view class="menu-item">
-        <view class="menu-icon-circle" style="background-color: #BEE3E7;">
-          <text class="menu-icon-emoji">🔔</text>
-        </view>
-        <text class="menu-text">提醒通知</text>
-        <text class="menu-arrow">›</text>
-      </view>
-
-      <!-- 语言 -->
-      <view class="menu-item">
-        <view class="menu-icon-circle" style="background-color: rgba(254,157,127,0.3);">
-          <text class="menu-icon-emoji">🌐</text>
-        </view>
-        <text class="menu-text">语言设置</text>
-        <text class="menu-value">中文</text>
-        <text class="menu-arrow">›</text>
-      </view>
-
       <!-- 关于我们 -->
       <view class="menu-item" bindtap="showAbout">
-        <view class="menu-icon-circle" style="background-color: #E9E8E6;">
+        <view class="menu-icon-circle">
           <text class="menu-icon-emoji">ℹ</text>
         </view>
         <text class="menu-text">关于宠物管家</text>
@@ -133,7 +117,7 @@
 
       <!-- 帮助中心 -->
       <view class="menu-item menu-item-last">
-        <view class="menu-icon-circle" style="background-color: rgba(190,235,231,0.4);">
+        <view class="menu-icon-circle">
           <text class="menu-icon-emoji">🎧</text>
         </view>
         <text class="menu-text">帮助中心</text>
@@ -156,7 +140,7 @@
     <view class="modal-content" catchtap>
       <view class="modal-title">我的宠物</view>
       <view class="pet-list-item" wx:for="{{pets}}" wx:key="_id">
-        <image class="pet-list-avatar" src="{{item.avatar || '/images/default/pet-avatar.png'}}" mode="aspectFill" />
+        <image class="pet-list-avatar" src="{{item.avatar || '/images/default-avatar.png'}}" mode="aspectFill" />
         <view class="pet-list-info">
           <text class="pet-list-name">{{item.name}}</text>
           <text class="pet-list-breed">{{item.breed || '未设置品种'}}</text>
@@ -181,7 +165,7 @@
 
       <!-- 头像选择 -->
       <button class="avatar-picker" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-        <image class="avatar-preview" src="{{tempAvatarUrl || '/images/default/pet-avatar.png'}}" mode="aspectFill" />
+        <image class="avatar-preview" src="{{tempAvatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
         <view class="avatar-picker-hint">
           <text class="avatar-picker-text">{{tempAvatarUrl ? '重新选择头像' : '点击选择头像'}}</text>
         </view>

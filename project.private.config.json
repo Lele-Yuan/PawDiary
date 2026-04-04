@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
-          "name": "加载中",
-          "pathName": "pages/loading/loading",
+          "name": "纪念馆",
+          "pathName": "pages/memorial/memorial",
           "query": "",
           "scene": null,
           "launchMode": "default"
+        },
+        {
+          "name": "加载中",
+          "pathName": "pages/loading/loading",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "「秋田」邀请成员",

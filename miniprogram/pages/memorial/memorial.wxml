@@ -1,0 +1,168 @@
+<view class="memorial-page">
+  <nav-bar title="纪念馆" back="{{true}}" />
+
+  <!-- Tab 切换 -->
+  <view class="tab-bar">
+    <view
+      class="tab-item {{activeTab === 0 ? 'tab-active' : ''}}"
+      bindtap="onTabChange"
+      data-index="0"
+    >我的纪念</view>
+    <view
+      class="tab-item {{activeTab === 1 ? 'tab-active' : ''}}"
+      bindtap="onTabChange"
+      data-index="1"
+    >随机探访</view>
+    <view class="tab-indicator" style="left: {{activeTab === 0 ? '12.5%' : '62.5%'}}"></view>
+  </view>
+
+  <!-- ===== 我的纪念 Tab ===== -->
+  <view class="tab-content" wx:if="{{activeTab === 0}}">
+
+    <!-- 新增按钮 -->
+    <view class="add-entry" bindtap="goAddMemorial">
+      <view class="add-entry-icon">+</view>
+      <text class="add-entry-text">记录一位小天使</text>
+    </view>
+
+    <!-- 宠物列表 -->
+    <view wx:if="{{myMemorials.length > 0}}" class="memorial-list">
+      <view
+        class="memorial-card"
+        wx:for="{{myMemorials}}"
+        wx:key="_id"
+      >
+        <view class="card-avatar-wrap">
+          <image
+            class="card-avatar"
+            src="{{item.petAvatar || '/images/default-avatar.png'}}"
+            mode="aspectFill"
+          />
+          <view class="card-candle">🕯️</view>
+        </view>
+        <view class="card-info">
+          <text class="card-name">{{item.petName}}</text>
+          <text class="card-meta">{{item.species}} · {{item.passDate}} 离开</text>
+          <text class="card-desc" wx:if="{{item.description}}">{{item.description}}</text>
+        </view>
+        <view
+          class="card-blessing-count"
+          bindtap="goBlessingDetail"
+          data-id="{{item._id}}"
+          data-name="{{item.petName}}"
+          data-avatar="{{item.petAvatar}}"
+          data-count="{{item.blessingsCount || 0}}"
+        >
+          <text class="blessing-num">{{item.blessingsCount || 0}}</text>
+          <text class="blessing-label">条祝福 ›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:else class="my-empty">
+      <text class="empty-emoji">🌈</text>
+      <text class="empty-title">还没有记录</text>
+      <text class="empty-desc">记录下那些曾陪伴过你的小生命</text>
+    </view>
+
+  </view>
+
+  <!-- ===== 随机探访 Tab ===== -->
+  <view class="tab-content" wx:if="{{activeTab === 1}}">
+
+    <!-- 加载中 -->
+    <view wx:if="{{loadingRandom}}" class="loading-area">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">寻找小天使中...</text>
+    </view>
+
+    <!-- 无数据 -->
+    <view wx:elif="{{!randomPet}}" class="random-empty">
+      <text class="empty-emoji">🌟</text>
+      <text class="empty-title">还没有其他小天使</text>
+      <text class="empty-desc">去「我的纪念」添加，让更多人看见 TA</text>
+    </view>
+
+    <!-- 随机宠物卡片 -->
+    <block wx:else>
+      <view class="random-card">
+        <!-- 头部：头像 + 基本信息 -->
+        <view class="random-card-header">
+          <view class="random-avatar-wrap">
+            <image
+              class="random-avatar"
+              src="{{randomPet.petAvatar || '/images/default-avatar.png'}}"
+              mode="aspectFill"
+            />
+            <view class="random-candle-badge">🕯️</view>
+          </view>
+          <view class="random-pet-info">
+            <text class="random-pet-name">{{randomPet.petName}}</text>
+            <view class="random-pet-meta-row">
+              <text class="random-meta-tag">{{randomPet.species}}</text>
+              <text class="random-meta-tag" wx:if="{{randomPet.gender !== 'unknown'}}">{{randomPet.gender === 'male' ? '公' : '母'}}</text>
+            </view>
+            <text class="random-owner">主人：{{randomPet.ownerNickName}}</text>
+            <text class="random-pass-date">{{randomPet.passDate}} 化作星光</text>
+          </view>
+        </view>
+
+        <!-- 纪念寄语 -->
+        <view class="random-desc" wx:if="{{randomPet.description}}">
+          <text class="random-desc-quote">"</text>
+          <text class="random-desc-text">{{randomPet.description}}</text>
+          <text class="random-desc-quote">"</text>
+        </view>
+
+        <!-- 祝福统计 -->
+        <view class="blessing-stats">
+          <text class="blessing-stats-text">已收到 {{randomPet.blessingsCount || 0}} 条祝福</text>
+        </view>
+
+        <!-- 已有祝福列表 -->
+        <view class="blessing-list" wx:if="{{randomBlessings.length > 0}}">
+          <view class="blessing-item" wx:for="{{randomBlessings}}" wx:key="_id">
+            <image
+              class="blessing-avatar"
+              src="{{item.avatarUrl || '/images/default-avatar.png'}}"
+              mode="aspectFill"
+            />
+            <view class="blessing-body">
+              <text class="blessing-nick">{{item.nickName}}</text>
+              <text class="blessing-content">{{item.content}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 祝福输入区 -->
+      <view class="blessing-input-area">
+        <textarea
+          class="blessing-textarea"
+          placeholder="为 TA 写下祝福..."
+          placeholder-class="blessing-placeholder"
+          value="{{blessingInput}}"
+          bindinput="onBlessingInput"
+          maxlength="100"
+          auto-height
+        />
+        <view class="blessing-footer">
+          <text class="blessing-counter {{blessingLength >= 90 ? 'counter-warn' : ''}}">{{blessingLength}}/100</text>
+          <view
+            class="blessing-send-btn {{submitting || !blessingInput ? 'send-btn-disabled' : ''}}"
+            bindtap="onSendBlessing"
+          >送出祝福</view>
+        </view>
+      </view>
+
+      <!-- 换一个按钮 -->
+      <view class="next-btn" bindtap="loadRandom">
+        <text class="next-btn-text">换一位小天使</text>
+      </view>
+
+    </block>
+
+  </view>
+
+</view>

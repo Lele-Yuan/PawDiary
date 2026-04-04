@@ -26,6 +26,8 @@
         <view class="online-dot"></view>
         <text>{{onlineUsers.length}}人在线</text>
       </view>
+      <!-- 分享按钮（仅用户在该地点 1km 内在线时可见） -->
+      <button wx:if="{{isOnline}}" class="share-btn" open-type="share" hover-class="btn-hover">🐕 喊狗友遛狗</button>
     </view>
 
     <!-- 地址信息 -->
@@ -118,5 +120,6 @@
       <button class="action-btn edit-btn" bindtap="onEdit" hover-class="btn-hover">编辑地点</button>
       <button class="action-btn delete-btn" bindtap="onDelete" loading="{{deleting}}" hover-class="btn-hover">删除地点</button>
     </view>
+
   </view>
 </view>

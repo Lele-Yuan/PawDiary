@@ -29,7 +29,7 @@
     <view class="hero-avatar-wrap">
       <image
         class="hero-avatar"
-        src="{{pet.avatar || '/images/default/pet-avatar.png'}}"
+        src="{{pet.avatar || '/images/default-avatar.png'}}"
         mode="aspectFill"
       />
       <view class="gender-badge {{pet.gender === 'female' ? 'female' : 'male'}}">
