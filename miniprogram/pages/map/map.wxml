@@ -1,6 +1,8 @@
 <nav-bar title="宠物友好地图" back="{{true}}" />
 
-<view class="map-page">
+<loading-view wx:if="{{loading}}" />
+
+<view class="map-page" wx:if="{{loaded}}">
   <!-- 模式切换栏 -->
   <view class="mode-tabs">
     <view class="mode-tab {{viewMode === 'list' ? 'active' : ''}}" data-mode="list" bindtap="onSwitchMode">
@@ -39,7 +41,7 @@
       </view>
 
       <empty-state
-        wx:if="{{!places.length && loaded}}"
+        wx:if="{{!places.length}}"
         icon="📍"
         title="附近暂无地点"
         description="成为第一个标记宠物友好地点的人吧"

@@ -70,7 +70,7 @@ App({
       } else {
         // 首次登录，创建用户记录
         const newUser = {
-          nickName: '未知游客',
+          nickName: '',
           avatarUrl: '',
           phone: '',
           currentPetId: '',

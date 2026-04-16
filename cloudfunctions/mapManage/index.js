@@ -76,7 +76,7 @@ async function addPlace(openid, data) {
       longitude: data.longitude,
       address: data.address || '',
       images: data.images || [],
-      creatorName: user.nickName || '未知游客',
+      creatorName: user.nickName || '',
       creatorAvatar: user.avatarUrl || '',
       status: 'active',
       createdAt: now,

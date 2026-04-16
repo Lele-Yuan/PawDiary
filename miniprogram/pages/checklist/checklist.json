@@ -2,7 +2,8 @@
   "navigationStyle": "custom",
   "usingComponents": {
     "empty-state": "/components/empty-state/empty-state",
-    "nav-bar": "/components/nav-bar/nav-bar"
+    "nav-bar": "/components/nav-bar/nav-bar",
+    "loading-view": "/components/loading/loading"
   },
   "navigationBarTitleText": "清单"
 }

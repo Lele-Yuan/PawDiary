@@ -1,18 +1,66 @@
 const { RECORD_TYPES } = require('../../../utils/constants');
 const { showLoading, hideLoading, showSuccess, showError } = require('../../../utils/util');
 const { uploadFile } = require('../../../utils/cloud');
+const { MAX_PHOTOS_PER_DETAIL, checkPhotoLimit, incrementPhotoCount, checkImageSize } = require('../../../utils/limit');
 
 Page({
   data: {
     typeList: RECORD_TYPES,
+    typeIndex: null,
     today: '',
     submitting: false,
     customInterval: '',
     editId: '',
     pageTitle: '添加记录',
+    titlePlaceholder: '标题',
+    // 体重单位
+    weightUnits: [
+      { key: 'kg', label: 'kg' },
+      { key: 'g', label: 'g' }
+    ],
+    weightUnitIndex: 0,
+    // 尿便状态
+    poopStatuses: [
+      { key: 'normal', label: '正常' },
+      { key: 'abnormal', label: '异常' }
+    ],
+    poopStatusIndex: null,
+    isPoopAbnormal: false,
+    // 食物类型
+    foodTypes: [
+      { key: 'dry', label: '干粮' },
+      { key: 'wet', label: '湿粮' },
+      { key: 'homemade', label: '自制' }
+    ],
+    foodTypeIndex: null,
+    // 驱虫类型
+    dewormTypes: [
+      { key: 'external', label: '体外驱虫' },
+      { key: 'internal', label: '体内驱虫' },
+      { key: 'both', label: '内外同驱' }
+    ],
+    dewormTypeIndex: null,
+    // 疫苗类型
+    vaccineTypes: [
+      { key: 'rabies', label: '狂犬疫苗' },
+      { key: 'infectious', label: '传染病疫苗' }
+    ],
+    vaccineTypeIndex: null,
+    // 给药方式
+    medicationTypes: [
+      { key: 'oral', label: '口服' },
+      { key: 'external', label: '外用' },
+      { key: 'rectal', label: '直肠' },
+      { key: 'injection', label: '注射' }
+    ],
+    medicationTypeIndex: null,
+    // 是否隐藏标题
+    hideTitle: false,
+    // 日期
     form: {
       type: '',
       date: '',
+      displayDateTime: '',
       title: '',
       description: '',
       location: '',
@@ -20,7 +68,20 @@ Page({
       nextDate: '',
       enableRemind: false,
       remindInterval: 0,
-      images: []
+      images: [],
+      // 类型特定字段
+      weight: '',
+      weightUnit: 'kg',
+      poopStatus: '',
+      abnormalDesc: '',
+      waterAmount: '',
+      foodType: '',
+      foodAmount: '',
+      dewormType: '',
+      vaccineType: '',
+      medicationType: '',
+      dosage: '',
+      hospitalName: ''
     }
   },
 
@@ -41,13 +102,23 @@ Page({
     if (options.id) {
       this.setData({ editId: options.id, pageTitle: '编辑记录' });
       this.loadRecord(options.id);
+    } else if (options.type) {
+      // 从类型选择页面跳转，预选类型
+      var typeIndex = this.data.typeList.findIndex(function(t) { return t.key === options.type; });
+      var typeInfo = this.data.typeList[typeIndex];
+      this.setData({
+        'form.date': todayStr,
+        'form.type': options.type,
+        typeIndex: typeIndex >= 0 ? typeIndex : null,
+        titlePlaceholder: typeInfo ? typeInfo.titlePlaceholder : '标题',
+        hideTitle: typeInfo ? !!typeInfo.hideTitle : false
+      });
     } else if (options.prefill === '1') {
       // 从"立即完成"跳转，预填充数据
       this.setData({
         'form.date': todayStr,
         'form.type': decodeURIComponent(options.type || ''),
-        'form.title': decodeURIComponent(options.title || ''),
-        'form.location': decodeURIComponent(options.location || '')
+        'form.title': decodeURIComponent(options.title || '')
       });
       // 继承提醒设置
       var enableRemind = options.enableRemind === '1';
@@ -95,20 +166,42 @@ Page({
         var dt = new Date(d);
         return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
       };
+      var typeIndex = this.data.typeList.findIndex(function(t) { return t.key === r.type; });
+      var typeInfo = this.data.typeList[typeIndex];
       this.setData({
         form: {
           type: r.type || '',
           date: formatD(r.date),
           title: r.title || '',
           description: r.description || '',
-          location: r.location || '',
-          cost: r.cost ? String(r.cost) : '',
           nextDate: formatD(r.nextDate),
           enableRemind: !!r.enableRemind,
           remindInterval: r.remindInterval || 0,
-          images: r.images || []
+          images: r.images || [],
+          // 类型特定字段
+          weight: r.weight || '',
+          weightUnit: r.weightUnit || 'kg',
+          poopStatus: r.poopStatus || '',
+          abnormalDesc: r.abnormalDesc || '',
+          waterAmount: r.waterAmount || '',
+          foodType: r.foodType || '',
+          foodAmount: r.foodAmount || '',
+          dewormType: r.dewormType || '',
+          vaccineType: r.vaccineType || '',
+          medicationType: r.medicationType || '',
+          dosage: r.dosage || '',
+          hospitalName: r.hospitalName || ''
         },
-        customInterval: (r.remindInterval > 0 && [30, 60, 90, 180].indexOf(r.remindInterval) === -1) ? String(r.remindInterval) : ''
+        typeIndex: typeIndex >= 0 ? typeIndex : null,
+        titlePlaceholder: typeInfo ? typeInfo.titlePlaceholder : '标题',
+        hideTitle: typeInfo ? !!typeInfo.hideTitle : false,
+        // 设置类型特定索引
+        weightUnitIndex: r.weightUnit === 'kg' ? 0 : (r.weightUnit === 'g' ? 1 : null),
+        poopStatusIndex: r.poopStatus === 'normal' ? 0 : (r.poopStatus === 'abnormal' ? 1 : null),
+        foodTypeIndex: r.foodType === 'dry' ? 0 : (r.foodType === 'wet' ? 1 : (r.foodType === 'homemade' ? 2 : null)),
+        dewormTypeIndex: r.dewormType === 'external' ? 0 : (r.dewormType === 'internal' ? 1 : (r.dewormType === 'both' ? 2 : null)),
+        vaccineTypeIndex: r.vaccineType === 'rabies' ? 0 : (r.vaccineType === 'infectious' ? 1 : null),
+        medicationTypeIndex: r.medicationType === 'oral' ? 0 : r.medicationType === 'external' ? 1 : (r.medicationType === 'rectal' ? 2 : (r.medicationType === 'injection' ? 3 : null))
       });
       hideLoading();
     } catch (err) {
@@ -120,8 +213,23 @@ Page({
 
   // 选择类型
   onSelectType(e) {
-    const type = e.currentTarget.dataset.key;
-    this.setData({ 'form.type': type });
+    const index = e.detail.value;
+    const type = this.data.typeList[index].key;
+    const typeInfo = this.data.typeList[index];
+    this.setData({
+      'form.type': type,
+      typeIndex: index,
+      titlePlaceholder: typeInfo ? typeInfo.titlePlaceholder : '标题',
+      hideTitle: typeInfo ? !!typeInfo.hideTitle : false,
+      // 重置其他类型的索引
+      weightUnitIndex: null,
+      poopStatusIndex: null,
+      isPoopAbnormal: false,
+      foodTypeIndex: null,
+      dewormTypeIndex: null,
+      vaccineTypeIndex: null,
+      medicationTypeIndex: null
+    });
   },
 
   // 通用输入
@@ -130,7 +238,49 @@ Page({
     this.setData({ [`form.${field}`]: e.detail.value });
   },
 
-  // 日期选择
+  // 体重单位选择
+  onWeightUnitChange(e) {
+    const index = e.detail.value;
+    const unit = this.data.weightUnits[index].key;
+    this.setData({ weightUnitIndex: index, 'form.weightUnit': unit });
+  },
+
+  // 尿便状态选择
+  onPoopStatusChange(e) {
+    const index = e.detail.value;
+    const status = this.data.poopStatuses[index].key;
+    this.setData({ poopStatusIndex: index, 'form.poopStatus': status, isPoopAbnormal: status === 'abnormal' });
+  },
+
+  // 食物类型选择
+  onFoodTypeChange(e) {
+    const index = e.detail.value;
+    const type = this.data.foodTypes[index].key;
+    this.setData({ foodTypeIndex: index, 'form.foodType': type });
+  },
+
+  // 驱虫类型选择
+  onDewormTypeChange(e) {
+    const index = e.detail.value;
+    const type = this.data.dewormTypes[index].key;
+    this.setData({ dewormTypeIndex: index, 'form.dewormType': type });
+  },
+
+  // 疫苗类型选择
+  onVaccineTypeChange(e) {
+    const index = e.detail.value;
+    const type = this.data.vaccineTypes[index].key;
+    this.setData({ vaccineTypeIndex: index, 'form.vaccineType': type });
+  },
+
+  // 给药方式选择
+  onMedicationTypeChange(e) {
+    const index = e.detail.value;
+    const type = this.data.medicationTypes[index].key;
+    this.setData({ medicationTypeIndex: index, 'form.medicationType': type });
+  },
+
+  // 日期选择（用于下次预计日期）
   onDateChange(e) {
     const field = e.currentTarget.dataset.field;
     this.setData({ ['form.' + field]: e.detail.value });
@@ -180,15 +330,30 @@ Page({
 
   // 选择图片
   chooseImage() {
-    const remaining = 9 - this.data.form.images.length;
+    const currentCount = this.data.form.images.length;
+    if (currentCount >= MAX_PHOTOS_PER_DETAIL) {
+      wx.showToast({ title: `最多上传${MAX_PHOTOS_PER_DETAIL}张图片`, icon: 'none' });
+      return;
+    }
+    const photoCheck = checkPhotoLimit(1);
+    if (!photoCheck.ok) {
+      wx.showToast({ title: '今日上传照片已达上限（5张）', icon: 'none' });
+      return;
+    }
+    const remaining = Math.min(MAX_PHOTOS_PER_DETAIL - currentCount, photoCheck.remaining);
     wx.chooseMedia({
       count: remaining,
       mediaType: ['image'],
       sourceType: ['album', 'camera'],
       sizeType: ['compressed'],
-      success: (res) => {
-        const newImages = res.tempFiles.map(f => f.tempFilePath);
-        const images = this.data.form.images.concat(newImages).slice(0, 9);
+      success: function(res) {
+        const sizeResult = checkImageSize(res.tempFiles);
+        if (sizeResult.oversizedCount > 0) {
+          wx.showToast({ title: `${sizeResult.oversizedCount}张图片超过500KB，已过滤`, icon: 'none' });
+        }
+        if (sizeResult.validFiles.length === 0) return;
+        var newImages = sizeResult.validFiles.map(function(f) { return f.tempFilePath; });
+        const images = this.data.form.images.concat(newImages).slice(0, MAX_PHOTOS_PER_DETAIL);
         this.setData({ 'form.images': images });
       }
     });
@@ -213,9 +378,30 @@ Page({
       showError('请选择日期');
       return false;
     }
-    if (!form.title || !form.title.trim()) {
-      showError('请输入标题');
-      return false;
+    // 根据类型验证必填项
+    switch (form.type) {
+      case 'weight':
+        if (!form.weight || !form.weight.trim()) {
+          showError('请输入体重');
+          return false;
+        }
+        break;
+      case 'water':
+        if (!form.waterAmount || !form.waterAmount.trim()) {
+          showError('请输入饮水量');
+          return false;
+        }
+        break;
+      case 'diet':
+        break;
+      case 'deworm':
+        break;
+      case 'vaccine':
+        break;
+      case 'illness':
+        break;
+      case 'checkup':
+        break;
     }
     return true;
   },
@@ -238,29 +424,59 @@ Page({
     try {
       var form = this.data.form;
 
+      // 统计本次新增图片（非已上传的 cloud:// 图片）
+      var newPhotoCount = form.images.filter(function(img) { return !img.startsWith('cloud://'); }).length;
+      if (newPhotoCount > 0) {
+        const photoCheck = checkPhotoLimit(newPhotoCount);
+        if (!photoCheck.ok) {
+          hideLoading();
+          showError('今日上传照片已达上限（5张）');
+          this.setData({ submitting: false });
+          return;
+        }
+      }
+
       // 上传图片
       var uploadedImages = [];
+      var actualUploadCount = 0;
       for (var i = 0; i < form.images.length; i++) {
         var img = form.images[i];
         if (img.startsWith('cloud://')) {
           uploadedImages.push(img);
         } else {
           var fileID = await uploadFile(img, 'records');
-          if (fileID) uploadedImages.push(fileID);
+          if (fileID) {
+            uploadedImages.push(fileID);
+            actualUploadCount++;
+          }
         }
       }
 
+      // 构建日期
+      var fullDateStr = form.date;
+
       var fields = {
         type: form.type,
-        date: new Date(form.date),
-        title: form.title.trim(),
+        date: new Date(fullDateStr),
+        title: form.title ? form.title.trim() : '',
         description: (form.description || '').trim(),
-        location: (form.location || '').trim(),
-        cost: form.cost ? Number(form.cost) : 0,
-        nextDate: form.nextDate ? new Date(form.nextDate) : null,
+        nextDate: form.nextDate ? new Date(form.nextDate + ' 12:00') : null,
         enableRemind: !!form.enableRemind,
         remindInterval: form.enableRemind ? (form.remindInterval || 0) : 0,
-        images: uploadedImages
+        images: uploadedImages,
+        // 类型特定字段
+        weight: form.weight,
+        weightUnit: form.weightUnit,
+        poopStatus: form.poopStatus,
+        abnormalDesc: form.abnormalDesc,
+        waterAmount: form.waterAmount,
+        foodType: form.foodType,
+        foodAmount: form.foodAmount,
+        dewormType: form.dewormType,
+        vaccineType: form.vaccineType,
+        medicationType: form.medicationType,
+        dosage: form.dosage,
+        hospitalName: form.hospitalName
       };
 
       if (this.data.editId) {
@@ -296,6 +512,7 @@ Page({
       }
 
       hideLoading();
+      if (actualUploadCount > 0) incrementPhotoCount(actualUploadCount);
       showSuccess(this.data.editId ? '修改成功' : '记录成功');
       setTimeout(function() { wx.navigateBack(); }, 1500);
     } catch (err) {

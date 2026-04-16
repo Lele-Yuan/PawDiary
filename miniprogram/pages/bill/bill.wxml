@@ -1,5 +1,9 @@
 <view class="bill-page">
   <nav-bar title="账单" titleOpacity="{{navTitleOpacity}}" />
+
+  <!-- 加载中 -->
+  <loading-view wx:if="{{!loaded}}" />
+
   <!-- 当前宠物 -->
   <view class="top-bar">
     <view class="current-pet" wx:if="{{currentPetName}}">

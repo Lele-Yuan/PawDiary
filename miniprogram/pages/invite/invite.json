@@ -1,6 +1,8 @@
 {
   "usingComponents": {
-    "nav-bar": "/components/nav-bar/nav-bar"
+    "nav-bar": "/components/nav-bar/nav-bar",
+    "login-modal": "/components/login-modal/login-modal",
+    "loading-view": "/components/loading/loading"
   },
   "navigationBarTitleText": "加入宠物家庭",
   "navigationStyle": "custom"

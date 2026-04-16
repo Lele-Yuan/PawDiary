@@ -1,5 +1,6 @@
 var { PLACE_CATEGORIES, PLACE_CATEGORY_MAP } = require('../../../utils/constants');
 var { uploadFile } = require('../../../utils/cloud');
+var { MAX_PHOTOS_PER_DETAIL, checkPhotoLimit, incrementPhotoCount, checkPlaceLimit, incrementPlaceCount, checkImageSize } = require('../../../utils/limit');
 
 Page({
   data: {
@@ -122,19 +123,30 @@ Page({
   async chooseImage() {
     var that = this;
     var currentCount = this.data.form.images.length;
-    if (currentCount >= 3) {
-      wx.showToast({ title: '最多上传3张图片', icon: 'none' });
+    if (currentCount >= MAX_PHOTOS_PER_DETAIL) {
+      wx.showToast({ title: `最多上传${MAX_PHOTOS_PER_DETAIL}张图片`, icon: 'none' });
       return;
     }
+    var photoCheck = checkPhotoLimit(1);
+    if (!photoCheck.ok) {
+      wx.showToast({ title: '今日上传照片已达上限（5张）', icon: 'none' });
+      return;
+    }
+    var remaining = Math.min(MAX_PHOTOS_PER_DETAIL - currentCount, photoCheck.remaining);
     try {
       var res = await wx.chooseMedia({
-        count: 3 - currentCount,
+        count: remaining,
         mediaType: ['image'],
         sizeType: ['compressed']
       });
+      var sizeResult = checkImageSize(res.tempFiles);
+      if (sizeResult.oversizedCount > 0) {
+        wx.showToast({ title: sizeResult.oversizedCount + '张图片超过500KB，已过滤', icon: 'none' });
+      }
+      if (sizeResult.validFiles.length === 0) return;
       var newImages = that.data.form.images.slice();
-      for (var i = 0; i < res.tempFiles.length; i++) {
-        newImages.push(res.tempFiles[i].tempFilePath);
+      for (var i = 0; i < sizeResult.validFiles.length; i++) {
+        newImages.push(sizeResult.validFiles[i].tempFilePath);
       }
       that.setData({ 'form.images': newImages });
     } catch (err) {
@@ -163,19 +175,39 @@ Page({
       return;
     }
 
+    // 新增模式：校验每日地点限额
+    if (this.data.mode === 'add' && !checkPlaceLimit()) {
+      wx.showToast({ title: '今日已达新增地点上限（2个）', icon: 'none' });
+      return;
+    }
+
+    // 统计本次新增图片数量，校验每日照片限额
+    var newPhotoCount = form.images.filter(function(p) { return p.indexOf('cloud://') !== 0; }).length;
+    if (newPhotoCount > 0) {
+      var photoCheck = checkPhotoLimit(newPhotoCount);
+      if (!photoCheck.ok) {
+        wx.showToast({ title: '今日上传照片已达上限（5张）', icon: 'none' });
+        return;
+      }
+    }
+
     this.setData({ submitting: true });
     wx.showLoading({ title: '提交中...', mask: true });
 
     try {
       // 上传图片
       var imageFileIDs = [];
+      var actualUploadCount = 0;
       for (var i = 0; i < form.images.length; i++) {
         var filePath = form.images[i];
         if (filePath.indexOf('cloud://') === 0) {
           imageFileIDs.push(filePath);
         } else {
           var fileID = await uploadFile(filePath, 'places');
-          if (fileID) imageFileIDs.push(fileID);
+          if (fileID) {
+            imageFileIDs.push(fileID);
+            actualUploadCount++;
+          }
         }
       }
 
@@ -204,6 +236,9 @@ Page({
       this.setData({ submitting: false });
 
       if (res.result && res.result.code === 0) {
+        // 上传成功后才递增计数
+        if (actualUploadCount > 0) incrementPhotoCount(actualUploadCount);
+        if (this.data.mode === 'add') incrementPlaceCount();
         var msg = this.data.mode === 'edit' ? '更新成功' : '添加成功';
         wx.showToast({ title: msg, icon: 'success' });
         setTimeout(function () {

@@ -161,6 +161,23 @@ Page({
     });
   },
 
+  // 导航到地点
+  onNavigate() {
+    var place = this.data.place;
+    if (!place || !place.latitude || !place.longitude) {
+      wx.showToast({ title: '地点坐标信息不完整', icon: 'none' });
+      return;
+    }
+
+    wx.openLocation({
+      latitude: place.latitude,
+      longitude: place.longitude,
+      name: place.name,
+      address: place.address || place.name,
+      scale: 18
+    });
+  },
+
   // 删除地点
   async onDelete() {
     var that = this;

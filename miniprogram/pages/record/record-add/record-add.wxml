@@ -4,18 +4,12 @@
   <!-- 记录类型选择 -->
   <view class="form-section card">
     <view class="form-label">记录类型 <text class="required">*</text></view>
-    <view class="type-selector">
-      <view
-        class="type-item {{form.type === item.key ? 'active' : ''}}"
-        wx:for="{{typeList}}"
-        wx:key="key"
-        data-key="{{item.key}}"
-        bindtap="onSelectType"
-      >
-        <text class="type-icon">{{item.icon}}</text>
-        <text class="type-label">{{item.label}}</text>
+    <picker mode="selector" range="{{typeList}}" range-key="label" value="{{typeIndex}}" bindchange="onSelectType">
+      <view class="form-picker">
+        <text class="{{typeIndex !== null ? '' : 'placeholder'}}">{{typeIndex !== null ? typeList[typeIndex].label : '请选择记录类型'}}</text>
+        <text class="arrow">›</text>
       </view>
-    </view>
+    </picker>
   </view>
 
   <!-- 表单区域 -->
@@ -31,15 +25,154 @@
       </picker>
     </view>
 
-    <!-- 标题 -->
-    <view class="form-group">
-      <view class="form-label">标题 <text class="required">*</text></view>
+    <!-- 标题（根据类型显示或隐藏） -->
+    <view class="form-group" wx:if="{{!hideTitle}}">
+      <view class="form-label">{{titlePlaceholder}}</view>
       <input
         class="form-input"
-        placeholder="如：体内驱虫-大宠爱"
+        placeholder="{{titlePlaceholder}}"
         value="{{form.title}}"
         bindinput="onInputChange"
         data-field="title"
+        maxlength="50"
+      />
+    </view>
+
+    <!-- 体重类型：体重输入框 + 单位选择 -->
+    <view class="form-group" wx:if="{{form.type === 'weight'}}">
+      <view class="form-label">体重</view>
+      <view class="input-with-unit">
+        <input
+          class="form-input"
+          type="digit"
+          placeholder="请输入体重"
+          value="{{form.weight}}"
+          bindinput="onInputChange"
+          data-field="weight"
+        />
+        <picker mode="selector" range="{{weightUnits}}" range-key="label" value="{{weightUnitIndex}}" bindchange="onWeightUnitChange">
+          <view class="unit-picker">
+            <text>{{weightUnits[weightUnitIndex].label}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 尿便类型：选择框（正常/异常），异常时需要输入框填写异常描述 -->
+    <view class="form-group" wx:if="{{form.type === 'poop'}}">
+      <view class="form-label">状态</view>
+      <picker mode="selector" range="{{poopStatuses}}" range-key="label" value="{{poopStatusIndex}}" bindchange="onPoopStatusChange">
+        <view class="form-picker">
+          <text class="{{poopStatusIndex !== null ? '' : 'placeholder'}}">{{poopStatusIndex !== null ? poopStatuses[poopStatusIndex].label : '请选择状态'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="form-group" wx:if="{{form.type === 'poop' && isPoopAbnormal}}">
+      <view class="form-label">异常描述</view>
+      <textarea
+        class="form-textarea"
+        placeholder="请描述异常情况..."
+        value="{{form.abnormalDesc}}"
+        bindinput="onInputChange"
+        data-field="abnormalDesc"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+
+    <!-- 喝水：输入框 + 单位ml -->
+    <view class="form-group" wx:if="{{form.type === 'water'}}">
+      <view class="form-label">饮水量</view>
+      <view class="input-with-unit">
+        <input
+          class="form-input"
+          type="digit"
+          placeholder="请输入饮水量"
+          value="{{form.waterAmount}}"
+          bindinput="onInputChange"
+          data-field="waterAmount"
+        />
+        <text class="unit-label">ml</text>
+      </view>
+    </view>
+
+    <!-- 饮食类型：食物类型选择框 + 进食量输入框 -->
+    <view class="form-group" wx:if="{{form.type === 'diet'}}">
+      <view class="form-label">食物类型</view>
+      <picker mode="selector" range="{{foodTypes}}" range-key="label" value="{{foodTypeIndex}}" bindchange="onFoodTypeChange">
+        <view class="form-picker">
+          <text class="{{foodTypeIndex !== null ? '' : 'placeholder'}}">{{foodTypeIndex !== null ? foodTypes[foodTypeIndex].label : '请选择食物类型'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="form-group" wx:if="{{form.type === 'diet'}}">
+      <view class="form-label">进食量</view>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="请输入进食量"
+        value="{{form.foodAmount}}"
+        bindinput="onInputChange"
+        data-field="foodAmount"
+      />
+    </view>
+
+    <!-- 驱虫类型：驱虫类型选择框 -->
+    <view class="form-group" wx:if="{{form.type === 'deworm'}}">
+      <view class="form-label">驱虫类型</view>
+      <picker mode="selector" range="{{dewormTypes}}" range-key="label" value="{{dewormTypeIndex}}" bindchange="onDewormTypeChange">
+        <view class="form-picker">
+          <text class="{{dewormTypeIndex !== null ? '' : 'placeholder'}}">{{dewormTypeIndex !== null ? dewormTypes[dewormTypeIndex].label : '请选择驱虫类型'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 疫苗类型：疫苗类型选择框 -->
+    <view class="form-group" wx:if="{{form.type === 'vaccine'}}">
+      <view class="form-label">疫苗类型</view>
+      <picker mode="selector" range="{{vaccineTypes}}" range-key="label" value="{{vaccineTypeIndex}}" bindchange="onVaccineTypeChange">
+        <view class="form-picker">
+          <text class="{{vaccineTypeIndex !== null ? '' : 'placeholder'}}">{{vaccineTypeIndex !== null ? vaccineTypes[vaccineTypeIndex].label : '请选择疫苗类型'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 给药类型（原看病）：给药方式选择框 + 剂量输入框 -->
+    <view class="form-group" wx:if="{{form.type === 'illness'}}">
+      <view class="form-label">给药方式</view>
+      <picker mode="selector" range="{{medicationTypes}}" range-key="label" value="{{medicationTypeIndex}}" bindchange="onMedicationTypeChange">
+        <view class="form-picker">
+          <text class="{{medicationTypeIndex !== null ? '' : 'placeholder'}}">{{medicationTypeIndex !== null ? medicationTypes[medicationTypeIndex].label : '请选择给药方式'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="form-group" wx:if="{{form.type === 'illness'}}">
+      <view class="form-label">剂量</view>
+      <input
+        class="form-input"
+        type="digit"
+        placeholder="请输入剂量"
+        value="{{form.dosage}}"
+        bindinput="onInputChange"
+        data-field="dosage"
+      />
+    </view>
+
+    <!-- 体检类型：医院名称输入框 -->
+    <view class="form-group" wx:if="{{form.type === 'checkup'}}">
+      <view class="form-label">医院名称</view>
+      <input
+        class="form-input"
+        placeholder="请输入医院名称"
+        value="{{form.hospitalName}}"
+        bindinput="onInputChange"
+        data-field="hospitalName"
         maxlength="50"
       />
     </view>
@@ -55,32 +188,6 @@
         data-field="description"
         maxlength="500"
         auto-height
-      />
-    </view>
-
-    <!-- 地点 -->
-    <view class="form-group">
-      <view class="form-label">地点</view>
-      <input
-        class="form-input"
-        placeholder="如：xxx宠物医院"
-        value="{{form.location}}"
-        bindinput="onInputChange"
-        data-field="location"
-        maxlength="50"
-      />
-    </view>
-
-    <!-- 花费 -->
-    <view class="form-group">
-      <view class="form-label">花费（元）</view>
-      <input
-        class="form-input"
-        type="digit"
-        placeholder="请输入花费金额"
-        value="{{form.cost}}"
-        bindinput="onInputChange"
-        data-field="cost"
       />
     </view>
 

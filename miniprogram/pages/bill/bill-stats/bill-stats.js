@@ -10,14 +10,25 @@ Page({
     totalStr: '0.00',
     categoryStats: [],
     trends: [],
-    loaded: false
+    loaded: false,
+    maxYear: 2026,
+    maxMonth: 3
   },
 
-  onLoad() {
+  onLoad(options) {
     const now = new Date();
+    const maxYear = now.getFullYear();
+    const maxMonth = now.getMonth() + 1;
+
+    // 从参数获取初始月份，否则使用当前月份
+    const initialYear = options.year ? parseInt(options.year) : maxYear;
+    const initialMonth = options.month ? parseInt(options.month) : maxMonth;
+
     this.setData({
-      currentYear: now.getFullYear(),
-      currentMonth: now.getMonth() + 1
+      currentYear: initialYear,
+      currentMonth: initialMonth,
+      maxYear,
+      maxMonth
     });
     this.loadStats();
   },
@@ -26,6 +37,34 @@ Page({
   switchPeriod(e) {
     const period = e.currentTarget.dataset.period;
     this.setData({ period });
+    this.loadStats();
+  },
+
+  // 上一月
+  prevMonth() {
+    let { currentYear, currentMonth } = this.data;
+    currentMonth--;
+    if (currentMonth < 1) {
+      currentMonth = 12;
+      currentYear--;
+    }
+    this.setData({ currentYear, currentMonth });
+    this.loadStats();
+  },
+
+  // 下一月
+  nextMonth() {
+    let { currentYear, currentMonth, maxYear, maxMonth } = this.data;
+    // 不能超过当前月份
+    if (currentYear === maxYear && currentMonth >= maxMonth) {
+      return;
+    }
+    currentMonth++;
+    if (currentMonth > 12) {
+      currentMonth = 1;
+      currentYear++;
+    }
+    this.setData({ currentYear, currentMonth });
     this.loadStats();
   },
 
@@ -112,13 +151,14 @@ Page({
     try {
       const db = wx.cloud.database();
       const _ = db.command;
-      const now = new Date();
+      const { currentYear, currentMonth } = this.data;
       const trends = [];
       let maxTotal = 0;
 
+      // 基于当前选择的月份往前推6个月
       for (let i = 5; i >= 0; i--) {
-        let m = now.getMonth() + 1 - i;
-        let y = now.getFullYear();
+        let m = currentMonth - i;
+        let y = currentYear;
         if (m <= 0) { m += 12; y--; }
 
         const mStart = new Date(y, m - 1, 1);

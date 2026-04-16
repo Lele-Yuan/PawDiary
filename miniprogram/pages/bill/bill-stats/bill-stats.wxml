@@ -1,6 +1,10 @@
 <nav-bar title="消费统计" back="{{true}}" />
 
-<view class="stats-page">
+<!-- 加载中 -->
+<loading-view wx:if="{{!loaded}}" />
+
+<view class="stats-page" wx:if="{{loaded}}">
+
   <!-- 月度/年度切换 -->
   <view class="period-tabs card">
     <view class="period-tab {{period === 'month' ? 'active' : ''}}" bindtap="switchPeriod" data-period="month">月度</view>
@@ -9,10 +13,31 @@
 
   <!-- 总额概览 -->
   <view class="total-card card">
+    <!-- 月份选择器（月度模式下显示） -->
+    <view class="month-selector" wx:if="{{period === 'month'}}">
+      <view class="month-arrow" bindtap="prevMonth">‹</view>
+      <view class="month-display">{{currentYear}}年{{currentMonth}}月</view>
+      <view class="month-arrow" bindtap="nextMonth">›</view>
+    </view>
+
     <text class="total-label">{{period === 'month' ? currentYear + '年' + currentMonth + '月' : currentYear + '年'}} 总支出</text>
     <view class="total-amount">
       <text class="total-currency">¥</text>
       <text class="total-value">{{totalStr}}</text>
+    </view>
+  </view>
+
+  <!-- 近6个月趋势 -->
+  <view class="trend-card card" wx:if="{{period === 'year' && trends.length}}">
+    <view class="trend-title">近6个月趋势</view>
+    <view class="trend-chart">
+      <view class="trend-bar-wrap" wx:for="{{trends}}" wx:key="month">
+        <view class="trend-bar-outer">
+          <view class="trend-bar-inner" style="height: {{item.heightPercent}}%;"></view>
+        </view>
+        <text class="trend-amount-label">{{item.totalStr}}</text>
+        <text class="trend-month-label">{{item.label}}</text>
+      </view>
     </view>
   </view>
 
@@ -47,20 +72,6 @@
           <text class="rank-money">¥{{item.amountStr}}</text>
           <text class="rank-percent">{{item.percent}}%</text>
         </view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 近6个月趋势 -->
-  <view class="trend-card card" wx:if="{{trends.length}}">
-    <view class="trend-title">近6个月趋势</view>
-    <view class="trend-chart">
-      <view class="trend-bar-wrap" wx:for="{{trends}}" wx:key="month">
-        <view class="trend-bar-outer">
-          <view class="trend-bar-inner" style="height: {{item.heightPercent}}%;"></view>
-        </view>
-        <text class="trend-amount-label">{{item.totalStr}}</text>
-        <text class="trend-month-label">{{item.label}}</text>
       </view>
     </view>
   </view>

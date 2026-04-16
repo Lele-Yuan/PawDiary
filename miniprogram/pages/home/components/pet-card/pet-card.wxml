@@ -32,9 +32,7 @@
         src="{{pet.avatar || '/images/default-avatar.png'}}"
         mode="aspectFill"
       />
-      <view class="gender-badge {{pet.gender === 'female' ? 'female' : 'male'}}">
-        {{pet.gender === 'female' ? '♀' : '♂'}}
-      </view>
+      <view class="gender-badge {{pet.gender === 'female' ? 'female' : 'male'}}">{{pet.gender === 'female' ? '♀' : '♂'}}</view>
     </view>
   </view>
 </view>

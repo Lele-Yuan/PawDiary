@@ -2,6 +2,37 @@
   padding-bottom: 60rpx;
 }
 
+/* 月份选择器 */
+.month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.month-arrow {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: #6B2D1A;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.month-arrow:active {
+  opacity: 0.5;
+}
+
+.month-display {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2D2D2D;
+}
+
 /* 切换标签 */
 .period-tabs {
   display: flex;

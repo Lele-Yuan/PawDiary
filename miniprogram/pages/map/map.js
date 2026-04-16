@@ -7,12 +7,14 @@ Page({
     myLatitude: 0,
     myLongitude: 0,
     markers: [],
+    loading: false,
     loaded: false
   },
 
   _reportTimer: null,
 
   onLoad() {
+    this.setData({ loading: true });
     this.getLocation();
   },
 
@@ -59,7 +61,10 @@ Page({
   async loadData() {
     var lat = this.data.myLatitude;
     var lng = this.data.myLongitude;
-    if (!lat || !lng) return;
+    if (!lat || !lng) {
+      this.setData({ loading: false, loaded: true });
+      return;
+    }
 
     try {
       var placesRes = await wx.cloud.callFunction({
@@ -82,13 +87,14 @@ Page({
 
       this.setData({
         places: places,
+        loading: false,
         loaded: true
       });
 
       this.buildMarkers();
     } catch (err) {
       console.error('加载数据失败', err);
-      this.setData({ loaded: true });
+      this.setData({ loading: false, loaded: true });
     }
   },
 

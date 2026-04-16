@@ -2,25 +2,6 @@
   min-height: 100vh;
 }
 
-/* ===== 加载状态 ===== */
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.loading-icon {
-  font-size: 80rpx;
-  color: #6B2D1A;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* ===== 邀请内容 ===== */
 .invite-content {
   padding: 0 24rpx 120rpx;

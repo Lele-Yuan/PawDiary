@@ -1,4 +1,5 @@
 const { showLoading, hideLoading, showSuccess, showError } = require('../../../utils/util');
+const { checkImageSize } = require('../../../utils/limit');
 
 Page({
   data: {
@@ -27,6 +28,11 @@ Page({
         sizeType: ['compressed']
       });
       if (res.tempFiles && res.tempFiles.length > 0) {
+        const sizeResult = checkImageSize(res.tempFiles);
+        if (sizeResult.oversizedCount > 0) {
+          wx.showToast({ title: '图片超过500KB，请选择更小的图片', icon: 'none' });
+          return;
+        }
         this.setData({ 'form.petAvatar': res.tempFiles[0].tempFilePath });
       }
     } catch (e) {

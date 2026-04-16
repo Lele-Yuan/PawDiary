@@ -269,6 +269,34 @@ Page({
 
   // 添加宠物 / 跳转添加页面
   goAddPet() {
+    var app = getApp();
+
+    // 未登录时提示登录或跳过
+    if (!app.globalData.openid) {
+      wx.showModal({
+        title: '提示',
+        content: '登录后可同步数据至云端，是否登录？',
+        confirmText: '登录',
+        cancelText: '跳过',
+        success: function (res) {
+          if (res.confirm) {
+            // 点击登录，重新初始化用户
+            app.initUser().then(function () {
+              wx.navigateTo({
+                url: '/pages/pet-edit/pet-edit?mode=add'
+              });
+            });
+          } else if (res.cancel) {
+            // 点击跳过，直接跳转添加页面（本地模式）
+            wx.navigateTo({
+              url: '/pages/pet-edit/pet-edit?mode=add'
+            });
+          }
+        }
+      });
+      return;
+    }
+
     wx.navigateTo({
       url: '/pages/pet-edit/pet-edit?mode=add'
     });
@@ -303,6 +331,13 @@ Page({
     wx.navigateTo({ url: '/pages/map/map' });
   },
 
+  // 指南 - 养狗指南（跳转公众号合集）
+  goDogGuide() {
+    wx.navigateTo({
+      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s?__biz=MzI1NDQ3NTUxMA==&mid=2247484409&idx=1&sn=02d7ba44d6c929cc092cac36d40c7d8b&chksm=e9c5ee60deb267765f88441120a51e4523d0d1551033cb3a452148fdf37737bea8c716799dea&scene=178&cur_album_id=4456222019121938438')
+    });
+  },
+
   // 加载家庭成员
   async loadFamilyMembers(petId) {
     var app = getApp();
@@ -328,14 +363,27 @@ Page({
   },
 
   // 分享小程序（邀请成员）- 跳转到邀请页面
-  onShareAppMessage: function () {
+  onShareAppMessage: function (options) {
     var pet = this.data.currentPet;
     var petName = pet ? pet.name : '宠物';
-    return {
-      title: '邀请你加入「' + petName + '」的照顾家庭',
-      path: '/pages/invite/invite?id=' + this.data.currentPetId,
-      imageUrl: (pet && pet.avatar) ? pet.avatar : ''
-    };
+    
+    // 有宠物时，邀请成员
+    if (pet && options.from === 'button') {
+      // 来自页面内转发按钮（邀请成员按钮）
+      return {
+        title: '邀请你加入「' + petName + '」的照顾家庭',
+        path: '/pages/invite/invite?id=' + this.data.currentPetId,
+        imageUrl: pet.avatar || ''
+      };
+    } else {
+      // 没有宠物时，分享首页
+      // 来自右上角菜单，分享首页
+      return {
+        title: 'PawDiary - 记录宠物生活的每一天',
+        path: '/pages/home/home',
+        imageUrl: '/images/guide/illust-main.png'
+      };
+    }
   },
 
   // 长按成员弹出管理菜单（创建者）

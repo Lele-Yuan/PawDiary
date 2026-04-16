@@ -1,0 +1,10 @@
+<view class="loading-page">
+  <view class="loading-content">
+    <view class="loading-dots">
+      <view class="dot dot-1"></view>
+      <view class="dot dot-2"></view>
+      <view class="dot dot-3"></view>
+    </view>
+    <text class="loading-text">{{text || '加载中...'}}</text>
+  </view>
+</view>

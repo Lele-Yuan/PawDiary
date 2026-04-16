@@ -223,8 +223,9 @@ Page({
 
   // 跳转统计页
   goStats() {
+    const { currentYear, currentMonth } = this.data;
     wx.navigateTo({
-      url: '/pages/bill/bill-stats/bill-stats'
+      url: `/pages/bill/bill-stats/bill-stats?year=${currentYear}&month=${currentMonth}`
     });
   },
 

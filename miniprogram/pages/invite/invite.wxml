@@ -2,9 +2,7 @@
 
 <view class="invite-page">
   <!-- 加载中 -->
-  <view class="loading-container" wx:if="{{loading}}">
-    <view class="loading-icon">⟳</view>
-  </view>
+  <loading-view wx:if="{{loading}}" />
 
   <!-- 宠物信息 -->
   <view class="invite-content fade-in" wx:if="{{loaded && pet}}">
@@ -80,4 +78,11 @@
     <text class="error-icon">😕</text>
     <text class="error-text">宠物不存在或已失效</text>
   </view>
+
+  <!-- 登录弹窗 -->
+  <login-modal
+    show="{{showLoginModal}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginClose"
+  />
 </view>

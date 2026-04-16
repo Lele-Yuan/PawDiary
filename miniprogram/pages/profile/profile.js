@@ -1,4 +1,5 @@
 const { showLoading, hideLoading, showSuccess, showError } = require('../../utils/util');
+const { checkImageSize } = require('../../utils/limit');
 
 Page({
   data: {
@@ -10,12 +11,8 @@ Page({
     currentPetId: '',
     showPetList: false,
     navTitleOpacity: 1,
-    // 登录相关
     isGuest: true,
-    showLoginModal: false,
-    tempAvatarUrl: '',
-    tempNickName: '',
-    tempPhone: ''
+    showLoginModal: false
   },
 
   onShow() {
@@ -96,13 +93,27 @@ Page({
   },
 
   // 切换宠物（来自宠物卡片 bindtap）
-  onSwitchPet(e) {
+  async onSwitchPet(e) {
     const petId = e.currentTarget.dataset.petId || e.detail?.petId;
-    if (!petId) return;
-    const app = getApp();
-    this.setData({ currentPetId: petId });
-    app.globalData.currentPetId = petId;
-    app.switchPet(petId);
+    if (!petId || petId === this.data.currentPetId) return;
+
+    showLoading('切换中...');
+    try {
+      const app = getApp();
+      this.setData({ currentPetId: petId });
+      app.globalData.currentPetId = petId;
+
+      // 等待切换完成
+      await app.switchPet(petId);
+
+      hideLoading();
+      // 跳转到首页
+      wx.switchTab({ url: '/pages/home/home' });
+    } catch (err) {
+      hideLoading();
+      console.error('切换宠物失败：', err);
+      showError('切换失败');
+    }
   },
 
   // 编辑宠物（来自 pet-switcher 的 edit 事件）
@@ -116,117 +127,34 @@ Page({
   // 登录 - 打开登录弹窗
   onLogin() {
     if (!this.data.isGuest) return;
+    this.setData({ showLoginModal: true });
+  },
+
+  // 登录成功回调
+  onLoginSuccess(e) {
+    const { avatarUrl, nickName, phone } = e.detail;
+    const app = getApp();
+
+    // 更新全局状态
+    const userInfo = { ...app.globalData.userInfo, avatarUrl, nickName, phone };
+    app.globalData.userInfo = userInfo;
+
     this.setData({
-      showLoginModal: true,
-      tempAvatarUrl: '',
-      tempNickName: '',
-      tempPhone: ''
+      userInfo,
+      isGuest: false
     });
+
+    // 重新加载数据
+    this.loadStats();
+    this.loadPets();
+
+    // 检查游客数据
+    this.checkGuestData();
   },
 
   // 关闭登录弹窗
-  closeLoginModal() {
+  onLoginClose() {
     this.setData({ showLoginModal: false });
-  },
-
-  // 选择头像
-  onChooseAvatar(e) {
-    this.setData({ tempAvatarUrl: e.detail.avatarUrl });
-  },
-
-  // 昵称输入
-  onNicknameInput(e) {
-    this.setData({ tempNickName: e.detail.value });
-  },
-
-  // 获取手机号
-  async onGetPhoneNumber(e) {
-    if (e.detail.errMsg !== 'getPhoneNumber:ok') return;
-    try {
-      const res = await wx.cloud.callFunction({
-        name: 'userManage',
-        data: { action: 'getPhoneNumber', data: { code: e.detail.code } }
-      });
-      if (res.result && res.result.code === 0) {
-        this.setData({ tempPhone: res.result.data.purePhoneNumber || res.result.data.phoneNumber });
-        showSuccess('手机号已获取');
-      } else {
-        showError('获取手机号失败');
-      }
-    } catch (err) {
-      console.error('获取手机号失败：', err);
-      showError('获取手机号失败');
-    }
-  },
-
-  // 确认登录
-  async confirmLogin() {
-    const { tempAvatarUrl, tempNickName, tempPhone } = this.data;
-    if (!tempNickName || !tempNickName.trim()) {
-      wx.showToast({ title: '请输入昵称', icon: 'none' });
-      return;
-    }
-
-    showLoading('登录中...');
-    try {
-      const app = getApp();
-      const db = wx.cloud.database();
-
-      // 上传头像到云存储
-      let avatarUrl = tempAvatarUrl;
-      if (tempAvatarUrl && (tempAvatarUrl.startsWith('http://tmp') || tempAvatarUrl.startsWith('wxfile://'))) {
-        const ext = tempAvatarUrl.includes('.') ? tempAvatarUrl.split('.').pop().split('?')[0] : 'jpg';
-        const cloudPath = `avatars/${app.globalData.openid}_${Date.now()}.${ext}`;
-        const uploadRes = await wx.cloud.uploadFile({
-          cloudPath,
-          filePath: tempAvatarUrl
-        });
-        avatarUrl = uploadRes.fileID;
-      }
-
-      // 更新数据库
-      const { data: users } = await db.collection('users')
-        .where({ _openid: app.globalData.openid })
-        .limit(1)
-        .get();
-
-      const updateData = {
-        nickName: tempNickName.trim(),
-        updatedAt: new Date()
-      };
-      // 只在上传新头像时更新 avatarUrl
-      if (tempAvatarUrl && (tempAvatarUrl.startsWith('http://tmp') || tempAvatarUrl.startsWith('wxfile://'))) {
-        updateData.avatarUrl = avatarUrl;
-      } else if (users.length > 0 && users[0].avatarUrl) {
-        // 保持原有头像不变
-        updateData.avatarUrl = users[0].avatarUrl;
-      } else {
-        updateData.avatarUrl = '';
-      }
-      if (tempPhone) updateData.phone = tempPhone;
-
-      if (users.length > 0) {
-        await db.collection('users').doc(users[0]._id).update({ data: updateData });
-      }
-
-      // 更新全局状态
-      const userInfo = { ...app.globalData.userInfo, ...updateData };
-      app.globalData.userInfo = userInfo;
-      this.setData({
-        userInfo,
-        isGuest: false,
-        showLoginModal: false
-      });
-
-      hideLoading();
-
-      // 检查游客数据
-      await this.checkGuestData();
-    } catch (err) {
-      hideLoading();
-      console.error('登录失败：', err);
-      showError('登录失败');
-    }
   },
 
   // 检查游客期间的数据
@@ -325,6 +253,36 @@ Page({
 
   // 添加宠物
   addPet() {
+    var app = getApp();
+
+    // 检查是否登录
+    if (!app.globalData.openid) {
+      wx.showModal({
+        title: '提示',
+        content: '登录后可同步数据至云端，是否登录？',
+        confirmText: '登录',
+        cancelText: '跳过',
+        success: function (res) {
+          if (res.confirm) {
+            // 点击登录，重新初始化用户
+            app.initUser().then(function () {
+              this.setData({ showPetList: false });
+              wx.navigateTo({
+                url: '/pages/pet-edit/pet-edit?mode=add'
+              });
+            }.bind(this));
+          } else if (res.cancel) {
+            // 点击跳过，直接跳转添加页面（本地模式）
+            this.setData({ showPetList: false });
+            wx.navigateTo({
+              url: '/pages/pet-edit/pet-edit?mode=add'
+            });
+          }
+        }.bind(this)
+      });
+      return;
+    }
+
     this.setData({ showPetList: false });
     wx.navigateTo({
       url: '/pages/pet-edit/pet-edit?mode=add'
@@ -367,6 +325,16 @@ Page({
     });
   },
 
+  // 帮助中心
+  showHelp() {
+    wx.showModal({
+      title: '帮助中心',
+      content: '如遇问题或需要帮助，请联系管理员\n\n微信号：AdminPawDiary\n\n工作时间：9:00 - 18:00',
+      showCancel: false,
+      confirmText: '知道了'
+    });
+  },
+
   // 退出登录
   onLogout() {
     wx.showModal({
@@ -385,7 +353,7 @@ Page({
             if (users.length > 0) {
               await db.collection('users').doc(users[0]._id).update({
                 data: {
-                  nickName: '未知游客',
+                  nickName: '',
                   avatarUrl: '',
                   phone: '',
                   updatedAt: new Date()
@@ -395,7 +363,7 @@ Page({
 
             app.globalData.userInfo = {
               ...app.globalData.userInfo,
-              nickName: '未知游客',
+              nickName: '',
               avatarUrl: '',
               phone: ''
             };

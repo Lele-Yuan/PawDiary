@@ -36,7 +36,10 @@
         <text class="title-icon">📍</text>
         <text>地址</text>
       </view>
-      <view class="address-text">{{place.address}}</view>
+      <view class="address-text">
+        {{place.address}}
+        <button class="nav-btn" bindtap="onNavigate" hover-class="btn-hover">🧭 导航</button>
+      </view>
     </view>
 
     <!-- 描述 -->

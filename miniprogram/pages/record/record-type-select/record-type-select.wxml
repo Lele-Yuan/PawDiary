@@ -1,0 +1,47 @@
+<nav-bar title="选择记录类型" back="{{true}}" />
+
+<view class="type-select-page">
+  <!-- 健康记录 -->
+  <view class="category-section">
+    <view class="category-title">健康记录</view>
+    <view class="type-grid">
+      <view class="type-card" wx:for="{{healthTypes}}" wx:key="key" bindtap="selectType" data-key="{{item.key}}">
+        <view class="card-icon">{{item.icon}}</view>
+        <view class="card-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 洗护记录 -->
+  <view class="category-section">
+    <view class="category-title">洗护记录</view>
+    <view class="type-grid">
+      <view class="type-card" wx:for="{{groomingTypes}}" wx:key="key" bindtap="selectType" data-key="{{item.key}}">
+        <view class="card-icon">{{item.icon}}</view>
+        <view class="card-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 清洁记录 -->
+  <view class="category-section">
+    <view class="category-title">清洁记录</view>
+    <view class="type-grid">
+      <view class="type-card" wx:for="{{cleaningTypes}}" wx:key="key" bindtap="selectType" data-key="{{item.key}}">
+        <view class="card-icon">{{item.icon}}</view>
+        <view class="card-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 异常情况 -->
+  <view class="category-section">
+    <view class="category-title">异常情况</view>
+    <view class="type-grid">
+      <view class="type-card" wx:for="{{abnormalTypes}}" wx:key="key" bindtap="selectType" data-key="{{item.key}}">
+        <view class="card-icon">{{item.icon}}</view>
+        <view class="card-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+</view>

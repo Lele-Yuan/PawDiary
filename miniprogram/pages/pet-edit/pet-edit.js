@@ -1,6 +1,7 @@
 const { PET_SPECIES, PET_GENDERS } = require('../../utils/constants');
 const { showLoading, hideLoading, showSuccess, showError } = require('../../utils/util');
 const { uploadFile } = require('../../utils/cloud');
+const { checkPetLimit, incrementPetCount, checkImageSize } = require('../../utils/limit');
 
 Page({
   data: {
@@ -91,6 +92,11 @@ Page({
       sourceType: ['album', 'camera'],
       sizeType: ['compressed'],
       success: (res) => {
+        const sizeResult = checkImageSize(res.tempFiles);
+        if (sizeResult.oversizedCount > 0) {
+          wx.showToast({ title: '图片超过500KB，请选择更小的图片', icon: 'none' });
+          return;
+        }
         const tempFilePath = res.tempFiles[0].tempFilePath;
         this.setData({ 'form.avatar': tempFilePath });
       }
@@ -145,6 +151,15 @@ Page({
 
     try {
       const { form, mode, petId } = this.data;
+
+      // 新增模式：校验每日宠物限额
+      if (mode === 'add' && !checkPetLimit()) {
+        hideLoading();
+        showError('今日已达新增宠物上限（2个）');
+        this.setData({ submitting: false });
+        return;
+      }
+
       let avatarUrl = form.avatar;
 
       // 如果是本地图片路径（非云存储），则上传
@@ -169,6 +184,7 @@ Page({
           name: 'petManage',
           data: { action: 'add', data: petData }
         });
+        incrementPetCount();
         showSuccess('添加成功');
       } else {
         petData._id = petId;

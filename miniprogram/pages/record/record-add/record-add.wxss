@@ -2,6 +2,40 @@
   padding-bottom: 60rpx;
 }
 
+/* 带单位的输入框 */
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.input-with-unit .form-input {
+  flex: 1;
+}
+
+.unit-label,
+.unit-picker {
+  display: flex;
+  align-items: center;
+  height: 80rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #6B6B80;
+  background-color: #F5F3F1;
+  border-radius: 16rpx;
+  min-width: 80rpx;
+  justify-content: space-between;
+}
+
+/* 日期时间选择器 */
+.datetime-group {
+  /* 同 form-group */
+}
+
+.datetime-picker {
+  /* 同 form-picker */
+}
+
 .form-section {
   margin-top: 16rpx;
 }

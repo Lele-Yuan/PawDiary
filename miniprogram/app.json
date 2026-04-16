@@ -4,6 +4,7 @@
     "pages/home/home",
     "pages/checklist/checklist",
     "pages/record/record",
+    "pages/record/record-type-select/record-type-select",
     "pages/record/record-add/record-add",
     "pages/bill/bill",
     "pages/bill/bill-add/bill-add",
@@ -17,7 +18,8 @@
     "pages/loading/loading",
     "pages/memorial/memorial",
     "pages/memorial/memorial-add/memorial-add",
-    "pages/memorial/blessing-detail/blessing-detail"
+    "pages/memorial/blessing-detail/blessing-detail",
+    "pages/webview/webview"
   ],
   "window": {
     "backgroundTextStyle": "light",

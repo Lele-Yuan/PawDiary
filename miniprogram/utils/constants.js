@@ -2,10 +2,30 @@
  * 记录类型
  */
 const RECORD_TYPES = [
-  { key: 'deworm', label: '驱虫', color: '#249654', icon: '🐜' },
-  { key: 'checkup', label: '体检', color: '#3C6663', icon: '🩺' },
-  { key: 'vaccine', label: '疫苗', color: '#F5A623', icon: '💉' },
-  { key: 'bath', label: '洗澡', color: '#9C27B0', icon: '🛁' }
+  // 健康记录
+  { key: 'weight', label: '体重', hideTitle: true, color: '#607D8B', icon: '⚖️' },
+  { key: 'poop', label: '尿便', hideTitle: true, color: '#8D6E63', icon: '💩' },
+  { key: 'diet', label: '饮食', hideTitle: true, color: '#FF7043', icon: '🍖' },
+  { key: 'water', label: '喝水', hideTitle: true, color: '#42A5F5', icon: '💧' },
+  { key: 'deworm', label: '驱虫', titlePlaceholder: '驱虫药名称', color: '#249654', icon: '🐜' },
+  { key: 'vaccine', label: '疫苗', titlePlaceholder: '疫苗名称', color: '#F5A623', icon: '💉' },
+  { key: 'checkup', label: '体检', titlePlaceholder: '体检记录', color: '#3C6663', icon: '🩺' },
+  { key: 'illness', label: '给药', titlePlaceholder: '药品名称', color: '#E53935', icon: '🏥' },
+  // 洗护记录
+  { key: 'bath', label: '洗澡', hideTitle: true, color: '#9C27B0', icon: '🛁' },
+  { key: 'nail', label: '剪指甲', hideTitle: true, color: '#795548', icon: '💅' },
+  { key: 'ear', label: '洗耳朵', hideTitle: true, color: '#8D6E63', icon: '👂' },
+  { key: 'paw', label: '踢脚毛', hideTitle: true, color: '#A1887F', icon: '🐾' },
+  { key: 'gland', label: '挤肛门腺', hideTitle: true, color: '#FF5722', icon: '💉' },
+  { key: 'teeth', label: '刷牙', hideTitle: true, color: '#78909C', icon: '🦷' },
+  { key: 'beauty', label: '美容', hideTitle: true, color: '#9C27B0', icon: '✂️' },
+  // 清洁记录
+  { key: 'disinfect', label: '消毒', hideTitle: true, color: '#66BB6A', icon: '🧴' },
+  { key: 'litter', label: '换猫砂', titlePlaceholder: '猫砂名', color: '#D4A373', icon: '🏝️' },
+  { key: 'toy', label: '洗玩具', hideTitle: true, color: '#FFA726', icon: '🧸' },
+  { key: 'cage', label: '清洁窝笼', hideTitle: true, color: '#8D6E63', icon: '🏠' },
+  // 异常情况
+  { key: 'abnormal', label: '异常情况', titlePlaceholder: '异常情况记录', color: '#F44336', icon: '⚠️' }
 ];
 
 /**

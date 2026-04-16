@@ -50,32 +50,6 @@
       bind:edit="onEditPet"
     />
 
-    <!-- 快捷功能入口 -->
-    <view class="quick-entry card">
-      <view class="entry-grid">
-        <view class="entry-item" bindtap="goChecklist">
-          <view class="entry-icon entry-icon-dark">📋</view>
-          <view class="entry-label">清单</view>
-        </view>
-        <view class="entry-item" bindtap="goRecord">
-          <view class="entry-icon entry-icon-teal">📝</view>
-          <view class="entry-label">记录</view>
-        </view>
-        <view class="entry-item" bindtap="goBill">
-          <view class="entry-icon entry-icon-beige">💰</view>
-          <view class="entry-label">账单</view>
-        </view>
-        <view class="entry-item" bindtap="goEditWeight">
-          <view class="entry-icon entry-icon-gray">⚖️</view>
-          <view class="entry-label">体重记录</view>
-        </view>
-        <view class="entry-item" bindtap="goMap">
-          <view class="entry-icon entry-icon-teal">🗺️</view>
-          <view class="entry-label">地图</view>
-        </view>
-      </view>
-    </view>
-
     <!-- 家庭成员 -->
     <view class="family-section card" wx:if="{{currentPet}}">
       <view class="section-header">
@@ -111,19 +85,19 @@
 
     <!-- 指南模块 -->
     <view class="guide-links">
-      <view class="guide-link guide-link-dog">
+      <view class="guide-link guide-link-map" bindtap="goMap">
         <view class="guide-link-copy">
-          <view class="guide-link-title">养狗指南</view>
-          <view class="guide-link-desc">狗狗养育完全手册</view>
+          <view class="guide-link-title">地图</view>
+          <view class="guide-link-desc">宠物友好地点</view>
         </view>
-        <view class="guide-link-deco">🐶</view>
+        <view class="guide-link-deco">🗺️</view>
       </view>
-      <view class="guide-link guide-link-cat">
+      <view class="guide-link guide-link-dog" bindtap="goDogGuide">
         <view class="guide-link-copy">
-          <view class="guide-link-title">养猫指南</view>
-          <view class="guide-link-desc">了解猫咪养护知识</view>
+          <view class="guide-link-title">养宠指南</view>
+          <view class="guide-link-desc">猫猫狗狗养育完全手册</view>
         </view>
-        <view class="guide-link-deco">🐱</view>
+        <view class="guide-link-deco">🐶🐱</view>
       </view>
     </view>
 

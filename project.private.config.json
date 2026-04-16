@@ -23,23 +23,23 @@
     "miniprogram": {
       "list": [
         {
-          "name": "纪念馆",
-          "pathName": "pages/memorial/memorial",
-          "query": "",
+          "name": "「雪糕」邀请成员",
+          "pathName": "pages/invite/invite",
+          "query": "id=33956e3d69def6010452e9552dee9c5e",
           "scene": null,
           "launchMode": "default"
         },
         {
-          "name": "加载中",
-          "pathName": "pages/loading/loading",
+          "name": "纪念馆",
+          "pathName": "pages/memorial/memorial",
           "query": "",
           "launchMode": "default",
           "scene": null
         },
         {
-          "name": "「秋田」邀请成员",
-          "pathName": "pages/invite/invite",
-          "query": "id=c3459b2a69cb7d8402568ae66e789ab4",
+          "name": "加载中",
+          "pathName": "pages/loading/loading",
+          "query": "",
           "launchMode": "default",
           "scene": null
         }

@@ -1,5 +1,9 @@
 <view class="record-page">
-  <nav-bar title="健康记录" titleOpacity="{{navTitleOpacity}}" />
+  <nav-bar title="日常记录" titleOpacity="{{navTitleOpacity}}" />
+
+  <!-- 加载中 -->
+  <loading-view wx:if="{{!loaded}}" />
+
   <!-- 当前宠物 -->
   <view class="top-bar">
     <view class="current-pet" wx:if="{{currentPetName}}">
@@ -29,7 +33,12 @@
     <view class="timeline-item" wx:for="{{records}}" wx:key="_id">
       <!-- 左侧时间线 -->
       <view class="timeline-left">
-        <text class="timeline-date">{{item.shortDateStr}}</text>
+        <view class="timeline-date">
+          <text class="date-text">{{item.shortDateStr}}</text>
+          <text class="hour-text" wx:if="{{item.hour}}">{{item.hourStr}}</text>
+        </view>
+        <!-- upcoming 标签 -->
+        <view class="upcoming-tag" wx:if="{{item.nextDateStr}}">即将到来</view>
         <view class="timeline-dot" style="background-color: {{item.typeColor}};"></view>
         <view class="timeline-line" wx:if="{{index < records.length - 1}}"></view>
       </view>
@@ -41,18 +50,31 @@
         bindtap="goEdit"
         bindlongpress="onLongPressRecord"
       >
-        <!-- upcoming 标签 -->
-        <view class="upcoming-tag" wx:if="{{item.nextDateStr}}">即将到来</view>
 
         <!-- 主内容行：图标圆 + 内容 -->
         <view class="card-main">
           <!-- 类型图标圆形 -->
           <view class="card-icon-circle" style="background-color: {{item.typeColor}}22;">
-            <text wx:if="{{item.type === 'deworm'}}">💊</text>
-            <text wx:elif="{{item.type === 'checkup'}}">🩺</text>
+            <text wx:if="{{item.type === 'weight'}}">⚖️</text>
+            <text wx:elif="{{item.type === 'poop'}}">💩</text>
+            <text wx:elif="{{item.type === 'diet'}}">🍖</text>
+            <text wx:elif="{{item.type === 'water'}}">💧</text>
+            <text wx:elif="{{item.type === 'deworm'}}">🐜</text>
             <text wx:elif="{{item.type === 'vaccine'}}">💉</text>
+            <text wx:elif="{{item.type === 'checkup'}}">🩺</text>
+            <text wx:elif="{{item.type === 'illness'}}">🏥</text>
             <text wx:elif="{{item.type === 'bath'}}">🛁</text>
-            <text wx:else>📋</text>
+            <text wx:elif="{{item.type === 'nail'}}">💅</text>
+            <text wx:elif="{{item.type === 'ear'}}">👂</text>
+            <text wx:elif="{{item.type === 'paw'}}">🐾</text>
+            <text wx:elif="{{item.type === 'gland'}}">💉</text>
+            <text wx:elif="{{item.type === 'teeth'}}">🦷</text>
+            <text wx:elif="{{item.type === 'beauty'}}">✂️</text>
+            <text wx:elif="{{item.type === 'disinfect'}}">🧴</text>
+            <text wx:elif="{{item.type === 'litter'}}">🏝️</text>
+            <text wx:elif="{{item.type === 'toy'}}">🧸</text>
+            <text wx:elif="{{item.type === 'cage'}}">🏠</text>
+            <text wx:else>⚠️</text>
           </view>
 
           <!-- 文字内容 -->
@@ -60,16 +82,25 @@
             <view class="card-title-row">
               <text class="card-title">{{item.title}}</text>
               <text class="remind-icon" wx:if="{{item.hasRemind}}">🔔</text>
+
+
+              <!-- upcoming 操作行 -->
+              <button
+                class="complete-btn"
+                size="mini"
+                hover-class="complete-btn-hover"
+                data-id="{{item._id}}"
+                data-type="{{item.type}}"
+                data-title="{{item.title}}"
+                data-enable-remind="{{item.enableRemind}}"
+                data-remind-interval="{{item.remindInterval}}"
+                catchtap="onCompleteRecord"
+              >立即完成</button>
             </view>
             <!-- upcoming 副文字 -->
             <text class="card-subtitle subtitle-upcoming" wx:if="{{item.nextDateStr}}">下次：{{item.nextDateStr}}</text>
             <!-- completed 副文字 -->
             <text class="card-subtitle subtitle-completed" wx:else>已完成</text>
-            <!-- 地点/费用 -->
-            <view class="card-details" wx:if="{{item.location || item.cost}}">
-              <text class="detail-item" wx:if="{{item.location}}">📍 {{item.location}}</text>
-              <text class="detail-item" wx:if="{{item.cost}}">💰 ¥{{item.costStr}}</text>
-            </view>
             <!-- 图片 -->
             <view class="card-images" wx:if="{{item.images && item.images.length}}">
               <image
@@ -93,22 +124,6 @@
               <text class="remind-days-text {{item.remindOverdue ? 'overdue' : ''}}">{{item.remindDaysText}}</text>
             </view>
           </view>
-        </view>
-
-        <!-- upcoming 操作行 -->
-        <view class="card-actions" wx:if="{{item.nextDateStr && canEdit}}">
-          <button
-            class="complete-btn"
-            hover-class="complete-btn-hover"
-            data-id="{{item._id}}"
-            data-type="{{item.type}}"
-            data-title="{{item.title}}"
-            data-location="{{item.location}}"
-            data-enable-remind="{{item.enableRemind}}"
-            data-remind-interval="{{item.remindInterval}}"
-            catchtap="onCompleteRecord"
-          >立即完成</button>
-          <view class="bell-btn">🔔</view>
         </view>
       </view>
     </view>

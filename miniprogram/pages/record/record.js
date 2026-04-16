@@ -54,7 +54,7 @@ Page({
             data: { action: 'list' }
           });
           const pets = (res.result && res.result.code === 0) ? res.result.data : [];
-          const pet = pets.find(p => p._id === petId);
+          const pet = pets.find(function(p) { return p._id === petId; });
           if (pet) {
             app.globalData.currentPet = pet;
             this.setData({ currentPetName: pet.name || '' });
@@ -98,14 +98,14 @@ Page({
 
       var records = data.map(function (r) {
         var typeInfo = RECORD_TYPE_MAP[r.type] || {};
+        var hour = r.hour !== undefined ? r.hour : 12;
         var item = {
           _id: r._id,
           type: r.type,
           title: r.title,
-          location: r.location,
-          cost: r.cost,
           images: r.images,
           date: r.date,
+          hour: hour,
           nextDate: r.nextDate,
           enableRemind: r.enableRemind,
           remindInterval: r.remindInterval,
@@ -117,7 +117,7 @@ Page({
             var ds = formatDate(r.date, 'YYYY.MM.DD');
             return ds ? ds.substring(2).replace(/-/g, '.') : '';
           })(),
-          costStr: formatMoney(r.cost),
+          hourStr: hour + ':00',
           nextDateStr: r.nextDate ? formatDate(r.nextDate, 'YYYY-MM-DD') : '',
           hasRemind: !!r.enableRemind,
           remindProgress: 0,
@@ -182,7 +182,7 @@ Page({
       return;
     }
     wx.navigateTo({
-      url: '/pages/record/record-add/record-add'
+      url: '/pages/record/record-type-select/record-type-select'
     });
   },
 
@@ -192,7 +192,6 @@ Page({
     var params = 'prefill=1';
     params += '&type=' + encodeURIComponent(ds.type || '');
     params += '&title=' + encodeURIComponent(ds.title || '');
-    params += '&location=' + encodeURIComponent(ds.location || '');
     params += '&enableRemind=' + (ds.enableRemind ? '1' : '0');
     params += '&remindInterval=' + (ds.remindInterval || 0);
     params += '&sourceId=' + (ds.id || '');
@@ -289,19 +288,23 @@ Page({
     const id = e.currentTarget.dataset.id;
     wx.showActionSheet({
       itemList: ['删除此记录'],
-      success: async (res) => {
+      success: function(res) {
         if (res.tapIndex === 0) {
           wx.showModal({
             title: '确认删除',
             content: '删除后无法恢复，确定要删除吗？',
             confirmColor: '#F44336',
-            success: async (modalRes) => {
+            success: function(modalRes) {
               if (modalRes.confirm) {
                 try {
                   const db = wx.cloud.database();
-                  await db.collection('records').doc(id).remove();
-                  wx.showToast({ title: '已删除', icon: 'success' });
-                  this.loadRecords();
+                  db.collection('records').doc(id).remove().then(function() {
+                    wx.showToast({ title: '已删除', icon: 'success' });
+                    that.loadRecords();
+                  }).catch(function(err) {
+                    console.error('删除失败：', err);
+                    wx.showToast({ title: '删除失败', icon: 'none' });
+                  });
                 } catch (err) {
                   console.error('删除失败：', err);
                   wx.showToast({ title: '删除失败', icon: 'none' });

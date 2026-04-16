@@ -13,7 +13,7 @@
       />
     </view>
     <view class="memorial-float-btn" bindtap="goMemorial">
-      <text class="memorial-float-icon">🕯️</text>
+      <text class="memorial-float-icon">🕯️ 小天使🪽</text>
     </view>
 
     <!-- 游客态 -->
@@ -46,7 +46,11 @@
         <text class="family-title">我的毛孩子</text>
         <text class="family-subtitle">{{pets.length}} 位成员</text>
       </view>
-      <view class="family-add-btn" bindtap="addPet">
+      <view class="family-add-btn" wx:if="{{isGuest}}" bindtap="onLogin">
+        <text class="family-add-icon">+</text>
+        <text class="family-add-text">添加宠物</text>
+      </view>
+      <view class="family-add-btn" wx:else bindtap="addPet">
         <text class="family-add-icon">+</text>
         <text class="family-add-text">添加宠物</text>
       </view>
@@ -116,7 +120,7 @@
       </view>
 
       <!-- 帮助中心 -->
-      <view class="menu-item menu-item-last">
+      <view class="menu-item menu-item-last" bindtap="showHelp">
         <view class="menu-icon-circle">
           <text class="menu-icon-emoji">🎧</text>
         </view>
@@ -135,73 +139,14 @@
     <text class="version-text">VERSION 1.0.0</text>
   </view>
 
-  <!-- 宠物列表弹窗（保留原有逻辑） -->
-  <view class="modal-mask" wx:if="{{showPetList}}" bindtap="hidePetList">
-    <view class="modal-content" catchtap>
-      <view class="modal-title">我的宠物</view>
-      <view class="pet-list-item" wx:for="{{pets}}" wx:key="_id">
-        <image class="pet-list-avatar" src="{{item.avatar || '/images/default-avatar.png'}}" mode="aspectFill" />
-        <view class="pet-list-info">
-          <text class="pet-list-name">{{item.name}}</text>
-          <text class="pet-list-breed">{{item.breed || '未设置品种'}}</text>
-        </view>
-        <view class="pet-list-actions">
-          <view class="action-btn edit" data-id="{{item._id}}" bindtap="editPet">编辑</view>
-        </view>
-      </view>
-      <view class="add-pet-btn" bindtap="addPet">
-        <text class="add-icon">+</text>
-        <text>添加新宠物</text>
-      </view>
-      <view class="modal-close" bindtap="hidePetList">关闭</view>
-    </view>
-  </view>
-
-  <!-- ===== 登录弹窗 ===== -->
-  <view class="modal-mask" wx:if="{{showLoginModal}}" bindtap="closeLoginModal">
-    <view class="login-modal" catchtap>
-      <view class="login-modal-title">微信登录</view>
-      <view class="login-modal-desc">完善您的个人信息，享受更好的体验</view>
-
-      <!-- 头像选择 -->
-      <button class="avatar-picker" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
-        <image class="avatar-preview" src="{{tempAvatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
-        <view class="avatar-picker-hint">
-          <text class="avatar-picker-text">{{tempAvatarUrl ? '重新选择头像' : '点击选择头像'}}</text>
-        </view>
-      </button>
-
-      <!-- 昵称输入 -->
-      <view class="login-field">
-        <text class="login-field-label">昵称</text>
-        <input
-          class="login-field-input"
-          type="nickname"
-          placeholder="请输入昵称"
-          bindinput="onNicknameInput"
-          value="{{tempNickName}}"
-        />
-      </view>
-
-      <!-- 手机号授权 -->
-      <view class="login-field">
-        <text class="login-field-label">手机号（可选）</text>
-        <button
-          class="phone-auth-btn {{tempPhone ? 'phone-authed' : ''}}"
-          open-type="getPhoneNumber"
-          bindgetphonenumber="onGetPhoneNumber"
-        >
-          <text wx:if="{{tempPhone}}">{{tempPhone[0]}}{{tempPhone[1]}}{{tempPhone[2]}}****{{tempPhone[7]}}{{tempPhone[8]}}{{tempPhone[9]}}{{tempPhone[10]}}</text>
-          <text wx:else>点击授权手机号</text>
-        </button>
-      </view>
-
-      <!-- 操作按钮 -->
-      <view class="login-actions">
-        <button class="login-confirm-btn" bindtap="confirmLogin">确认登录</button>
-        <view class="login-cancel" bindtap="closeLoginModal">取消</view>
-      </view>
-    </view>
-  </view>
+  <!-- 登录弹窗组件 -->
+  <login-modal
+    show="{{showLoginModal}}"
+    avatarUrl="{{userInfo.avatarUrl}}"
+    nickName="{{userInfo.nickName}}"
+    phone="{{userInfo.phone}}"
+    bind:success="onLoginSuccess"
+    bind:close="onLoginClose"
+  />
 
 </view>

@@ -76,6 +76,25 @@
   justify-content: center;
 }
 
+wx-button:not([size=mini]).nav-btn {
+  width: auto;
+  margin-top: 20rpx;
+  margin-left: 10px;
+  height: 52rpx;
+  border-radius: 48rpx;
+  background-color: #3385ff;
+  color: #fff;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.nav-btn::after {
+  border: none;
+}
+
 .place-meta-row {
   display: flex;
   align-items: center;
