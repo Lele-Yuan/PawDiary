@@ -6,6 +6,8 @@ Page({
     categoryList: BILL_CATEGORIES,
     today: '',
     submitting: false,
+    editId: '',
+    pageTitle: '记一笔',
     form: {
       amount: '',
       category: '',
@@ -15,7 +17,7 @@ Page({
     }
   },
 
-  onLoad() {
+  onLoad(options) {
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     this.setData({
@@ -30,6 +32,12 @@ Page({
       wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
       setTimeout(() => wx.navigateBack(), 1500);
       return;
+    }
+
+    // 编辑模式
+    if (options.id) {
+      this.setData({ editId: options.id, pageTitle: '编辑账单' });
+      this.loadBill(options.id);
     }
   },
 
@@ -61,6 +69,36 @@ Page({
   // 日期选择
   onDateChange(e) {
     this.setData({ 'form.date': e.detail.value });
+  },
+
+  // 加载账单数据（编辑模式）
+  async loadBill(id) {
+    showLoading('加载中...');
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'billManage',
+        data: { action: 'get', data: { _id: id } }
+      });
+
+      if (res.result && res.result.code === 0) {
+        const bill = res.result.data;
+        const dateStr = bill.date ? new Date(bill.date).toISOString().split('T')[0] : '';
+
+        this.setData({
+          'form.amount': bill.amount || '',
+          'form.category': bill.category || '',
+          'form.title': bill.title || '',
+          'form.date': dateStr || this.data.today,
+          'form.note': bill.note || ''
+        });
+      } else {
+        showError('获取账单数据失败');
+      }
+    } catch (err) {
+      console.error('加载账单失败：', err);
+      showError('加载账单数据失败');
+    }
+    hideLoading();
   },
 
   // 校验
@@ -97,26 +135,34 @@ Page({
     showLoading('保存中...');
 
     try {
-      const { form } = this.data;
+      const { form, editId } = this.data;
+      const isEdit = !!editId;
 
-      // 通过云函数添加账单
+      // 通过云函数添加或更新账单
+      const action = isEdit ? 'update' : 'add';
+      const data = isEdit ? {
+        _id: editId,
+        amount: Number(form.amount),
+        category: form.category,
+        title: form.title.trim(),
+        date: form.date,
+        note: form.note.trim()
+      } : {
+        petId,
+        amount: Number(form.amount),
+        category: form.category,
+        title: form.title.trim(),
+        date: form.date,
+        note: form.note.trim()
+      };
+
       await wx.cloud.callFunction({
         name: 'billManage',
-        data: {
-          action: 'add',
-          data: {
-            petId,
-            amount: Number(form.amount),
-            category: form.category,
-            title: form.title.trim(),
-            date: form.date,
-            note: form.note.trim()
-          }
-        }
+        data: { action, data }
       });
 
       hideLoading();
-      showSuccess('记录成功');
+      showSuccess(isEdit ? '修改成功' : '记录成功');
       setTimeout(() => wx.navigateBack(), 1500);
     } catch (err) {
       console.error('保存账单失败：', err);

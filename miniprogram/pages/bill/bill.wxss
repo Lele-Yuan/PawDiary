@@ -240,14 +240,61 @@
 }
 
 /* ===== 账单条目 ===== */
+.bill-item-wrapper {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+/* 左滑操作按钮 */
+.bill-swipe-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 1;
+}
+
+.swipe-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  height: 80rpx;
+  width: 80rpx;
+  border-radius: 80rpx;
+  transition: transform 0.3s ease;
+  margin-right: 20rpx;
+}
+
+.swipe-btn-edit {
+  background-color: #4CAF5055;
+}
+
+.swipe-btn-delete {
+  background-color: #F4433655;
+}
+
 .bill-item {
+  position: relative;
   display: flex;
   align-items: center;
   background-color: #FFFFFF;
   padding: 28rpx;
   border-radius: 32rpx;
-  margin-bottom: 16rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease;
+  z-index: 2;
+}
+
+.bill-item.swiped {
+  box-shadow: 0 0 0 transparent;
 }
 
 .bill-item-alt {

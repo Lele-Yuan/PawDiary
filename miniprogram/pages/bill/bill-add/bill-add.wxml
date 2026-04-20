@@ -1,4 +1,4 @@
-<nav-bar title="记一笔" back="{{true}}" />
+<nav-bar title="{{pageTitle}}" back="{{true}}" />
 
 <view class="page-container">
   <!-- 金额输入 -->
@@ -82,7 +82,7 @@
       bindtap="onSubmit"
       loading="{{submitting}}"
     >
-      保存账单
+      {{editId ? '保存修改' : '保存账单'}}
     </button>
   </view>
 </view>

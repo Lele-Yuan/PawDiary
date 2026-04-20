@@ -1,4 +1,4 @@
-const { daysBetween, formatDate, handleAvatarError } = require('../../utils/util');
+const { formatDate } = require('../../utils/util');
 const { RECORD_TYPE_MAP } = require('../../utils/constants');
 
 // 将宠物对象中的 Date 字段序列化为 ISO 字符串，避免 setData 跨线程传输时 Date → {} 的问题
@@ -200,10 +200,13 @@ Page({
         .slice(0, 3);
 
       // 格式化提醒数据
-      const upcomingReminders = reminders.map(r => {
-        const typeInfo = RECORD_TYPE_MAP[r.type] || {};
-        const daysLeft = daysBetween(now, r.nextDate);
-        const tagClassMap = {
+      const upcomingReminders = reminders.map(function(r) {
+        var typeInfo = RECORD_TYPE_MAP[r.type] || {};
+        var nowTime = now.getTime();
+        var nextTime = new Date(r.nextDate).getTime();
+        // 与record.js中remainDays的计算逻辑保持一致：使用Math.ceil向上取整
+        var daysLeft = Math.ceil((nextTime - nowTime) / 86400000);
+        var tagClassMap = {
           deworm: 'tag-success',
           checkup: 'tag-info',
           vaccine: 'tag-warning',
@@ -381,7 +384,7 @@ Page({
       return {
         title: 'PawDiary - 记录宠物生活的每一天',
         path: '/pages/home/home',
-        imageUrl: '/images/guide/illust-main.png'
+        imageUrl: '/images/guide/bg.png'
       };
     }
   },

@@ -44,7 +44,12 @@ async function addRecord(openid, data) {
     return { code: -1, message: '无权限请联系宠物主' };
   }
 
-  const validTypes = ['deworm', 'checkup', 'vaccine', 'bath'];
+  const validTypes = [
+    'weight', 'poop', 'diet', 'water',
+    'deworm', 'vaccine', 'checkup', 'illness',
+    'bath', 'nail', 'ear', 'paw', 'gland', 'teeth', 'beauty',
+    'disinfect', 'litter', 'toy', 'cage', 'abnormal'
+  ];
   if (!validTypes.includes(data.type)) {
     return { code: -1, message: '无效的记录类型' };
   }
@@ -59,7 +64,23 @@ async function addRecord(openid, data) {
     location: data.location || '',
     cost: data.cost ? Number(data.cost) : 0,
     nextDate: data.nextDate ? new Date(data.nextDate) : null,
+    enableRemind: data.enableRemind || false,
+    remindInterval: data.remindInterval || 0,
     images: data.images || [],
+    // 类型特定字段
+    weight: data.weight || '',
+    weightUnit: data.weightUnit || 'kg',
+    poopStatus: data.poopStatus || '',
+    abnormalDesc: data.abnormalDesc || '',
+    waterAmount: data.waterAmount || '',
+    waterUnit: data.waterUnit || 'ml',
+    foodType: data.foodType || '',
+    foodAmount: data.foodAmount || '',
+    dewormType: data.dewormType || '',
+    vaccineType: data.vaccineType || '',
+    medicationType: data.medicationType || '',
+    notes: data.notes || '',
+    hour: data.hour !== undefined ? data.hour : 12,
     createdAt: new Date()
   };
 
@@ -104,6 +125,20 @@ async function updateRecord(openid, data) {
   if (data.enableRemind !== undefined) updateData.enableRemind = data.enableRemind;
   if (data.remindInterval !== undefined) updateData.remindInterval = data.remindInterval;
   if (data.images !== undefined) updateData.images = data.images;
+  // 类型特定字段
+  if (data.weight !== undefined) updateData.weight = data.weight;
+  if (data.weightUnit !== undefined) updateData.weightUnit = data.weightUnit;
+  if (data.poopStatus !== undefined) updateData.poopStatus = data.poopStatus;
+  if (data.abnormalDesc !== undefined) updateData.abnormalDesc = data.abnormalDesc;
+  if (data.waterAmount !== undefined) updateData.waterAmount = data.waterAmount;
+  if (data.waterUnit !== undefined) updateData.waterUnit = data.waterUnit;
+  if (data.foodType !== undefined) updateData.foodType = data.foodType;
+  if (data.foodAmount !== undefined) updateData.foodAmount = data.foodAmount;
+  if (data.dewormType !== undefined) updateData.dewormType = data.dewormType;
+  if (data.vaccineType !== undefined) updateData.vaccineType = data.vaccineType;
+  if (data.medicationType !== undefined) updateData.medicationType = data.medicationType;
+  if (data.notes !== undefined) updateData.notes = data.notes;
+  if (data.hour !== undefined) updateData.hour = data.hour;
 
   await db.collection('records').doc(data._id).update({ data: updateData });
   return { code: 0, message: '更新成功' };

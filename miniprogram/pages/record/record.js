@@ -9,7 +9,8 @@ Page({
     canEdit: true,
     records: [],
     typeList: [],
-    loaded: false
+    loaded: false,
+    RECORD_TYPE_MAP
   },
 
   onLoad() {
@@ -99,6 +100,41 @@ Page({
       var records = data.map(function (r) {
         var typeInfo = RECORD_TYPE_MAP[r.type] || {};
         var hour = r.hour !== undefined ? r.hour : 12;
+
+        // 根据类型生成详情文本
+        var detailText = '';
+        switch (r.type) {
+          case 'weight':
+            detailText = (r.weight || '') + (r.weightUnit || '');
+            break;
+          case 'diet':
+            var foodTypeMap = { 'dry': '干粮', 'wet': '湿粮', 'homemade': '自制' };
+            var foodTypeLabel = foodTypeMap[r.foodType] || '';
+            detailText = foodTypeLabel + (r.foodAmount || '');
+            break;
+          case 'water':
+            detailText = (r.waterAmount || '') + (r.waterUnit || '');
+            break;
+          case 'illness':
+            var medicationTypeMap = { 'oral': '口服', 'external': '外用', 'rectal': '直肠', 'injection': '注射' };
+            detailText = medicationTypeMap[r.medicationType] || '未知方式';
+            break;
+          case 'poop':
+            var poopStatusMap = { 'normal': '正常', 'abnormal': '异常' };
+            detailText = poopStatusMap[r.poopStatus] || '未记录';
+            break;
+          case 'deworm':
+            var dewormTypeMap = { 'external': '体外驱虫', 'internal': '体内驱虫', 'both': '内外同驱' };
+            detailText = dewormTypeMap[r.dewormType] || '未记录';
+            break;
+          case 'vaccine':
+            var vaccineTypeMap = { 'rabies': '狂犬疫苗', 'infectious': '传染病疫苗' };
+            detailText = vaccineTypeMap[r.vaccineType] || '未记录';
+            break;
+          default:
+            detailText = '';
+        }
+
         var item = {
           _id: r._id,
           type: r.type,
@@ -110,6 +146,7 @@ Page({
           enableRemind: r.enableRemind,
           remindInterval: r.remindInterval,
           typeLabel: typeInfo.label || r.type,
+          detailText: detailText,
           typeColor: typeInfo.color || '#999',
           tagClass: tagClassMap[r.type] || 'tag-primary',
           dateStr: formatDate(r.date, 'YYYY-MM-DD'),
@@ -120,6 +157,7 @@ Page({
           hourStr: hour + ':00',
           nextDateStr: r.nextDate ? formatDate(r.nextDate, 'YYYY-MM-DD') : '',
           hasRemind: !!r.enableRemind,
+          remainDays: null,
           remindProgress: 0,
           remindOverdue: false,
           remindDaysText: '',
@@ -139,6 +177,7 @@ Page({
 
             item.remindProgress = Math.max(0, progress);
             item.remindOverdue = remainDays < 0;
+            item.remainDays = remainDays;
 
             if (remainDays >= 0) {
               item.remindDaysText = '\u8fd8\u5269 ' + remainDays + ' \u5929';
@@ -186,17 +225,19 @@ Page({
     });
   },
 
-  // 立即完成：携带当前记录数据跳转到添加页面
+  // 立即完成：携带记录ID跳转到添加页面，先获取数据再预填
   onCompleteRecord(e) {
     var ds = e.currentTarget.dataset;
-    var params = 'prefill=1';
-    params += '&type=' + encodeURIComponent(ds.type || '');
-    params += '&title=' + encodeURIComponent(ds.title || '');
-    params += '&enableRemind=' + (ds.enableRemind ? '1' : '0');
-    params += '&remindInterval=' + (ds.remindInterval || 0);
-    params += '&sourceId=' + (ds.id || '');
+    var id = ds.id;
+
+    if (!id) {
+      showError('记录ID不存在');
+      return;
+    }
+
+    // 只传递sourceId，在添加页面获取完整记录数据
     wx.navigateTo({
-      url: '/pages/record/record-add/record-add?' + params
+      url: '/pages/record/record-add/record-add?prefill=1&sourceId=' + id
     });
   },
 

@@ -38,7 +38,7 @@
           <text class="hour-text" wx:if="{{item.hour}}">{{item.hourStr}}</text>
         </view>
         <!-- upcoming 标签 -->
-        <view class="upcoming-tag" wx:if="{{item.nextDateStr}}">即将到来</view>
+        <view class="upcoming-tag" wx:if="{{item.nextDateStr}}">到期提醒</view>
         <view class="timeline-dot" style="background-color: {{item.typeColor}};"></view>
         <view class="timeline-line" wx:if="{{index < records.length - 1}}"></view>
       </view>
@@ -55,37 +55,19 @@
         <view class="card-main">
           <!-- 类型图标圆形 -->
           <view class="card-icon-circle" style="background-color: {{item.typeColor}}22;">
-            <text wx:if="{{item.type === 'weight'}}">⚖️</text>
-            <text wx:elif="{{item.type === 'poop'}}">💩</text>
-            <text wx:elif="{{item.type === 'diet'}}">🍖</text>
-            <text wx:elif="{{item.type === 'water'}}">💧</text>
-            <text wx:elif="{{item.type === 'deworm'}}">🐜</text>
-            <text wx:elif="{{item.type === 'vaccine'}}">💉</text>
-            <text wx:elif="{{item.type === 'checkup'}}">🩺</text>
-            <text wx:elif="{{item.type === 'illness'}}">🏥</text>
-            <text wx:elif="{{item.type === 'bath'}}">🛁</text>
-            <text wx:elif="{{item.type === 'nail'}}">💅</text>
-            <text wx:elif="{{item.type === 'ear'}}">👂</text>
-            <text wx:elif="{{item.type === 'paw'}}">🐾</text>
-            <text wx:elif="{{item.type === 'gland'}}">💉</text>
-            <text wx:elif="{{item.type === 'teeth'}}">🦷</text>
-            <text wx:elif="{{item.type === 'beauty'}}">✂️</text>
-            <text wx:elif="{{item.type === 'disinfect'}}">🧴</text>
-            <text wx:elif="{{item.type === 'litter'}}">🏝️</text>
-            <text wx:elif="{{item.type === 'toy'}}">🧸</text>
-            <text wx:elif="{{item.type === 'cage'}}">🏠</text>
-            <text wx:else>⚠️</text>
+            <view>{{RECORD_TYPE_MAP[item.type].icon}}</view>
+            <view>{{RECORD_TYPE_MAP[item.type].label}}</view>
           </view>
 
           <!-- 文字内容 -->
           <view class="card-content">
             <view class="card-title-row">
               <text class="card-title">{{item.title}}</text>
-              <text class="remind-icon" wx:if="{{item.hasRemind}}">🔔</text>
-
+              <!-- <text class="remind-icon" wx:if="{{item.hasRemind}}">🔔</text> -->
 
               <!-- upcoming 操作行 -->
               <button
+                wx:if="{{item.remainDays !== null && item.remainDays < 5}}"
                 class="complete-btn"
                 size="mini"
                 hover-class="complete-btn-hover"
@@ -99,6 +81,8 @@
             </view>
             <!-- upcoming 副文字 -->
             <text class="card-subtitle subtitle-upcoming" wx:if="{{item.nextDateStr}}">下次：{{item.nextDateStr}}</text>
+            <!-- 详情文字 -->
+            <text class="card-subtitle subtitle-completed" wx:elif="{{item.detailText}}">{{item.detailText}}</text>
             <!-- completed 副文字 -->
             <text class="card-subtitle subtitle-completed" wx:else>已完成</text>
             <!-- 图片 -->

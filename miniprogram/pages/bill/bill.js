@@ -17,7 +17,11 @@ Page({
     monthComparePercent: 0,
     categoryStats: [],
     groupedBills: [],
-    loaded: false
+    loaded: false,
+    // 左滑相关
+    currentSwipedId: null,
+    touchStartX: 0,
+    touchStartY: 0
   },
 
   onLoad() {
@@ -277,5 +281,108 @@ Page({
         }
       }
     });
+  },
+
+  // ===== 左滑相关 =====
+
+  // 触摸开始
+  onTouchStart(e) {
+    this.setData({
+      touchStartX: e.touches[0].clientX,
+      touchStartY: e.touches[0].clientY
+    });
+  },
+
+  // 触摸移动
+  onTouchMove(e) {
+    var touchX = e.touches[0].clientX;
+    var touchY = e.touches[0].clientY;
+    var startX = this.data.touchStartX;
+    var startY = this.data.touchStartY;
+    var diffX = touchX - startX;
+    var diffY = touchY - startY;
+
+    // 如果垂直滑动大于水平滑动，不处理
+    if (Math.abs(diffY) > Math.abs(diffX)) {
+      return;
+    }
+
+    var id = e.currentTarget.dataset.id;
+
+    // 向左滑动超过30px，显示操作按钮
+    if (diffX < -30) {
+      if (this.data.currentSwipedId !== id) {
+        this.setData({ currentSwipedId: id });
+      }
+    }
+    // 向右滑动超过30px，隐藏操作按钮
+    else if (diffX > 30) {
+      if (this.data.currentSwipedId === id) {
+        this.setData({ currentSwipedId: null });
+      }
+    }
+  },
+
+  // 触摸结束
+  onTouchEnd(e) {
+    // 可以在这里添加额外的结束逻辑
+  },
+
+  // 关闭左滑
+  closeSwipe() {
+    if (this.data.currentSwipedId) {
+      this.setData({ currentSwipedId: null });
+    }
+  },
+
+  // 点击编辑
+  onEditBill(e) {
+    if (!this.data.canEdit) {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      return;
+    }
+    var id = e.currentTarget.dataset.id;
+    this.setData({ currentSwipedId: null });
+    wx.navigateTo({
+      url: '/pages/bill/bill-add/bill-add?id=' + id
+    });
+  },
+
+  // 点击删除
+  onDeleteBill(e) {
+    if (!this.data.canEdit) {
+      wx.showToast({ title: '无权限请联系宠物主', icon: 'none' });
+      return;
+    }
+
+    var that = this;
+    var id = e.currentTarget.dataset.id;
+
+    wx.showModal({
+      title: '确认删除',
+      content: '删除后无法恢复，确定要删除吗？',
+      confirmColor: '#F44336',
+      success: function(modalRes) {
+        if (modalRes.confirm) {
+          that.deleteBill(id);
+        }
+      }
+    });
+  },
+
+  // 执行删除
+  async deleteBill(id) {
+    try {
+      await wx.cloud.callFunction({
+        name: 'billManage',
+        data: { action: 'delete', data: { _id: id } }
+      });
+      this.setData({ currentSwipedId: null });
+      wx.showToast({ title: '已删除', icon: 'success' });
+      this.loadMonthData();
+    } catch (err) {
+      console.error('删除失败：', err);
+      wx.showToast({ title: '删除失败', icon: 'none' });
+    }
   }
 });

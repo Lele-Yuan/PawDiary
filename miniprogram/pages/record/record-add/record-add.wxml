@@ -4,7 +4,7 @@
   <!-- 记录类型选择 -->
   <view class="form-section card">
     <view class="form-label">记录类型 <text class="required">*</text></view>
-    <picker mode="selector" range="{{typeList}}" range-key="label" value="{{typeIndex}}" bindchange="onSelectType">
+    <picker mode="selector" disabled range="{{typeList}}" range-key="label" value="{{typeIndex}}" bindchange="onSelectType">
       <view class="form-picker">
         <text class="{{typeIndex !== null ? '' : 'placeholder'}}">{{typeIndex !== null ? typeList[typeIndex].label : '请选择记录类型'}}</text>
         <text class="arrow">›</text>
@@ -190,9 +190,14 @@
         auto-height
       />
     </view>
+    <!-- 提醒开关 -->
+    <view class="form-group remind-row">
+      <view class="form-label">下次提醒</view>
+      <switch checked="{{form.enableRemind}}" bindchange="onRemindChange" color="#6B2D1A" />
+    </view>
 
     <!-- 下次预计日期 -->
-    <view class="form-group" wx:if="{{!form.enableRemind}}">
+    <view class="form-group" wx:if="{{form.enableRemind}}">
       <view class="form-label">下次预计日期</view>
       <picker mode="date" value="{{form.nextDate}}" start="{{today}}" bindchange="onDateChange" data-field="nextDate">
         <view class="form-picker">
@@ -200,12 +205,6 @@
           <text class="arrow">›</text>
         </view>
       </picker>
-    </view>
-
-    <!-- 提醒开关 -->
-    <view class="form-group remind-row">
-      <view class="form-label">下次提醒</view>
-      <switch checked="{{form.enableRemind}}" bindchange="onRemindChange" color="#6B2D1A" />
     </view>
 
     <!-- 间隔选择（仅提醒开启时显示） -->

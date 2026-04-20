@@ -117,8 +117,8 @@
 /* ===== 卡片通用 ===== */
 .timeline-card {
   flex: 1;
-  border-radius: 64rpx;
-  padding: 32rpx;
+  border-radius: 32rpx;
+  padding: 16rpx;
   margin-bottom: 20rpx;
   position: relative;
   overflow: hidden;
@@ -139,7 +139,6 @@
 .upcoming-tag {
   display: inline-block;
   /* background-color: #FE9D7F; */
-  color: #FFFFFF;
   color: #FE9D7F;
   font-size: 18rpx;
   font-weight: 700;
@@ -162,11 +161,12 @@
   height: 80rpx;
   border-radius: 50%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 36rpx;
+  font-size: 18rpx;
   flex-shrink: 0;
-  margin-right: 24rpx;
+  margin-right: 16rpx;
 }
 
 /* 文字内容区 */
@@ -186,7 +186,6 @@
 .card-subtitle {
   font-size: 24rpx;
   display: block;
-  margin-bottom: 8rpx;
 }
 
 .subtitle-upcoming {

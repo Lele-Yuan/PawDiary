@@ -75,28 +75,44 @@
     <view class="bill-list">
       <view wx:for="{{groupedBills}}" wx:key="date" wx:for-item="group">
         <view
-          class="bill-item {{billIdx % 2 === 0 ? '' : 'bill-item-alt'}}"
+          class="bill-item-wrapper"
           wx:for="{{group.bills}}"
           wx:for-item="bill"
           wx:for-index="billIdx"
           wx:key="_id"
           data-id="{{bill._id}}"
-          bindlongpress="onLongPressBill"
         >
-          <!-- 图标圆形 -->
-          <view class="bill-icon-circle" style="background-color: {{bill.categoryColor}}22;">
-            <text class="bill-icon-emoji">{{bill.categoryIcon}}</text>
+          <!-- 左滑操作按钮 -->
+          <view class="bill-swipe-actions">
+            <view class="swipe-btn swipe-btn-edit" data-id="{{bill._id}}" catchtap="onEditBill">✏️</view>
+            <view class="swipe-btn swipe-btn-delete" data-id="{{bill._id}}" catchtap="onDeleteBill">🗑️</view>
           </view>
-          <!-- 文字信息 -->
-          <view class="bill-info">
-            <text class="bill-title">{{bill.title}}</text>
-            <text class="bill-subtitle">{{bill.dateStr}}{{bill.note ? ' · ' + bill.note : ''}}</text>
-          </view>
-          <!-- 金额 + 分类 tag -->
-          <view class="bill-right">
-            <text class="bill-amount">¥{{bill.amountStr}}</text>
-            <view class="bill-category-tag" style="background-color: {{bill.categoryColor}}22; color: {{bill.categoryColor}};">
-              {{bill.categoryLabel}}
+
+          <!-- 账单项 -->
+          <view
+            class="bill-item {{billIdx % 2 === 0 ? '' : 'bill-item-alt'}} {{bill._id === currentSwipedId ? 'swiped' : ''}}"
+            style="transform: translateX({{bill._id === currentSwipedId ? -220 : 0}}rpx);"
+            data-id="{{bill._id}}"
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+            bindlongpress="onLongPressBill"
+          >
+            <!-- 图标圆形 -->
+            <view class="bill-icon-circle" style="background-color: {{bill.categoryColor}}22;">
+              <text class="bill-icon-emoji">{{bill.categoryIcon}}</text>
+            </view>
+            <!-- 文字信息 -->
+            <view class="bill-info">
+              <text class="bill-title">{{bill.title}}</text>
+              <text class="bill-subtitle">{{bill.dateStr}}{{bill.note ? ' · ' + bill.note : ''}}</text>
+            </view>
+            <!-- 金额 + 分类 tag -->
+            <view class="bill-right">
+              <text class="bill-amount">¥{{bill.amountStr}}</text>
+              <view class="bill-category-tag" style="background-color: {{bill.categoryColor}}22; color: {{bill.categoryColor}};">
+                {{bill.categoryLabel}}
+              </view>
             </view>
           </view>
         </view>

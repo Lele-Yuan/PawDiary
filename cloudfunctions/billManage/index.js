@@ -10,6 +10,8 @@ exports.main = async (event, context) => {
   switch (action) {
     case 'add':
       return await addBill(OPENID, data);
+    case 'get':
+      return await getBill(OPENID, data);
     case 'update':
       return await updateBill(OPENID, data);
     case 'list':
@@ -62,6 +64,30 @@ async function addBill(openid, data) {
 
   const res = await db.collection('bills').add({ data: billData });
   return { code: 0, message: '添加成功', data: { _id: res._id } };
+}
+
+// 获取账单详情（支持家庭成员查看）
+async function getBill(openid, data) {
+  if (!data || !data._id) {
+    return { code: -1, message: '缺少账单ID' };
+  }
+
+  // 验证用户是否是该宠物的成员
+  const { data: bill } = await db.collection('bills').doc(data._id).get();
+  if (!bill) {
+    return { code: -1, message: '账单不存在' };
+  }
+
+  const memberRes = await db.collection('pet_members')
+    .where({ petId: bill.petId, _openid: openid })
+    .limit(1)
+    .get();
+
+  if (memberRes.data.length === 0) {
+    return { code: -1, message: '无权访问' };
+  }
+
+  return { code: 0, data: bill };
 }
 
 // 更新账单（支持家庭成员操作）

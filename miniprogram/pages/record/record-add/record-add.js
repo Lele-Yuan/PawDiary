@@ -71,7 +71,7 @@ Page({
       images: [],
       // 类型特定字段
       weight: '',
-      weightUnit: 'kg',
+      weightUnit: '',
       poopStatus: '',
       abnormalDesc: '',
       waterAmount: '',
@@ -102,6 +102,9 @@ Page({
     if (options.id) {
       this.setData({ editId: options.id, pageTitle: '编辑记录' });
       this.loadRecord(options.id);
+    } else if (options.prefill === '1' && options.sourceId) {
+      // 从"立即完成"跳转，先获取完整记录数据再预填
+      this.loadSourceRecord(options.sourceId);
     } else if (options.type) {
       // 从类型选择页面跳转，预选类型
       var typeIndex = this.data.typeList.findIndex(function(t) { return t.key === options.type; });
@@ -114,7 +117,7 @@ Page({
         hideTitle: typeInfo ? !!typeInfo.hideTitle : false
       });
     } else if (options.prefill === '1') {
-      // 从"立即完成"跳转，预填充数据
+      // 兼容旧版本的URL参数方式（如果还有使用）
       this.setData({
         'form.date': todayStr,
         'form.type': decodeURIComponent(options.type || ''),
@@ -134,6 +137,67 @@ Page({
         }
         this.calcNextDate(remindInterval);
       }
+      // 预填类型特定数据
+      if (options.weight) {
+        this.setData({ 'form.weight': decodeURIComponent(options.weight) });
+        var weightUnit = decodeURIComponent(options.weightUnit || 'kg');
+        var unitIndex = this.data.weightUnits.findIndex(function(u) { return u.key === weightUnit; });
+        this.setData({
+          'form.weightUnit': weightUnit,
+          weightUnitIndex: unitIndex >= 0 ? unitIndex : 0
+        });
+      }
+      if (options.poopStatus) {
+        var poopStatus = decodeURIComponent(options.poopStatus);
+        var poopStatusIndex = this.data.poopStatuses.findIndex(function(s) { return s.key === poopStatus; });
+        this.setData({
+          'form.poopStatus': poopStatus,
+          poopStatusIndex: poopStatusIndex >= 0 ? poopStatusIndex : 0
+        });
+      }
+      if (options.abnormalDesc) {
+        this.setData({ 'form.abnormalDesc': decodeURIComponent(options.abnormalDesc) });
+      }
+      if (options.waterAmount) {
+        this.setData({ 'form.waterAmount': decodeURIComponent(options.waterAmount) });
+        var waterUnit = decodeURIComponent(options.waterUnit || 'ml');
+        this.setData({ 'form.waterUnit': waterUnit });
+      }
+      if (options.foodType) {
+        var foodType = decodeURIComponent(options.foodType);
+        var foodTypeIndex = this.data.foodTypes.findIndex(function(t) { return t.key === foodType; });
+        this.setData({
+          'form.foodType': foodType,
+          foodTypeIndex: foodTypeIndex >= 0 ? foodTypeIndex : 0
+        });
+      }
+      if (options.dewormType) {
+        var dewormType = decodeURIComponent(options.dewormType);
+        var dewormTypeIndex = this.data.dewormTypes.findIndex(function(t) { return t.key === dewormType; });
+        this.setData({
+          'form.dewormType': dewormType,
+          dewormTypeIndex: dewormTypeIndex >= 0 ? dewormTypeIndex : 0
+        });
+      }
+      if (options.vaccineType) {
+        var vaccineType = decodeURIComponent(options.vaccineType);
+        var vaccineTypeIndex = this.data.vaccineTypes.findIndex(function(t) { return t.key === vaccineType; });
+        this.setData({
+          'form.vaccineType': vaccineType,
+          vaccineTypeIndex: vaccineTypeIndex >= 0 ? vaccineTypeIndex : 0
+        });
+      }
+      if (options.medicationType) {
+        var medicationType = decodeURIComponent(options.medicationType);
+        var medicationTypeIndex = this.data.medicationTypes.findIndex(function(t) { return t.key === medicationType; });
+        this.setData({
+          'form.medicationType': medicationType,
+          medicationTypeIndex: medicationTypeIndex >= 0 ? medicationTypeIndex : 0
+        });
+      }
+      if (options.notes) {
+        this.setData({ 'form.notes': decodeURIComponent(options.notes) });
+      }
       // 保存来源记录 ID，提交后关闭其提醒
       if (options.sourceId) {
         this._sourceRecordId = options.sourceId;
@@ -141,6 +205,113 @@ Page({
     } else {
       this.setData({ 'form.date': todayStr });
     }
+  },
+
+  // 加载来源记录数据（用于立即完成）
+  async loadSourceRecord(sourceId) {
+    showLoading('加载中...');
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'recordManage',
+        data: { action: 'get', data: { _id: sourceId } }
+      });
+
+      if (res.result && res.result.code === 0) {
+        var record = res.result.data;
+        var type = record.type || '';
+        var typeIndex = this.data.typeList.findIndex(function(t) { return t.key === type; });
+        var typeInfo = this.data.typeList[typeIndex >= 0 ? typeIndex : 0];
+
+        var today = new Date();
+        var todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+        this.setData({
+          'form.date': todayStr,
+          'form.type': type,
+          'form.title': record.title || '',
+          typeIndex: typeIndex >= 0 ? typeIndex : null,
+          titlePlaceholder: typeInfo ? typeInfo.titlePlaceholder : '标题',
+          hideTitle: typeInfo ? !!typeInfo.hideTitle : false
+        });
+
+        // 继承提醒设置
+        if (record.enableRemind && record.remindInterval && record.remindInterval > 0) {
+          this.setData({
+            'form.enableRemind': true,
+            'form.remindInterval': record.remindInterval
+          });
+          // 自定义间隔回显
+          if ([30, 60, 90, 180].indexOf(record.remindInterval) === -1) {
+            this.setData({ customInterval: String(record.remindInterval) });
+          }
+          this.calcNextDate(record.remindInterval);
+        }
+
+        // 预填类型特定数据
+        if (record.weight) this.setData({ 'form.weight': record.weight });
+        if (record.weightUnit) {
+          var weightUnit = record.weightUnit;
+          var unitIndex = this.data.weightUnits.findIndex(function(u) { return u.key === weightUnit; });
+          this.setData({
+            'form.weightUnit': weightUnit,
+            weightUnitIndex: unitIndex >= 0 ? unitIndex : 0
+          });
+        }
+        if (record.poopStatus) {
+          var poopStatus = record.poopStatus;
+          var poopStatusIndex = this.data.poopStatuses.findIndex(function(s) { return s.key === poopStatus; });
+          this.setData({
+            'form.poopStatus': poopStatus,
+            poopStatusIndex: poopStatusIndex >= 0 ? poopStatusIndex : 0
+          });
+        }
+        if (record.abnormalDesc) this.setData({ 'form.abnormalDesc': record.abnormalDesc });
+        if (record.waterAmount) this.setData({ 'form.waterAmount': record.waterAmount });
+        if (record.waterUnit) this.setData({ 'form.waterUnit': record.waterUnit });
+        if (record.foodType) {
+          var foodType = record.foodType;
+          var foodTypeIndex = this.data.foodTypes.findIndex(function(t) { return t.key === foodType; });
+          this.setData({
+            'form.foodType': foodType,
+            foodTypeIndex: foodTypeIndex >= 0 ? foodTypeIndex : 0
+          });
+        }
+        if (record.dewormType) {
+          var dewormType = record.dewormType;
+          var dewormTypeIndex = this.data.dewormTypes.findIndex(function(t) { return t.key === dewormType; });
+          this.setData({
+            'form.dewormType': dewormType,
+            dewormTypeIndex: dewormTypeIndex >= 0 ? dewormTypeIndex : 0
+          });
+        }
+        if (record.vaccineType) {
+          var vaccineType = record.vaccineType;
+          var vaccineTypeIndex = this.data.vaccineTypes.findIndex(function(t) { return t.key === vaccineType; });
+          this.setData({
+            'form.vaccineType': vaccineType,
+            vaccineTypeIndex: vaccineTypeIndex >= 0 ? vaccineTypeIndex : 0
+          });
+        }
+        if (record.medicationType) {
+          var medicationType = record.medicationType;
+          var medicationTypeIndex = this.data.medicationTypes.findIndex(function(t) { return t.key === medicationType; });
+          this.setData({
+            'form.medicationType': medicationType,
+            medicationTypeIndex: medicationTypeIndex >= 0 ? medicationTypeIndex : 0
+          });
+        }
+        if (record.notes) this.setData({ 'form.notes': record.notes });
+
+        // 保存来源记录 ID，提交后关闭其提醒
+        this._sourceRecordId = sourceId;
+      } else {
+        showError('获取记录数据失败');
+      }
+    } catch (err) {
+      console.error('加载来源记录失败：', err);
+      showError('加载记录数据失败');
+    }
+    hideLoading();
   },
 
   // 加载已有记录（编辑模式）
@@ -284,6 +455,10 @@ Page({
   onDateChange(e) {
     const field = e.currentTarget.dataset.field;
     this.setData({ ['form.' + field]: e.detail.value });
+    // 选择下次预计日期时，清空提醒间隔
+    if (field === 'nextDate') {
+      this.setData({ 'form.remindInterval': 0, customInterval: '' });
+    }
     // 修改记录日期时，如果已开启提醒，重新计算 nextDate
     if (field === 'date' && this.data.form.enableRemind && this.data.form.remindInterval > 0) {
       this.calcNextDate(this.data.form.remindInterval);
@@ -302,7 +477,7 @@ Page({
   // 选择预设间隔
   onSelectInterval(e) {
     var days = Number(e.currentTarget.dataset.days);
-    this.setData({ 'form.remindInterval': days, customInterval: '' });
+    this.setData({ 'form.remindInterval': days, customInterval: '', 'form.nextDate': '' });
     this.calcNextDate(days);
   },
 
@@ -310,7 +485,7 @@ Page({
   onCustomInterval(e) {
     var val = e.detail.value;
     var days = Number(val);
-    this.setData({ customInterval: val });
+    this.setData({ customInterval: val, 'form.nextDate': '' });
     if (days > 0) {
       this.setData({ 'form.remindInterval': days });
       this.calcNextDate(days);
@@ -386,6 +561,16 @@ Page({
           return false;
         }
         break;
+      case 'poop':
+        if (!form.poopStatus) {
+          showError('请选择尿便状态');
+          return false;
+        }
+        if (form.poopStatus === 'abnormal' && (!form.abnormalDesc || !form.abnormalDesc.trim())) {
+          showError('请输入异常描述');
+          return false;
+        }
+        break;
       case 'water':
         if (!form.waterAmount || !form.waterAmount.trim()) {
           showError('请输入饮水量');
@@ -402,6 +587,11 @@ Page({
         break;
       case 'checkup':
         break;
+    }
+    // 如果开启了提醒，必须填写下次预计日期
+    if (form.enableRemind && !form.nextDate) {
+      showError('请填写下次预计日期');
+      return false;
     }
     return true;
   },
@@ -455,10 +645,17 @@ Page({
       // 构建日期
       var fullDateStr = form.date;
 
+      // 获取类型标签用于默认标题
+      var typeLabel = '';
+      var typeItem = this.data.typeList.find(function(t) { return t.key === form.type; });
+      if (typeItem) {
+        typeLabel = typeItem.label;
+      }
+
       var fields = {
         type: form.type,
         date: new Date(fullDateStr),
-        title: form.title ? form.title.trim() : '',
+        title: form.title ? form.title.trim() : typeLabel,
         description: (form.description || '').trim(),
         nextDate: form.nextDate ? new Date(form.nextDate + ' 12:00') : null,
         enableRemind: !!form.enableRemind,
