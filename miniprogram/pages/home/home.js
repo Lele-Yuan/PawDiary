@@ -25,7 +25,9 @@ Page({
     currentPetRole: '',
     loaded: false,
     statusBarHeight: 20,
-    userReady: false
+    userReady: false,
+    showLoginModal: false,
+    isGuest: false
   },
 
   onLoad(options) {
@@ -62,7 +64,9 @@ Page({
       return;
     }
 
-    this.setData({ userReady: true });
+    // 判断是否为游客（没有nickName或为空）
+    var isGuest = !app.globalData.userInfo || !app.globalData.userInfo.nickName;
+    this.setData({ userReady: true, isGuest });
 
     // 无宠物时（欢迎页）不显示底部导航栏
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
@@ -195,7 +199,7 @@ Page({
 
       // 筛选有提醒且未过期的记录
       const reminders = records
-        .filter(r => r.enableRemind && r.nextDate && new Date(r.nextDate) >= now)
+        .filter(r => r.enableRemind && r.nextDate)
         .sort((a, b) => new Date(a.nextDate) - new Date(b.nextDate))
         .slice(0, 3);
 
@@ -271,38 +275,48 @@ Page({
   },
 
   // 添加宠物 / 跳转添加页面
+  // 点击"开启宠爱之旅"按钮
   goAddPet() {
     var app = getApp();
 
-    // 未登录时提示登录或跳过
-    if (!app.globalData.openid) {
-      wx.showModal({
-        title: '提示',
-        content: '登录后可同步数据至云端，是否登录？',
-        confirmText: '登录',
-        cancelText: '跳过',
-        success: function (res) {
-          if (res.confirm) {
-            // 点击登录，重新初始化用户
-            app.initUser().then(function () {
-              wx.navigateTo({
-                url: '/pages/pet-edit/pet-edit?mode=add'
-              });
-            });
-          } else if (res.cancel) {
-            // 点击跳过，直接跳转添加页面（本地模式）
-            wx.navigateTo({
-              url: '/pages/pet-edit/pet-edit?mode=add'
-            });
-          }
-        }
-      });
+    // 未登录时，使用通用登录弹窗组件
+    if (this.data.isGuest) {
+      this.setData({ showLoginModal: true });
       return;
     }
 
+    // 已登录，直接跳转到新建宠物页面
     wx.navigateTo({
       url: '/pages/pet-edit/pet-edit?mode=add'
     });
+  },
+
+  // 登录成功回调
+  onLoginSuccess(e) {
+    var { avatarUrl, nickName, phone } = e.detail;
+
+    // 更新全局状态
+    var userInfo = { ...app.globalData.userInfo, avatarUrl, nickName, phone };
+    app.globalData.userInfo = userInfo;
+
+    this.setData({
+      userInfo,
+      isGuest: false,
+      showLoginModal: false
+    });
+
+    // 重新加载数据
+    this.loadData();
+
+    // 跳转到新建宠物页面
+    wx.navigateTo({
+      url: '/pages/pet-edit/pet-edit?mode=add'
+    });
+  },
+
+  // 关闭登录弹窗
+  onLoginClose() {
+    this.setData({ showLoginModal: false });
   },
 
   // 快捷入口 - 清单
@@ -384,7 +398,7 @@ Page({
       return {
         title: 'PawDiary - 记录宠物生活的每一天',
         path: '/pages/home/home',
-        imageUrl: '/images/guide/bg.png'
+        imageUrl: '/images/guide/illust-main.png'
       };
     }
   },

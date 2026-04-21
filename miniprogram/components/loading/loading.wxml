@@ -1,4 +1,5 @@
 <view class="loading-page">
+  <slot></slot>
   <view class="loading-content">
     <view class="loading-dots">
       <view class="dot dot-1"></view>

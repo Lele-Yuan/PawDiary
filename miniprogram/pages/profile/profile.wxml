@@ -15,28 +15,44 @@
     <view class="memorial-float-btn" bindtap="goMemorial">
       <text class="memorial-float-icon">🕯️ 小天使🪽</text>
     </view>
+    
+    <view class="user-info-wrap">
+      <!-- 游客态 -->
+      <block wx:if="{{isGuest}}">
+        <text class="user-name">游客</text>
+        <view class="login-guide-btn" bindtap="onLogin">点击登录</view>
+      </block>
 
-    <!-- 游客态 -->
-    <block wx:if="{{isGuest}}">
-      <text class="user-name">游客</text>
-      <view class="login-guide-btn" bindtap="onLogin">
-        <text class="login-guide-text">点击登录</text>
-      </view>
-    </block>
-
-    <!-- 已登录态 -->
-    <block wx:else>
-      <text class="user-name">{{userInfo.nickName}}</text>
-      <view class="user-phone" wx:if="{{userInfo.phone}}">
-        <text class="user-phone-text">{{userInfo.phone[0]}}{{userInfo.phone[1]}}{{userInfo.phone[2]}}****{{userInfo.phone[7]}}{{userInfo.phone[8]}}{{userInfo.phone[9]}}{{userInfo.phone[10]}}</text>
-      </view>
-      <!-- 微信云 badge -->
-      <view class="cloud-badge">
-        <text class="cloud-badge-icon">☁</text>
-        <text class="cloud-badge-text">微信云已连接</text>
-      </view>
-    </block>
+      <!-- 已登录态 -->
+      <block wx:else>
+        <text class="user-name">{{userInfo.nickName}}</text>
+        <view class="user-phone" wx:if="{{userInfo.phone}}">
+          <text class="user-phone-text">{{userInfo.phone[0]}}{{userInfo.phone[1]}}{{userInfo.phone[2]}}****{{userInfo.phone[7]}}{{userInfo.phone[8]}}{{userInfo.phone[9]}}{{userInfo.phone[10]}}</text>
+        </view>
+        <!-- 微信云 badge -->
+        <view class="cloud-badge">
+          <text class="cloud-badge-icon">☁</text>
+          <text class="cloud-badge-text">微信云已连接</text>
+        </view>
+      </block>
+    </view>
   </view>
+
+  <!-- ===== 常用功能 ===== -->
+  <view class="quick-actions-section">
+    <text class="quick-actions-title">常用功能</text>
+    <view class="quick-actions-grid">
+      <view class="quick-action-item" bindtap="goToCustomerService">
+        <view class="quick-action-icon">💁</view>
+        <text class="quick-action-label">客服反馈</text>
+      </view>
+      <view class="quick-action-item" bindtap="goDogGuide">
+        <view class="quick-action-icon">📋</view>
+        <text class="quick-action-label">养宠知识</text>
+      </view>
+    </view>
+  </view>
+
 
   <!-- ===== 我的毛孩子 ===== -->
   <view class="family-section" wx:if="{{pets.length || true}}">
@@ -73,10 +89,13 @@
       <!-- 宠物信息 -->
       <view class="pet-card-info">
         <view class="pet-card-name-row">
-          <text class="pet-card-name">{{item.name}}</text>
+          <view class="pet-card-name">
+            {{item.name}}
+            <text class="pet-card-desc">{{item.age}}</text>
+          </view>
           <text class="pet-role-tag pet-role-joined" wx:if="{{item.role !== 'creator'}}">已加入</text>
         </view>
-        <text class="pet-card-desc">{{item.breed || '未知品种'}}{{item.age ? ' · ' + item.age + '岁' : ''}}</text>
+        <text class="pet-card-desc">{{item.breed || '未知品种'}} · {{item.weight}}kg</text>
       </view>
       <!-- 编辑按钮 -->
       <view
@@ -97,7 +116,7 @@
   </view>
 
   <!-- ===== Settings & Support ===== -->
-  <view class="settings-section">
+  <view class="settings-section" hidden>
     <text class="settings-title">设置与支持</text>
     <view class="settings-group">
 

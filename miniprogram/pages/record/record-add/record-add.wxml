@@ -25,6 +25,17 @@
       </picker>
     </view>
 
+    <!-- 发情类型：发情阶段选择 -->
+    <view class="form-group" wx:if="{{form.type === 'heat'}}">
+      <view class="form-label">发情阶段</view>
+      <picker mode="selector" range="{{heatStageOptions}}" range-key="label" value="{{heatStageIndex}}" bindchange="onHeatStageChange">
+        <view class="form-picker">
+          <text class="{{heatStageIndex !== null ? '' : 'placeholder'}}">{{heatStageIndex !== null ? heatStageOptions[heatStageIndex].label : '请选择发情阶段'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
     <!-- 标题（根据类型显示或隐藏） -->
     <view class="form-group" wx:if="{{!hideTitle}}">
       <view class="form-label">{{titlePlaceholder}}</view>

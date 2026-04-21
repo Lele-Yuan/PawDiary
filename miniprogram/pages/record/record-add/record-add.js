@@ -81,8 +81,15 @@ Page({
       vaccineType: '',
       medicationType: '',
       dosage: '',
-      hospitalName: ''
-    }
+      hospitalName: '',
+      // 发情专用字段
+      heatStage: ''
+    },
+    // 发情阶段选项
+    heatStageOptions: [
+      { key: 'started', label: '发情开始' },
+      { key: 'ended', label: '发情结束' }
+    ]
   },
 
   onLoad(options) {
@@ -301,6 +308,15 @@ Page({
           });
         }
         if (record.notes) this.setData({ 'form.notes': record.notes });
+        // 处理发情阶段
+        if (record.heatStage) {
+          var heatStage = record.heatStage;
+          var heatStageIndex = this.data.heatStageOptions.findIndex(function(s) { return s.key === heatStage; });
+          this.setData({
+            'form.heatStage': heatStage,
+            heatStageIndex: heatStageIndex >= 0 ? heatStageIndex : 0
+          });
+        }
 
         // 保存来源记录 ID，提交后关闭其提醒
         this._sourceRecordId = sourceId;
@@ -361,7 +377,9 @@ Page({
           vaccineType: r.vaccineType || '',
           medicationType: r.medicationType || '',
           dosage: r.dosage || '',
-          hospitalName: r.hospitalName || ''
+          hospitalName: r.hospitalName || '',
+          // 发情专用字段
+          heatStage: r.heatStage || ''
         },
         typeIndex: typeIndex >= 0 ? typeIndex : null,
         titlePlaceholder: typeInfo ? typeInfo.titlePlaceholder : '标题',
@@ -372,7 +390,9 @@ Page({
         foodTypeIndex: r.foodType === 'dry' ? 0 : (r.foodType === 'wet' ? 1 : (r.foodType === 'homemade' ? 2 : null)),
         dewormTypeIndex: r.dewormType === 'external' ? 0 : (r.dewormType === 'internal' ? 1 : (r.dewormType === 'both' ? 2 : null)),
         vaccineTypeIndex: r.vaccineType === 'rabies' ? 0 : (r.vaccineType === 'infectious' ? 1 : null),
-        medicationTypeIndex: r.medicationType === 'oral' ? 0 : r.medicationType === 'external' ? 1 : (r.medicationType === 'rectal' ? 2 : (r.medicationType === 'injection' ? 3 : null))
+        medicationTypeIndex: r.medicationType === 'oral' ? 0 : r.medicationType === 'external' ? 1 : (r.medicationType === 'rectal' ? 2 : (r.medicationType === 'injection' ? 3 : null)),
+        // 发情阶段索引
+        heatStageIndex: r.heatStage === 'ended' ? 1 : 0
       });
       hideLoading();
     } catch (err) {
@@ -399,8 +419,17 @@ Page({
       foodTypeIndex: null,
       dewormTypeIndex: null,
       vaccineTypeIndex: null,
-      medicationTypeIndex: null
+      medicationTypeIndex: null,
+      // 发情类型时设置阶段索引
+      heatStageIndex: (type === 'heat') ? 0 : null
     });
+  },
+
+  // 选择发情阶段
+  onHeatStageChange(e) {
+    const index = e.detail.value;
+    const stage = this.data.heatStageOptions[index].key;
+    this.setData({ heatStageIndex: index, 'form.heatStage': stage });
   },
 
   // 通用输入
@@ -673,7 +702,9 @@ Page({
         vaccineType: form.vaccineType,
         medicationType: form.medicationType,
         dosage: form.dosage,
-        hospitalName: form.hospitalName
+        hospitalName: form.hospitalName,
+        // 发情专用字段
+        heatStage: form.heatStage
       };
 
       if (this.data.editId) {

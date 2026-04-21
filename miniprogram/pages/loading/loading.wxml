@@ -1,2 +1,4 @@
-<nav-bar title="加载中" back="{{false}}" />
-<loading-view />
+<!-- <nav-bar title="加载中" back="{{false}}" /> -->
+<loading-view text="亲爱的铲屎官你好\n欢迎来到爪印日记 PawDiary">
+    <image width="100%" src="../../images/guide/illust-main.png" mode="aspectFit" />
+</loading-view>

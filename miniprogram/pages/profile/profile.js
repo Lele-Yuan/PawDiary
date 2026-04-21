@@ -1,5 +1,4 @@
-const { showLoading, hideLoading, showSuccess, showError } = require('../../utils/util');
-const { checkImageSize } = require('../../utils/limit');
+const { showLoading, hideLoading, showSuccess, showError, calcAge } = require('../../utils/util');
 
 Page({
   data: {
@@ -78,7 +77,12 @@ Page({
         name: 'petManage',
         data: { action: 'list' }
       });
-      const pets = (res.result && res.result.code === 0) ? res.result.data : [];
+      const pets = ((res.result && res.result.code === 0) ? res.result.data : []).map(pet => {
+        return {
+          ...pet,
+          age: calcAge(pet.birthday) || ''
+        };
+      });
 
       let currentPetId = app.globalData.currentPetId;
       if (!currentPetId || !pets.find(p => p._id === currentPetId)) {
@@ -87,6 +91,7 @@ Page({
       }
 
       this.setData({ pets, currentPetId });
+      console.log('pets: ', pets);
     } catch (err) {
       console.error('加载宠物列表失败：', err);
     }
@@ -298,6 +303,25 @@ Page({
   goStats() {
     wx.navigateTo({
       url: '/pages/bill/bill-stats/bill-stats'
+    });
+  },
+
+  // 跳转地图
+  goToMap() {
+    wx.navigateTo({ url: '/pages/map/map' });
+  },
+
+  // 客服反馈（跳转公众号文章）
+  goToCustomerService() {
+    wx.navigateTo({
+      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s?__biz=MzI1NDQ3NTUxMA==&tempkey=MTM3MF8rR3JGcEdjaGtKcmwvaitlZjlPbU9VWHVBUjA5cnhIMmRua1AwU0xxWG1FamRJOXJRRWduLWpUUW90d1NCRTgyRHRHMDVia0ZZUkVQT0JTZFdKYTJ2a1lyZUpXcGdkcENaTlg1VVdNOUJnRm5HYmdsT0dYRWdDSWhDSGEtdEQ4dlJVak56UHVwQ1Vod3dzV2NkV1hoblhZbXZJbGxjM3NTT25BMHZ3fn4%3D&chksm=e9c5ee67deb267710fa3a16c8717226f32d1e94a0c11e101d25e88a3e4f8e27623d94660760d&token=35338396&lang=zh_CN#rd')
+    });
+  },
+  
+  // 养宠指南（跳转公众号文章）
+  goDogGuide() {
+    wx.navigateTo({
+      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s?__biz=MzI1NDQ3NTUxMA==&mid=2247484409&idx=1&sn=02d7ba44d6c929cc092cac36d40c7d8b&chksm=e9c5ee60deb267765f88441120a51e4523d0d1551033cb3a452148fdf37737bea8c716799dea&scene=178&cur_album_id=4456222019121938438')
     });
   },
 

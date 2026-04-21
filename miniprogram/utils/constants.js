@@ -11,6 +11,7 @@ const RECORD_TYPES = [
   { key: 'vaccine', label: '疫苗', titlePlaceholder: '疫苗名称', color: '#F5A623', icon: '💉' },
   { key: 'checkup', label: '就医', titlePlaceholder: '就医记录', color: '#3C6663', icon: '🩺' },
   { key: 'illness', label: '给药', titlePlaceholder: '药品名称', color: '#E53935', icon: '🏥' },
+  { key: 'heat', label: '发情', hideTitle: true, color: '#E91E63', icon: '💓' },
   // 洗护记录
   { key: 'bath', label: '洗澡', hideTitle: true, color: '#9C27B0', icon: '🛁' },
   { key: 'nail', label: '剪指甲', hideTitle: true, color: '#795548', icon: '💅' },

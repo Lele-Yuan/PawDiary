@@ -131,6 +131,10 @@ Page({
             var vaccineTypeMap = { 'rabies': '狂犬疫苗', 'infectious': '传染病疫苗' };
             detailText = vaccineTypeMap[r.vaccineType] || '未记录';
             break;
+          case 'heat':
+            var heatStageMap = { 'started': '开始', 'ended': '结束' };
+            detailText = heatStageMap[r.heatStage] || '未记录';
+            break;
           default:
             detailText = '';
         }

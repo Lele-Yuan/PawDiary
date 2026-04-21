@@ -11,6 +11,7 @@ Page({
       RECORD_TYPE_MAP.vaccine,
       RECORD_TYPE_MAP.checkup,
       RECORD_TYPE_MAP.illness,
+      RECORD_TYPE_MAP.heat,
     ],
     groomingTypes: [
       RECORD_TYPE_MAP.bath,

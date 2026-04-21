@@ -1,7 +1,8 @@
 {
   "usingComponents": {
     "empty-state": "/components/empty-state/empty-state",
-    "pet-card": "./components/pet-card/pet-card"
+    "pet-card": "./components/pet-card/pet-card",
+    "login-modal": "/components/login-modal/login-modal"
   },
   "navigationBarTitleText": "宠物管家",
   "navigationStyle": "custom"

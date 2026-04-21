@@ -5,9 +5,8 @@
 /* ===== 用户信息区 ===== */
 .user-section {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 48rpx 32rpx 40rpx;
+  padding: 48rpx 32rpx 58rpx;
   position: relative;
 }
 
@@ -45,7 +44,6 @@
   height: 112rpx;
   border-radius: 48rpx;
   overflow: hidden;
-  margin-bottom: 24rpx;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
 }
 
@@ -54,12 +52,20 @@
   height: 112rpx;
 }
 
+.user-info-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 24rpx;
+}
+
 .user-name {
   font-size: 40rpx;
   font-weight: 800;
   color: #313333;
   letter-spacing: -1rpx;
-  margin-bottom: 20rpx;
   text-align: center;
 }
 
@@ -90,12 +96,9 @@
 .login-guide-btn {
   background-color: #6B2D1A;
   border-radius: 60rpx;
-  padding: 16rpx 56rpx;
+  padding: 8rpx 28rpx;
   margin-top: 8rpx;
-}
-
-.login-guide-text {
-  font-size: 28rpx;
+  font-size: 24rpx;
   font-weight: 700;
   color: #FFFFFF;
   letter-spacing: 2rpx;
@@ -255,6 +258,50 @@
   padding: 16rpx 0;
 }
 
+/* ===== 常用功能 ===== */
+.quick-actions-section {
+  padding: 0 32rpx;
+  margin-bottom: 40rpx;
+}
+
+.quick-actions-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #313333;
+  margin-bottom: 20rpx;
+  padding-left: 4rpx;
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24rpx;
+}
+
+.quick-action-item {
+  border-radius: 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.quick-action-icon {
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+  line-height: 1;
+}
+
+.quick-action-label {
+  font-size: 26rpx;
+  color: #5E5F5D;
+  font-weight: 500;
+}
+
+
 /* ===== 我的毛孩子 ===== */
 .family-section {
   padding: 0 32rpx;
@@ -366,7 +413,6 @@
 }
 
 .pet-card-desc {
-  display: block;
   font-size: 24rpx;
   color: #5E5F5D;
 }

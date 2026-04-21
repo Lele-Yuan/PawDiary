@@ -247,11 +247,11 @@
 }
 
 .guide-link-map {
-  background: linear-gradient(145deg, #F5E6CC 0%, rgba(254, 157, 127, 0.2) 100%);
+  background: linear-gradient(145deg, #DDF1EF 0%, #CFE8E4 100%);
 }
 
 .guide-link-dog {
-  background: linear-gradient(145deg, #DDF1EF 0%, #CFE8E4 100%);
+  background: linear-gradient(145deg, #F5E6CC 0%, rgba(254, 157, 127, 0.2) 100%);
 }
 
 /* ===== 家庭成员 ===== */

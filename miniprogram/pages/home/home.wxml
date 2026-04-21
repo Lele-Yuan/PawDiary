@@ -87,17 +87,10 @@
     <view class="guide-links">
       <view class="guide-link guide-link-map" bindtap="goMap">
         <view class="guide-link-copy">
-          <view class="guide-link-title">地图</view>
-          <view class="guide-link-desc">宠物友好地点</view>
+          <view class="guide-link-title">宠好地图</view>
+          <view class="guide-link-desc">标记一处宠物友好地点，喊上好友去遛狗</view>
         </view>
         <view class="guide-link-deco">🗺️</view>
-      </view>
-      <view class="guide-link guide-link-dog" bindtap="goDogGuide">
-        <view class="guide-link-copy">
-          <view class="guide-link-title">养宠指南</view>
-          <view class="guide-link-desc">猫猫狗狗养育完全手册</view>
-        </view>
-        <view class="guide-link-deco">🐶🐱</view>
       </view>
     </view>
 
@@ -119,9 +112,11 @@
             <text class="reminder-date">{{item.nextDateStr}}</text>
           </view>
         </view>
-        <view class="reminder-countdown">
-          <text class="countdown-num">{{item.daysLeft}}</text>
-          <text class="countdown-label">天后</text>
+        <view class="reminder-countdown" wx:if="{{item.daysLeft >= 0}}">
+          <view class="countdown-label"><text class="countdown-num">{{item.daysLeft}} </text>天后</view>
+        </view>
+        <view class="reminder-countdown" wx:if="{{item.daysLeft < 0}}">
+          <view class="countdown-label">已超期<text class="countdown-num"> {{-item.daysLeft}} </text>天</view>
         </view>
       </view>
     </view>
@@ -133,3 +128,13 @@
     </view>
   </view>
 </view>
+
+<!-- 登录弹窗组件 -->
+<login-modal
+  show="{{showLoginModal}}"
+  avatarUrl="{{userInfo.avatarUrl}}"
+  nickName="{{userInfo.nickName}}"
+  phone="{{userInfo.phone}}"
+  bind:success="onLoginSuccess"
+  bind:close="onLoginClose"
+/>

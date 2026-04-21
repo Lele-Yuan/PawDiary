@@ -48,7 +48,7 @@ async function addRecord(openid, data) {
     'weight', 'poop', 'diet', 'water',
     'deworm', 'vaccine', 'checkup', 'illness',
     'bath', 'nail', 'ear', 'paw', 'gland', 'teeth', 'beauty',
-    'disinfect', 'litter', 'toy', 'cage', 'abnormal'
+    'disinfect', 'litter', 'toy', 'cage', 'abnormal', 'heat'
   ];
   if (!validTypes.includes(data.type)) {
     return { code: -1, message: '无效的记录类型' };
@@ -79,8 +79,12 @@ async function addRecord(openid, data) {
     dewormType: data.dewormType || '',
     vaccineType: data.vaccineType || '',
     medicationType: data.medicationType || '',
+    dosage: data.dosage || '',
+    hospitalName: data.hospitalName || '',
     notes: data.notes || '',
     hour: data.hour !== undefined ? data.hour : 12,
+    // 发情专用字段
+    heatStage: data.heatStage || '',
     createdAt: new Date()
   };
 
@@ -139,6 +143,8 @@ async function updateRecord(openid, data) {
   if (data.medicationType !== undefined) updateData.medicationType = data.medicationType;
   if (data.notes !== undefined) updateData.notes = data.notes;
   if (data.hour !== undefined) updateData.hour = data.hour;
+  // 发情专用字段
+  if (data.heatStage !== undefined) updateData.heatStage = data.heatStage;
 
   await db.collection('records').doc(data._id).update({ data: updateData });
   return { code: 0, message: '更新成功' };
