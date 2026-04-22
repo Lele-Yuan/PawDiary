@@ -1,4 +1,4 @@
-const { RECORD_TYPES } = require('../../../utils/constants');
+const { RECORD_TYPES, NOTIFY_TEMPLATE_ID } = require('../../../utils/constants');
 const { showLoading, hideLoading, showSuccess, showError } = require('../../../utils/util');
 const { uploadFile } = require('../../../utils/cloud');
 const { MAX_PHOTOS_PER_DETAIL, checkPhotoLimit, incrementPhotoCount, checkImageSize } = require('../../../utils/limit');
@@ -68,6 +68,8 @@ Page({
       nextDate: '',
       enableRemind: false,
       remindInterval: 0,
+      remindAdvance: 0,
+      remindTime: '08:00',
       images: [],
       // 类型特定字段
       weight: '',
@@ -364,6 +366,8 @@ Page({
           nextDate: formatD(r.nextDate),
           enableRemind: !!r.enableRemind,
           remindInterval: r.remindInterval || 0,
+          remindAdvance: r.remindAdvance !== undefined ? r.remindAdvance : 0,
+          remindTime: r.remindTime || '08:00',
           images: r.images || [],
           // 类型特定字段
           weight: r.weight || '',
@@ -499,8 +503,24 @@ Page({
     var enabled = e.detail.value;
     this.setData({ 'form.enableRemind': enabled });
     if (!enabled) {
-      this.setData({ 'form.nextDate': '', 'form.remindInterval': 0, customInterval: '' });
+      this.setData({
+        'form.nextDate': '',
+        'form.remindInterval': 0,
+        'form.remindAdvance': 0,
+        'form.remindTime': '08:00',
+        customInterval: ''
+      });
     }
+  },
+
+  // 提醒提前天数选择（0=当天，1=前一天）
+  onRemindAdvanceChange(e) {
+    this.setData({ 'form.remindAdvance': e.currentTarget.dataset.val });
+  },
+
+  // 提醒时间点选择（HH:mm）
+  onRemindTimeChange(e) {
+    this.setData({ 'form.remindTime': e.detail.value });
   },
 
   // 选择预设间隔
@@ -637,12 +657,22 @@ Page({
       return;
     }
 
+    var form = this.data.form;
+
+    // 开启提醒时请求订阅消息授权（必须在 tap 事件同步调用链中触发）
+    if (form.enableRemind) {
+      await new Promise(function(resolve) {
+        wx.requestSubscribeMessage({
+          tmplIds: [NOTIFY_TEMPLATE_ID],
+          complete: function() { resolve(); }
+        });
+      });
+    }
+
     this.setData({ submitting: true });
     showLoading('保存中...');
 
     try {
-      var form = this.data.form;
-
       // 统计本次新增图片（非已上传的 cloud:// 图片）
       var newPhotoCount = form.images.filter(function(img) { return !img.startsWith('cloud://'); }).length;
       if (newPhotoCount > 0) {
@@ -686,9 +716,19 @@ Page({
         date: new Date(fullDateStr),
         title: form.title ? form.title.trim() : typeLabel,
         description: (form.description || '').trim(),
-        nextDate: form.nextDate ? new Date(form.nextDate + ' 12:00') : null,
+        nextDate: form.nextDate ? new Date(form.nextDate + 'T12:00:00') : null,
         enableRemind: !!form.enableRemind,
         remindInterval: form.enableRemind ? (form.remindInterval || 0) : 0,
+        remindAdvance: form.enableRemind ? (form.remindAdvance || 0) : 0,
+        remindTime: form.enableRemind ? (form.remindTime || '08:00') : '',
+        remindSendAt: (function() {
+          if (!form.enableRemind || !form.nextDate || !form.remindTime) return null;
+          var d = new Date(form.nextDate);
+          d.setDate(d.getDate() - (form.remindAdvance || 0));
+          var parts = (form.remindTime || '08:00').split(':');
+          d.setHours(parseInt(parts[0]), parseInt(parts[1]), 0, 0);
+          return d;
+        })(),
         images: uploadedImages,
         // 类型特定字段
         weight: form.weight,

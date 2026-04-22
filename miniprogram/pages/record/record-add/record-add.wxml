@@ -241,6 +241,26 @@
         <text class="preview-text">下次提醒：{{form.nextDate}}</text>
       </view>
     </view>
+
+    <!-- 通知时间设置（提前天数 + 时间点） -->
+    <view class="remind-time-section" wx:if="{{form.enableRemind}}">
+      <view class="form-label">通知时间</view>
+      <view class="remind-advance-tabs">
+        <view class="tab-item {{form.remindAdvance === 0 ? 'active' : ''}}"
+          bindtap="onRemindAdvanceChange" data-val="{{0}}">当天</view>
+        <view class="tab-item {{form.remindAdvance === 1 ? 'active' : ''}}"
+          bindtap="onRemindAdvanceChange" data-val="{{1}}">前一天</view>
+      </view>
+      <picker mode="time" value="{{form.remindTime}}" bindchange="onRemindTimeChange">
+        <view class="remind-time-picker">
+          <text class="remind-time-label">提醒时刻</text>
+          <view class="remind-time-right">
+            <text class="remind-time-value">{{form.remindTime || '08:00'}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+      </picker>
+    </view>
   </view>
 
   <!-- 图片上传 -->

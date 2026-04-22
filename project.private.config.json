@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "上门铲屎遛狗",
+          "pathName": "pages/care/care",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "「雪糕」邀请成员",
           "pathName": "pages/invite/invite",
           "query": "id=33956e3d69def6010452e9552dee9c5e",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "纪念馆",

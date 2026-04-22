@@ -1,0 +1,561 @@
+/* ===== 发布互助页 ===== */
+.add-page {
+  min-height: 100vh;
+}
+
+/* 滚动容器（高度通过 wxml 内联 style 动态设置） */
+.add-scroll {
+  box-sizing: border-box;
+}
+
+/* 表单区块 */
+.form-section {
+  border-radius: 32rpx;
+  margin: 24rpx 28rpx 0;
+  padding: 32rpx;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.form-section-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2D2D2D;
+  display: block;
+  margin-bottom: 24rpx;
+}
+
+.section-title-row .form-section-title {
+  margin-bottom: 0;
+}
+
+.required-mark {
+  color: #E8875A;
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-left: 8rpx;
+}
+
+.form-section-hint {
+  font-size: 22rpx;
+  color: #AAAAAA;
+  margin-left: auto;
+}
+
+/* 角色选择 */
+.role-options {
+  display: flex;
+  gap: 16rpx;
+}
+
+.role-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28rpx 16rpx;
+  border-radius: 24rpx;
+  border: 2rpx solid #E8E0D4;
+  transition: all 0.2s;
+}
+
+.role-option-active-helper {
+  border-color: #E8875A;
+  background: rgba(232, 135, 90, 0.06);
+}
+
+.role-option-active-owner {
+  border-color: #8ECFC9;
+  background: rgba(142, 207, 201, 0.08);
+}
+
+.role-option-icon {
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+}
+
+.role-option-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.role-option-label {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #2D2D2D;
+  margin-bottom: 4rpx;
+}
+
+.role-option-desc {
+  font-size: 22rpx;
+  color: #888888;
+}
+
+/* 服务类型选择 */
+.service-options {
+  display: flex;
+  gap: 16rpx;
+}
+
+.service-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 8rpx;
+  border-radius: 20rpx;
+  border: 2rpx solid #E8E0D4;
+  background: #FAFAFA;
+  transition: all 0.2s;
+}
+
+.service-option-active {
+  border-color: #E8875A;
+  background: rgba(232, 135, 90, 0.06);
+}
+
+.service-option-icon {
+  font-size: 36rpx;
+  margin-bottom: 8rpx;
+}
+
+.service-option-label {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #2D2D2D;
+}
+
+/* 异宠类型输入框 */
+.exotic-input-wrap {
+  margin-top: 16rpx;
+}
+
+.exotic-input-wrap .form-input {
+  margin-bottom: 0;
+  border-color: #8ECFC9;
+  background: #F0FAF9;
+}
+
+/* 地点选择 */
+.location-picker {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: #F9F6F2;
+  border-radius: 20rpx;
+  border: 1rpx solid #E8E0D4;
+}
+
+.location-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.location-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #2D2D2D;
+  word-break: break-all;
+}
+
+.location-text.placeholder {
+  color: #BBBBBB;
+}
+
+.location-arrow {
+  font-size: 36rpx;
+  color: #BBBBBB;
+  flex-shrink: 0;
+  margin-left: 8rpx;
+}
+
+/* 半径 slider */
+.radius-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.radius-value-text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #E8875A;
+  margin-left: auto;
+  margin-bottom: 24rpx;
+}
+
+.slider-label {
+  font-size: 22rpx;
+  color: #AAAAAA;
+  flex-shrink: 0;
+  width: 48rpx;
+  text-align: center;
+}
+
+.radius-slider {
+  flex: 1;
+}
+
+/* 时间模式切换 */
+.time-mode-tabs {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.time-mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #888888;
+  background: #F5F0EA;
+  transition: all 0.2s;
+}
+
+.time-mode-tab-active {
+  background: #6B2D1A;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* 日期区间 */
+.date-range-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.data-time-picker {
+  flex: 1;
+}
+
+.date-picker-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 20rpx 20rpx;
+  border-radius: 20rpx;
+  background: #F9F6F2;
+  border: 1rpx solid #E8E0D4;
+  font-size: 26rpx;
+  color: #2D2D2D;
+}
+
+.date-picker-btn.placeholder {
+  color: #BBBBBB;
+}
+
+.date-picker-icon {
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.date-range-sep {
+  font-size: 28rpx;
+  color: #E8875A;
+  flex-shrink: 0;
+}
+
+/* 多选日历 */
+.calendar-wrap {
+  background: #FAF6F0;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  border: 1rpx solid #E8E0D4;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.calendar-nav-btn {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 44rpx;
+  color: #E8875A;
+  background: #FFF0E8;
+  line-height: 1;
+}
+
+.calendar-month-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #3D1C0A;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 12rpx;
+}
+
+.weekday-label {
+  text-align: center;
+  font-size: 22rpx;
+  color: #BBAA99;
+  padding: 8rpx 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8rpx;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 26rpx;
+  color: #3D1C0A;
+}
+
+.calendar-day-today {
+  border: 2rpx solid #E8875A;
+  color: #E8875A;
+  font-weight: 600;
+}
+
+.calendar-day-selected {
+  background: #E8875A;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.calendar-day-past {
+  color: #CCBBAA;
+}
+
+.calendar-day-empty {
+  pointer-events: none;
+}
+
+/* 已选日期摘要 */
+.selected-dates-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 4rpx;
+  margin-bottom: 20rpx;
+}
+
+.selected-dates-label {
+  font-size: 26rpx;
+  color: #E8875A;
+  font-weight: 600;
+}
+
+.selected-dates-clear {
+  font-size: 24rpx;
+  color: #BBAA99;
+  padding: 8rpx 16rpx;
+}
+
+/* 每日时间段 */
+.time-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.time-slot-picker {
+  flex: 1;
+  padding: 18rpx 24rpx;
+  background: #F9F6F2;
+  border-radius: 20rpx;
+  border: 1rpx solid #E8E0D4;
+  font-size: 28rpx;
+  color: #2D2D2D;
+  text-align: center;
+}
+
+.time-slot-picker.placeholder {
+  color: #BBBBBB;
+}
+
+.time-sep {
+  font-size: 28rpx;
+  color: #BBBBBB;
+  flex-shrink: 0;
+}
+
+/* 表单输入 */
+.form-input {
+  margin-bottom: 16rpx;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  background: #F9F6F2;
+  border-radius: 20rpx;
+  border: 1rpx solid #E8E0D4;
+  margin-bottom: 16rpx;
+  overflow: hidden;
+}
+
+.input-unit-input {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+.input-unit {
+  padding: 0 24rpx;
+  font-size: 26rpx;
+  color: #AAAAAA;
+  flex-shrink: 0;
+}
+
+/* 联系方式 */
+.contact-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #F9F6F2;
+  border-radius: 20rpx;
+  border: 1rpx solid #E8E0D4;
+  margin-bottom: 16rpx;
+  overflow: hidden;
+}
+
+.contact-input-icon {
+  font-size: 28rpx;
+  padding: 0 16rpx;
+  flex-shrink: 0;
+}
+
+.contact-input {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+/* textarea */
+.form-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: 20rpx 24rpx;
+  background: #F9F6F2;
+  border-radius: 20rpx;
+  border: 1rpx solid #E8E0D4;
+  font-size: 28rpx;
+  color: #2D2D2D;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.textarea-count {
+  display: block;
+  text-align: right;
+  font-size: 22rpx;
+  color: #BBBBBB;
+  margin-top: 8rpx;
+}
+
+/* 提交按钮 */
+.submit-wrap {
+  padding: 40rpx 28rpx 0;
+}
+
+.submit-btn {
+  background: #6B2D1A;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 700;
+  text-align: center;
+  padding: 28rpx;
+  border-radius: 64rpx;
+  box-shadow: 0 8rpx 24rpx rgba(107, 45, 26, 0.25);
+  transition: opacity 0.2s;
+}
+
+.submit-btn-loading {
+  background: #BBBBBB;
+  box-shadow: none;
+}
+
+.safe-bottom {
+  height: 80rpx;
+}
+
+/* 宠物快速选择 */
+.pet-select-hint {
+  display: block;
+  font-size: 24rpx;
+  color: #AAAAAA;
+  margin-bottom: 20rpx;
+}
+
+.pet-select-scroll {
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+  margin-bottom: 28rpx;
+}
+
+.pet-select-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  border: 2rpx solid #E8E0D4;
+  background: #FAFAFA;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.pet-select-item-active {
+  border-color: #8ECFC9;
+  background: rgba(142, 207, 201, 0.1);
+}
+
+.pet-select-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  margin-bottom: 12rpx;
+  background: #F5EDD0;
+}
+
+.pet-select-name {
+  font-size: 24rpx;
+  color: #2D2D2D;
+  font-weight: 500;
+  max-width: 88rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-select-item-active .pet-select-name {
+  color: #3C6663;
+  font-weight: 700;
+}

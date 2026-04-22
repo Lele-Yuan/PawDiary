@@ -54,6 +54,13 @@ async function addRecord(openid, data) {
     return { code: -1, message: '无效的记录类型' };
   }
 
+  // 查询宠物名称（冗余存储，供通知消息使用）
+  var petName = '';
+  try {
+    const petRes = await db.collection('pets').doc(data.petId).get();
+    if (petRes.data) petName = petRes.data.name || '';
+  } catch (e) {}
+
   const recordData = {
     _openid: openid,
     petId: data.petId,
@@ -66,6 +73,11 @@ async function addRecord(openid, data) {
     nextDate: data.nextDate ? new Date(data.nextDate) : null,
     enableRemind: data.enableRemind || false,
     remindInterval: data.remindInterval || 0,
+    remindAdvance: data.remindAdvance !== undefined ? data.remindAdvance : 0,
+    remindTime: data.remindTime || '',
+    remindSendAt: data.remindSendAt ? new Date(data.remindSendAt) : null,
+    remindSentAt: null,
+    petName: petName,
     images: data.images || [],
     // 类型特定字段
     weight: data.weight || '',
@@ -89,6 +101,33 @@ async function addRecord(openid, data) {
   };
 
   const res = await db.collection('records').add({ data: recordData });
+
+  // 体重记录：检查是否是最新日期，若是则同步更新宠物基本信息中的体重
+  if (data.type === 'weight' && data.weight) {
+    try {
+      const recordDate = new Date(data.date);
+      // 查询该宠物是否存在比此次更晚的体重记录
+      const newerRes = await db.collection('records')
+        .where({ petId: data.petId, type: 'weight', date: _.gt(recordDate) })
+        .limit(1)
+        .get();
+
+      if (newerRes.data.length === 0) {
+        // 是最新日期，更新宠物档案中的当前体重和历史记录
+        const newWeight = Number(data.weight);
+        await db.collection('pets').doc(data.petId).update({
+          data: {
+            weight: newWeight,
+            weightHistory: _.push([{ date: recordDate, weight: newWeight }]),
+            updatedAt: new Date()
+          }
+        });
+      }
+    } catch (e) {
+      // 体重同步失败不影响记录写入结果
+    }
+  }
+
   return { code: 0, message: '添加成功', data: { _id: res._id } };
 }
 
@@ -128,6 +167,13 @@ async function updateRecord(openid, data) {
   if (data.nextDate !== undefined) updateData.nextDate = data.nextDate ? new Date(data.nextDate) : null;
   if (data.enableRemind !== undefined) updateData.enableRemind = data.enableRemind;
   if (data.remindInterval !== undefined) updateData.remindInterval = data.remindInterval;
+  if (data.remindAdvance !== undefined) updateData.remindAdvance = data.remindAdvance;
+  if (data.remindTime !== undefined) updateData.remindTime = data.remindTime;
+  if (data.remindSendAt !== undefined) {
+    updateData.remindSendAt = data.remindSendAt ? new Date(data.remindSendAt) : null;
+    // remindSendAt 变更时重置已发送标记，确保新时间点能正常推送
+    updateData.remindSentAt = null;
+  }
   if (data.images !== undefined) updateData.images = data.images;
   // 类型特定字段
   if (data.weight !== undefined) updateData.weight = data.weight;

@@ -1,0 +1,9 @@
+{
+  "name": "careManage",
+  "version": "1.0.0",
+  "description": "代铲屎遛狗互助帖子管理",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

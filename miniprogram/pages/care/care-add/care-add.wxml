@@ -1,0 +1,297 @@
+<view class="add-page">
+  <!-- 顶部导航 -->
+  <nav-bar title="{{editId ? '编辑互助' : '发布互助'}}" back="{{true}}" />
+
+  <scroll-view class="add-scroll" scroll-y style="height: calc(100vh - {{navHeight}}px)">
+    <!-- 1. 角色选择 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="form-section-title">我是？</text>
+        <text class="required-mark">*</text>
+      </view>
+      <view class="role-options">
+        <view
+          class="role-option {{role === item.key ? 'role-option-active-' + item.key : ''}}"
+          wx:for="{{roleOptions}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onRoleChange"
+        >
+          <text class="role-option-icon">{{item.icon}}</text>
+          <view class="role-option-text">
+            <text class="role-option-label">{{item.label}}</text>
+            <text class="role-option-desc">{{item.desc}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 2. 服务类型 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="form-section-title">服务类型</text>
+        <text class="required-mark">*</text>
+      </view>
+      <view class="service-options">
+        <view
+          class="service-option {{serviceType === item.key ? 'service-option-active' : ''}}"
+          wx:for="{{serviceOptions}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onServiceChange"
+        >
+          <text class="service-option-icon">{{item.icon}}</text>
+          <text class="service-option-label">{{item.label}}</text>
+        </view>
+      </view>
+      <!-- 异宠类型输入（仅选择「异宠」时显示） -->
+      <view class="exotic-input-wrap" wx:if="{{serviceType === 'other'}}">
+        <input
+          class="form-input"
+          placeholder="请填写异宠类型，如：仓鼠、龟、蜥蜴..."
+          value="{{exoticPetType}}"
+          bindinput="onExoticPetTypeInput"
+          maxlength="20"
+        />
+      </view>
+    </view>
+
+    <!-- 3. 服务地点 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="form-section-title">服务地点</text>
+        <text class="required-mark">*</text>
+      </view>
+      <view class="location-picker" bindtap="onChooseLocation">
+        <text class="location-icon">📍</text>
+        <text class="location-text {{locationAddress ? '' : 'placeholder'}}">{{locationAddress || '点击选择地点'}}</text>
+        <text class="location-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 4. 可服务半径（仅临时主） -->
+    <view class="form-section" wx:if="{{role === 'helper'}}">
+      <view class="section-title-row">
+        <text class="form-section-title">可服务半径</text>
+        <text class="radius-value-text">{{radius}} km</text>
+      </view>
+      <view class="radius-slider-wrap">
+        <text class="slider-label">0.5</text>
+        <slider
+          class="radius-slider"
+          min="0.5"
+          max="10"
+          step="0.5"
+          value="{{radius}}"
+          activeColor="#E8875A"
+          backgroundColor="#E8E0D4"
+          block-color="#E8875A"
+          bindchange="onSliderChange"
+        />
+        <text class="slider-label">10</text>
+      </view>
+    </view>
+
+    <!-- 5. 时间 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="form-section-title">时间</text>
+        <text class="required-mark">*</text>
+      </view>
+      <!-- 模式切换 -->
+      <view class="time-mode-tabs">
+        <view
+          class="time-mode-tab {{availableTime.mode === item.key ? 'time-mode-tab-active' : ''}}"
+          wx:for="{{timeModes}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onTimeModeChange"
+        >{{item.label}}</view>
+      </view>
+
+      <!-- 时间区间模式 -->
+      <block wx:if="{{availableTime.mode === 'range'}}">
+        <view class="date-range-row">
+          <picker class="data-time-picker" mode="date" value="{{availableTime.startDate}}" bindchange="onStartDateChange">
+            <view class="date-picker-btn {{availableTime.startDate ? '' : 'placeholder'}}">
+              <text class="date-picker-icon">📅</text>
+              <text>{{availableTime.startDate || '开始日期'}}</text>
+            </view>
+          </picker>
+          <text class="date-range-sep">→</text>
+          <picker class="data-time-picker" mode="date" value="{{availableTime.endDate}}" bindchange="onEndDateChange">
+            <view class="date-picker-btn {{availableTime.endDate ? '' : 'placeholder'}}">
+              <text class="date-picker-icon">📅</text>
+              <text>{{availableTime.endDate || '结束日期'}}</text>
+            </view>
+          </picker>
+        </view>
+      </block>
+
+      <!-- 多选日期模式 -->
+      <block wx:if="{{availableTime.mode === 'multi'}}">
+        <view class="calendar-wrap">
+          <view class="calendar-header">
+            <view class="calendar-nav-btn" bindtap="onCalendarPrev">‹</view>
+            <text class="calendar-month-title">{{calendarYear}}年{{calendarMonth}}月</text>
+            <view class="calendar-nav-btn" bindtap="onCalendarNext">›</view>
+          </view>
+          <view class="calendar-weekdays">
+            <text class="weekday-label" wx:for="{{weekLabels}}" wx:key="*this">{{item}}</text>
+          </view>
+          <view class="calendar-grid">
+            <view
+              wx:for="{{calendarDays}}"
+              wx:key="index"
+              class="calendar-day {{item.empty ? 'calendar-day-empty' : ''}} {{item.selected ? 'calendar-day-selected' : ''}} {{item.isToday && !item.selected ? 'calendar-day-today' : ''}} {{item.isPast ? 'calendar-day-past' : ''}}"
+              data-date="{{item.date}}"
+              bindtap="{{item.empty || item.isPast ? '' : 'onToggleDate'}}"
+            >
+              <text wx:if="{{!item.empty}}">{{item.day}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="selected-dates-summary" wx:if="{{availableTime.selectedDates.length > 0}}">
+          <text class="selected-dates-label">已选 {{availableTime.selectedDates.length}} 天</text>
+          <text class="selected-dates-clear" bindtap="onClearDates">清空</text>
+        </view>
+      </block>
+
+      <!-- 每日时间段（两种模式共用） -->
+      <view class="time-slot-row">
+        <picker class="data-time-picker" mode="time" value="{{availableTime.startTime}}" bindchange="onStartTimeChange">
+          <view class="time-slot-picker {{availableTime.startTime ? '' : 'placeholder'}}">
+            {{availableTime.startTime || '开始时间'}}
+          </view>
+        </picker>
+        <text class="time-sep">~</text>
+        <picker class="data-time-picker" mode="time" value="{{availableTime.endTime}}" bindchange="onEndTimeChange">
+          <view class="time-slot-picker {{availableTime.endTime ? '' : 'placeholder'}}">
+            {{availableTime.endTime || '结束时间'}}
+          </view>
+        </picker>
+      </view>
+      <!-- 补充说明 -->
+      <input
+        class="form-input"
+        placeholder="补充说明，如'每周六日可以'"
+        value="{{availableTime.timeDesc}}"
+        bindinput="onTimeDescInput"
+        maxlength="30"
+      />
+    </view>
+
+    <!-- 6. 宠物信息（仅需求方） -->
+    <view class="form-section" wx:if="{{role === 'owner'}}">
+      <text class="form-section-title">宠物信息</text>
+
+      <!-- 从已管理的宠物中快速选择 -->
+      <block wx:if="{{filteredPets.length > 0}}">
+        <text class="pet-select-hint">从我的宠物中选择</text>
+        <scroll-view class="pet-select-scroll" scroll-x enable-flex>
+          <view
+            wx:for="{{filteredPets}}"
+            wx:key="_id"
+            class="pet-select-item {{selectedPetId === item._id ? 'pet-select-item-active' : ''}}"
+            data-id="{{item._id}}"
+            bindtap="onSelectPet"
+          >
+            <image
+              class="pet-select-avatar"
+              src="{{item.avatar || '/images/tab/tab-profile.png'}}"
+              mode="aspectFill"
+            />
+            <text class="pet-select-name">{{item.name}}</text>
+          </view>
+        </scroll-view>
+      </block>
+
+      <!-- 宠物信息字段（可手动填写或选择后修改） -->
+      <input
+        class="form-input"
+        placeholder="宠物名字"
+        value="{{petInfo.name}}"
+        bindinput="onPetInfoInput"
+        data-field="name"
+        maxlength="20"
+      />
+      <input
+        class="form-input"
+        placeholder="品种（如：金毛、布偶猫）"
+        value="{{petInfo.breed}}"
+        bindinput="onPetInfoInput"
+        data-field="breed"
+        maxlength="30"
+      />
+      <view class="input-with-unit">
+        <input
+          class="form-input input-unit-input"
+          placeholder="体重"
+          type="digit"
+          value="{{petInfo.weight}}"
+          bindinput="onPetInfoInput"
+          data-field="weight"
+          maxlength="6"
+        />
+        <text class="input-unit">kg</text>
+      </view>
+    </view>
+
+    <!-- 7. 联系方式 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="form-section-title">联系方式</text>
+        <text class="form-section-hint">至少填写一项</text>
+      </view>
+      <view class="contact-input-wrap">
+        <text class="contact-input-icon">📞</text>
+        <input
+          class="form-input contact-input"
+          placeholder="手机号"
+          type="number"
+          value="{{contactInfo.phone}}"
+          bindinput="onContactInput"
+          data-field="phone"
+          maxlength="11"
+        />
+      </view>
+      <view class="contact-input-wrap">
+        <text class="contact-input-icon">💬</text>
+        <input
+          class="form-input contact-input"
+          placeholder="微信号"
+          value="{{contactInfo.wechat}}"
+          bindinput="onContactInput"
+          data-field="wechat"
+          maxlength="30"
+        />
+      </view>
+    </view>
+
+    <!-- 8. 补充说明 -->
+    <view class="form-section">
+      <text class="form-section-title">补充说明</text>
+      <textarea
+        class="form-textarea"
+        placeholder="其他补充信息，如宠物性格、特殊需求等（可选）"
+        value="{{description}}"
+        bindinput="onDescInput"
+        maxlength="200"
+        auto-height
+      />
+      <text class="textarea-count">{{description.length}}/200</text>
+    </view>
+
+    <!-- 发布按钮 -->
+    <view class="submit-wrap">
+      <view
+        class="submit-btn {{submitting ? 'submit-btn-loading' : ''}}"
+        bindtap="onSubmit"
+      >
+        <text>{{submitting ? '保存中...' : (editId ? '保存修改' : '立即发布')}}</text>
+      </view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </scroll-view>
+</view>

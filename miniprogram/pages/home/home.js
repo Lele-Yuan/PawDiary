@@ -27,6 +27,7 @@ Page({
     statusBarHeight: 20,
     userReady: false,
     showLoginModal: false,
+    afterLoginCallback: null,
     isGuest: false
   },
 
@@ -277,13 +278,6 @@ Page({
   // 添加宠物 / 跳转添加页面
   // 点击"开启宠爱之旅"按钮
   goAddPet() {
-    var app = getApp();
-
-    // 未登录时，使用通用登录弹窗组件
-    if (this.data.isGuest) {
-      this.setData({ showLoginModal: true });
-      return;
-    }
 
     // 已登录，直接跳转到新建宠物页面
     wx.navigateTo({
@@ -293,6 +287,7 @@ Page({
 
   // 登录成功回调
   onLoginSuccess(e) {
+    const app = getApp();
     var { avatarUrl, nickName, phone } = e.detail;
 
     // 更新全局状态
@@ -308,15 +303,17 @@ Page({
     // 重新加载数据
     this.loadData();
 
-    // 跳转到新建宠物页面
-    wx.navigateTo({
-      url: '/pages/pet-edit/pet-edit?mode=add'
-    });
+    // 如果有登录回调，则执行登录回调
+    this.data.afterLoginCallback && this.data.afterLoginCallback();
+    this.setData({ afterLoginCallback: null });
   },
 
   // 关闭登录弹窗
   onLoginClose() {
-    this.setData({ showLoginModal: false });
+    this.setData({
+      showLoginModal: false,
+      afterLoginCallback: null
+    });
   },
 
   // 快捷入口 - 清单
@@ -346,6 +343,21 @@ Page({
   // 快捷入口 - 地图
   goMap() {
     wx.navigateTo({ url: '/pages/map/map' });
+  },
+
+  // 快捷入口 - 代铲屎遛狗
+  goToCare() {
+    // 未登录时，使用通用登录弹窗组件
+    if (this.data.isGuest) {
+      this.setData({
+        showLoginModal: true,
+        afterLoginCallback: () => {
+          wx.navigateTo({ url: '/pages/care/care' });
+        }
+      });
+      return;
+    }
+    wx.navigateTo({ url: '/pages/care/care' });
   },
 
   // 指南 - 养狗指南（跳转公众号合集）
@@ -455,31 +467,39 @@ Page({
   },
 
   // 移除成员（创建者操作）
-  async removeMember(targetOpenid) {
-    var app = getApp();
-    if (!app.globalData.openid) {
-      wx.showToast({ title: '请先登录', icon: 'none' });
+  removeMember(targetOpenid) {
+    async function removeMemberFn(targetOpenid) {
+      try {
+        var confirmRes = await wx.showModal({
+          title: '确认移除',
+          content: '确定要移除该成员吗？移除后对方将无法查看该宠物数据。',
+          confirmColor: '#C0392B'
+        });
+        if (!confirmRes.confirm) return;
+
+        await wx.cloud.callFunction({
+          name: 'familyManage',
+          data: { action: 'remove', data: { petId: this.data.currentPetId, targetOpenid: targetOpenid } }
+        });
+        wx.showToast({ title: '已移除', icon: 'success' });
+        this.loadFamilyMembers(this.data.currentPetId);
+      } catch (err) {
+        console.error('移除成员失败', err);
+        wx.showToast({ title: '操作失败', icon: 'none' });
+      }
+    }
+
+    // 未登录时，使用通用登录弹窗组件
+    if (this.data.isGuest) {
+      this.setData({
+        showLoginModal: true,
+        afterLoginCallback: removeMemberFn
+      });
       return;
     }
 
-    try {
-      var confirmRes = await wx.showModal({
-        title: '确认移除',
-        content: '确定要移除该成员吗？移除后对方将无法查看该宠物数据。',
-        confirmColor: '#C0392B'
-      });
-      if (!confirmRes.confirm) return;
+    removeMemberFn();
 
-      await wx.cloud.callFunction({
-        name: 'familyManage',
-        data: { action: 'remove', data: { petId: this.data.currentPetId, targetOpenid: targetOpenid } }
-      });
-      wx.showToast({ title: '已移除', icon: 'success' });
-      this.loadFamilyMembers(this.data.currentPetId);
-    } catch (err) {
-      console.error('移除成员失败', err);
-      wx.showToast({ title: '操作失败', icon: 'none' });
-    }
   },
 
   // 头像加载失败处理

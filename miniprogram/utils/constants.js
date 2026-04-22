@@ -210,6 +210,38 @@ PLACE_CATEGORIES.forEach(item => {
   PLACE_CATEGORY_MAP[item.key] = item;
 });
 
+/**
+ * 订阅消息模板 ID（下次提醒推送通知）
+ * 需在微信公众平台「功能 → 订阅消息」申请后替换此处占位值
+ */
+const NOTIFY_TEMPLATE_ID = 'ZuML7GbjCpKkV5ZvAy1BSvxTa0ns0RhPEZrAGa5MnG8';
+
+/**
+ * 代铲屎遛狗 - 角色类型
+ */
+const CARE_ROLE_TYPES = [
+  { key: 'helper', label: '临时主', desc: '我来帮忙', icon: '🙋', color: '#E8875A', bgColor: 'rgba(232,135,90,0.12)', borderColor: '#E8875A' },
+  { key: 'owner', label: '需求方', desc: '我需要帮助', icon: '🐾', color: '#3C6663', bgColor: 'rgba(142,207,201,0.15)', borderColor: '#8ECFC9' }
+];
+
+/**
+ * 代铲屎遛狗 - 服务类型
+ */
+const CARE_SERVICE_TYPES = [
+  { key: 'poop', label: '铲屎', icon: '💩', bgColor: '#F5EDD0', textColor: '#6B2D1A' },
+  { key: 'walk', label: '遛狗', icon: '🦮', bgColor: '#E8F5F4', textColor: '#3C6663' },
+  { key: 'other', label: '异宠', icon: '🐜', bgColor: '#F0F0F0', textColor: '#555555' }
+];
+
+/**
+ * 代铲屎遛狗 - 角色/服务类型映射
+ */
+const CARE_ROLE_MAP = {};
+CARE_ROLE_TYPES.forEach(item => { CARE_ROLE_MAP[item.key] = item; });
+
+const CARE_SERVICE_MAP = {};
+CARE_SERVICE_TYPES.forEach(item => { CARE_SERVICE_MAP[item.key] = item; });
+
 module.exports = {
   RECORD_TYPES,
   RECORD_TYPE_MAP,
@@ -223,5 +255,10 @@ module.exports = {
   MEMBER_ROLES,
   MEMBER_ROLE_LABELS,
   PLACE_CATEGORIES,
-  PLACE_CATEGORY_MAP
+  PLACE_CATEGORY_MAP,
+  NOTIFY_TEMPLATE_ID,
+  CARE_ROLE_TYPES,
+  CARE_SERVICE_TYPES,
+  CARE_ROLE_MAP,
+  CARE_SERVICE_MAP
 };

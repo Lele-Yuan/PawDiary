@@ -117,6 +117,12 @@ Page({
   onJoin() {
     const { isGuest, isJoined, isCurrentPet } = this.data;
 
+    // 未加入，如果是游客则显示登录弹窗
+    if (isGuest) {
+      this.setData({ showLoginModal: true });
+      return;
+    }
+
     // 已加入且是当前宠物，无需操作
     if (isJoined && isCurrentPet) {
       return;
@@ -125,12 +131,6 @@ Page({
     // 已加入但非当前宠物，直接切换
     if (isJoined && !isCurrentPet) {
       this.onSwitchPet();
-      return;
-    }
-
-    // 未加入，如果是游客则显示登录弹窗
-    if (isGuest) {
-      this.setData({ showLoginModal: true });
       return;
     }
 

@@ -25,8 +25,7 @@
     <view class="welcome-text">
       <view class="welcome-title">欢迎来到</view>
       <view class="welcome-title">宠物管家</view>
-      <view class="welcome-desc">让您的爱宠享受高端定制的贴心</view>
-      <view class="welcome-desc">管家服务。</view>
+      <view class="welcome-desc">让您的爱宠享受高端定制的贴心管家服务</view>
     </view>
   </view>
 
@@ -35,7 +34,7 @@
     <view class="welcome-cta" hover-class="welcome-cta-hover" bindtap="goAddPet">
       <text class="welcome-cta-text">开启宠爱之旅</text>
     </view>
-    <view class="welcome-slogan">LUXURY PET MANAGEMENT • ESTABLISHED 2024</view>
+    <view class="welcome-slogan">PAW DIARY MANAGEMENT • ESTABLISHED 2026</view>
   </view>
 </view>
 
@@ -92,6 +91,24 @@
         </view>
         <view class="guide-link-deco">🗺️</view>
       </view>
+    </view>
+
+    <!-- 宠物互助入口 -->
+    <view class="care-entry-wrap" bindtap="goToCare">
+      <view class="care-entry-left">
+        <view class="care-entry-icon-wrap">
+          <text class="care-entry-icon">🐾</text>
+        </view>
+        <view class="care-entry-text">
+          <text class="care-entry-title">代铲屎遛狗</text>
+          <text class="care-entry-desc">附近宠物互助，轻松找搭子</text>
+        </view>
+      </view>
+      <view class="care-entry-tags">
+        <text class="care-tag care-tag-helper">临时主</text>
+        <text class="care-tag care-tag-owner">需求方</text>
+      </view>
+      <text class="care-entry-arrow">›</text>
     </view>
 
     <!-- 近期提醒 -->

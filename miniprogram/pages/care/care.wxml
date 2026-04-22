@@ -1,0 +1,195 @@
+<view class="care-page">
+  <!-- 顶部导航 -->
+  <nav-bar title="代铲屎遛狗" back="{{true}}" />
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <!-- 角色筛选 -->
+    <picker
+      mode="selector"
+      range="{{roleOptions}}"
+      range-key="label"
+      value="{{roleFilterIndex}}"
+      bindchange="onRolePickerChange"
+    >
+      <view class="filter-selector {{roleFilter !== 'all' ? 'filter-selector-active' : ''}}">
+        <text class="filter-selector-text">{{roleOptions[roleFilterIndex].label}}</text>
+        <text class="filter-selector-arrow">▾</text>
+      </view>
+    </picker>
+
+    <!-- 服务类型筛选 -->
+    <picker
+      mode="selector"
+      range="{{serviceOptions}}"
+      range-key="label"
+      value="{{serviceFilterIndex}}"
+      bindchange="onServicePickerChange"
+    >
+      <view class="filter-selector {{serviceFilter !== 'all' ? 'filter-selector-active' : ''}}">
+        <text class="filter-selector-text">{{serviceOptions[serviceFilterIndex].icon ? serviceOptions[serviceFilterIndex].icon + ' ' : ''}}{{serviceOptions[serviceFilterIndex].label}}</text>
+        <text class="filter-selector-arrow">▾</text>
+      </view>
+    </picker>
+
+    <!-- 日期筛选 -->
+    <picker mode="date" value="{{dateFilter}}" bindchange="onDatePickerChange">
+      <view class="filter-selector {{dateFilter ? 'filter-selector-active' : ''}}">
+        <text class="filter-selector-text">{{dateFilter || '📅 日期'}}</text>
+        <text class="filter-selector-arrow" wx:if="{{!dateFilter}}">▾</text>
+        <text class="filter-date-clear" wx:if="{{dateFilter}}" catchtap="onClearDateFilter">✕</text>
+      </view>
+    </picker>
+
+    <!-- 排序 -->
+    <view class="sort-btn" bindtap="onSortChange">
+      <text class="sort-btn-arrow">⇅</text>
+      <text class="sort-btn-text">{{sortType === 'distance' ? '📍 距离' : '🕐 最新'}}</text>
+    </view>
+
+    <!-- 只看我发布 -->
+    <view class="only-mine-btn {{onlyMine ? 'only-mine-btn-active' : ''}}" bindtap="onToggleOnlyMine">
+      <text class="only-mine-check">{{onlyMine ? '☑' : '☐'}}</text>
+      <text class="only-mine-text">我的</text>
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <scroll-view
+    class="care-list"
+    scroll-y
+    bindscrolltolower="onReachBottom"
+    style="height: calc(100vh - {{navHeight}}px - 88rpx);"
+  >
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-wrap">
+      <view class="skeleton-card" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+    </view>
+
+    <!-- 列表内容 -->
+    <block wx:if="{{!loading}}">
+      <view
+        class="care-card"
+        wx:for="{{list}}"
+        wx:key="_id"
+        style="animation-delay: {{index * 60}}ms"
+      >
+        <!-- 发布人信息 -->
+        <view class="care-card-publisher">
+          <image
+            class="publisher-avatar"
+            src="{{item.publisherInfo.avatarUrl || '/images/tab/tab-profile.png'}}"
+            mode="aspectFill"
+          />
+          <text class="publisher-name">{{item.publisherInfo.nickname}}</text>
+
+          <!-- 卡片头部 -->
+          <view class="care-card-header">
+            <view class="header-left">
+              <view class="role-badge {{item.role === 'helper' ? 'role-badge-helper' : 'role-badge-owner'}}">
+                <text>{{item.role === 'helper' ? '临时主' : '需求方'}}</text>
+              </view>
+              <view class="service-tags">
+                <text
+                  class="service-tag {{item.serviceType === 'poop' ? 'tag-poop' : item.serviceType === 'walk' ? 'tag-walk' : 'tag-both'}}"
+                >{{item.serviceType === 'poop' ? '💩 铲屎' : item.serviceType === 'walk' ? '🦮 遛狗' : '🐜 异宠'}}</text>
+              </view>
+            </view>
+            <text class="distance-text">{{item.distanceText}}</text>
+          </view>
+        </view>
+
+        <!-- 详情信息 -->
+        <view class="care-card-body">
+          <view class="info-row" wx:if="{{item.location.address}}">
+            <text class="info-icon">📍</text>
+            <text class="info-text">{{item.location.address}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.dateText}}">
+            <text class="info-icon">📅</text>
+            <text class="info-text">{{item.dateText}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.timeSlotText}}">
+            <text class="info-icon">🕐</text>
+            <text class="info-text">{{item.timeSlotText}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.role === 'helper' && item.radius}}">
+            <text class="info-icon">📡</text>
+            <text class="info-text">可服务 {{item.radius}}km 范围内</text>
+          </view>
+          <view class="info-row" wx:if="{{item.role === 'owner' && item.petInfo && item.petInfo.name}}">
+            <text class="info-icon">{{item.serviceType === 'poop' ? '💩' : item.serviceType === 'walk' ? '🐶' : '🐜'}}</text>
+            <view class="info-text">
+              {{item.petInfo.name}}
+              {{item.petInfo.breed ? ' · ' + item.petInfo.breed : ''}}
+              {{item.petInfo.weight ? ' · ' + item.petInfo.weight + 'kg' : ''}}
+            </view>
+          </view>
+          <view class="info-row" wx:if="{{item.description}}">
+            <text class="info-icon">💬</text>
+            <text class="info-text info-desc">{{item.description}}</text>
+          </view>
+        </view>
+
+        <!-- 卡片底部 -->
+        <view class="care-card-footer">
+          <text class="post-time">{{item.createTimeStr}}</text>
+
+          <!-- 自己的帖子：编辑 + 删除 -->
+          <view wx:if="{{item.isOwner}}" class="own-actions">
+            <view
+              class="own-edit-btn"
+              data-id="{{item._id}}"
+              data-index="{{index}}"
+              bindtap="onEditPost"
+            >编辑</view>
+            <view
+              class="own-delete-btn"
+              data-id="{{item._id}}"
+              data-index="{{index}}"
+              bindtap="onDeletePost"
+            >删除</view>
+          </view>
+
+          <!-- 已获取联系方式 -->
+          <view wx:elif="{{item.contactInfo}}" class="contact-revealed">
+            <text class="contact-value" wx:if="{{item.contactInfo.phone}}">📞 {{item.contactInfo.phone}}</text>
+            <text class="contact-value" wx:if="{{item.contactInfo.wechat}}">💬 {{item.contactInfo.wechat}}</text>
+          </view>
+
+          <!-- 申请联系按钮 -->
+          <view
+            wx:else
+            class="contact-btn {{item.applying ? 'contact-btn-loading' : ''}}"
+            data-id="{{item._id}}"
+            data-index="{{index}}"
+            bindtap="onApplyContact"
+          >
+            <text>{{item.applying ? '申请中...' : '申请联系'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载更多 -->
+      <view class="load-more" wx:if="{{hasMore && list.length > 0}}">
+        <text>上拉加载更多</text>
+      </view>
+      <view class="load-end" wx:if="{{!hasMore && list.length > 0}}">
+        <text>已显示全部结果</text>
+      </view>
+
+      <!-- 空状态 -->
+      <view wx:if="{{list.length === 0}}" class="empty-wrap">
+        <empty-state
+          icon="🐾"
+          title="{{roleFilter !== 'all' || serviceFilter !== 'all' ? '该筛选条件下暂无结果' : '附近暂无互助信息'}}"
+          desc="{{roleFilter !== 'all' || serviceFilter !== 'all' ? '换个筛选条件试试？' : '成为第一个发布的人吧~'}}"
+        />
+        <view class="empty-cta" bindtap="onTapPublish">立即发布</view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 悬浮发布按钮 -->
+  <view class="fab-btn" bindtap="onTapPublish">+</view>
+</view>

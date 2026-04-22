@@ -14,6 +14,8 @@
     "pages/map/map",
     "pages/map/place-add/place-add",
     "pages/map/place-detail/place-detail",
+    "pages/care/care",
+    "pages/care/care-add/care-add",
     "pages/invite/invite",
     "pages/loading/loading",
     "pages/memorial/memorial",

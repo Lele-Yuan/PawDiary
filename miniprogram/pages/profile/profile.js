@@ -179,22 +179,22 @@ Page({
         return;
       }
 
-      wx.showModal({
-        title: '发现已有数据',
-        content: `检测到您在游客模式下已录入 ${total} 条数据（包括宠物、记录、账单、清单），是否保留这些数据到当前账户？`,
-        confirmText: '保留数据',
-        cancelText: '清除数据',
-        success: async (res) => {
-          if (res.cancel) {
-            showLoading('清除中...');
-            await this.clearAllGuestData();
-            hideLoading();
-            this.loadStats();
-            this.loadPets();
-          }
-          showSuccess('登录成功');
-        }
-      });
+      // wx.showModal({
+      //   title: '发现已有数据',
+      //   content: `检测到您在游客模式下已录入 ${total} 条数据（包括宠物、记录、账单、清单），是否保留这些数据到当前账户？`,
+      //   confirmText: '保留数据',
+      //   cancelText: '清除数据',
+      //   success: async (res) => {
+      //     if (res.cancel) {
+      //       showLoading('清除中...');
+      //       await this.clearAllGuestData();
+      //       hideLoading();
+      //       this.loadStats();
+      //       this.loadPets();
+      //     }
+      //     showSuccess('登录成功');
+      //   }
+      // });
     } catch (err) {
       console.error('检查游客数据失败：', err);
       showSuccess('登录成功');
@@ -314,14 +314,14 @@ Page({
   // 客服反馈（跳转公众号文章）
   goToCustomerService() {
     wx.navigateTo({
-      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s?__biz=MzI1NDQ3NTUxMA==&tempkey=MTM3MF8rR3JGcEdjaGtKcmwvaitlZjlPbU9VWHVBUjA5cnhIMmRua1AwU0xxWG1FamRJOXJRRWduLWpUUW90d1NCRTgyRHRHMDVia0ZZUkVQT0JTZFdKYTJ2a1lyZUpXcGdkcENaTlg1VVdNOUJnRm5HYmdsT0dYRWdDSWhDSGEtdEQ4dlJVak56UHVwQ1Vod3dzV2NkV1hoblhZbXZJbGxjM3NTT25BMHZ3fn4%3D&chksm=e9c5ee67deb267710fa3a16c8717226f32d1e94a0c11e101d25e88a3e4f8e27623d94660760d&token=35338396&lang=zh_CN#rd')
+      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s/P87JA9MBevKplBd6osywLA')
     });
   },
   
   // 养宠指南（跳转公众号文章）
   goDogGuide() {
     wx.navigateTo({
-      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s?__biz=MzI1NDQ3NTUxMA==&mid=2247484409&idx=1&sn=02d7ba44d6c929cc092cac36d40c7d8b&chksm=e9c5ee60deb267765f88441120a51e4523d0d1551033cb3a452148fdf37737bea8c716799dea&scene=178&cur_album_id=4456222019121938438')
+      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s/iNC9psvhJEQ_f0YWqD-O_w')
     });
   },
 
