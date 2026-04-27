@@ -53,6 +53,7 @@ Page({
       wechat: ''
     },
     description: '',
+    title: '',
     // 宠物选择
     myPets: [],
     filteredPets: [],
@@ -122,6 +123,7 @@ Page({
           petInfo: post.petInfo || { name: '', breed: '', weight: '' },
           contactInfo: post.contactInfo || { phone: '', wechat: '' },
           description: post.description || '',
+          title: post.title || '',
           calendarYear,
           calendarMonth,
           calendarDays: this._generateCalendar(calendarYear, calendarMonth, availableTime.selectedDates)
@@ -183,7 +185,9 @@ Page({
     this.setData({
       filteredPets: filtered,
       selectedPetId: stillValid ? selectedPetId : '',
-      petInfo: stillValid ? this.data.petInfo : { name: '', breed: '', weight: '' }
+      // 仅当之前选了某只宠物但现在不在过滤结果内时才清空 petInfo；
+      // 若 selectedPetId 为空（手动填写 或 编辑回填），保留已有的 petInfo
+      petInfo: (stillValid || !selectedPetId) ? this.data.petInfo : { name: '', breed: '', weight: '' }
     });
   },
 
@@ -362,6 +366,10 @@ Page({
   },
 
   // 补充说明输入
+  onTitleInput(e) {
+    this.setData({ title: e.detail.value });
+  },
+
   onDescInput(e) {
     this.setData({ description: e.detail.value });
   },
@@ -422,7 +430,8 @@ Page({
         availableTime: this.data.availableTime,
         contactInfo: this.data.contactInfo,
         petInfo: this.data.petInfo,
-        description: this.data.description
+        description: this.data.description,
+        title: this.data.title
       };
       if (isEdit) {
         payload.postId = this.data.editId;

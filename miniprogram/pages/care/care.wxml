@@ -74,33 +74,28 @@
         wx:key="_id"
         style="animation-delay: {{index * 60}}ms"
       >
-        <!-- 发布人信息 -->
-        <view class="care-card-publisher">
-          <image
-            class="publisher-avatar"
-            src="{{item.publisherInfo.avatarUrl || '/images/tab/tab-profile.png'}}"
-            mode="aspectFill"
-          />
-          <text class="publisher-name">{{item.publisherInfo.nickname}}</text>
-
-          <!-- 卡片头部 -->
-          <view class="care-card-header">
-            <view class="header-left">
-              <view class="role-badge {{item.role === 'helper' ? 'role-badge-helper' : 'role-badge-owner'}}">
-                <text>{{item.role === 'helper' ? '临时主' : '需求方'}}</text>
-              </view>
-              <view class="service-tags">
-                <text
-                  class="service-tag {{item.serviceType === 'poop' ? 'tag-poop' : item.serviceType === 'walk' ? 'tag-walk' : 'tag-both'}}"
-                >{{item.serviceType === 'poop' ? '💩 铲屎' : item.serviceType === 'walk' ? '🦮 遛狗' : '🐜 异宠'}}</text>
-              </view>
-            </view>
-            <text class="distance-text">{{item.distanceText}}</text>
-          </view>
-        </view>
 
         <!-- 详情信息 -->
         <view class="care-card-body">
+          <!-- 发布人信息 -->
+          <view class="care-card-publisher">
+            <view class="care-card-title" wx:if="{{item.title}}">{{item.title}}</view>
+
+            <!-- 卡片头部 -->
+            <view class="care-card-header">
+              <view class="header-left">
+                <view class="role-badge {{item.role === 'helper' ? 'role-badge-helper' : 'role-badge-owner'}}">
+                  <text>{{item.role === 'helper' ? '临时主' : '需求方'}}</text>
+                </view>
+                <view class="service-tags">
+                  <text
+                    class="service-tag {{item.serviceType === 'poop' ? 'tag-poop' : item.serviceType === 'walk' ? 'tag-walk' : 'tag-both'}}"
+                  >{{item.serviceType === 'poop' ? '💩 铲屎' : item.serviceType === 'walk' ? '🦮 遛狗' : '🐜 异宠'}}</text>
+                </view>
+              </view>
+              <text class="distance-text">{{item.distanceText}}</text>
+            </view>
+          </view>
           <view class="info-row" wx:if="{{item.location.address}}">
             <text class="info-icon">📍</text>
             <text class="info-text">{{item.location.address}}</text>
@@ -133,6 +128,13 @@
 
         <!-- 卡片底部 -->
         <view class="care-card-footer">
+          <image
+            class="publisher-avatar"
+            src="{{item.publisherInfo.avatarUrl || '/images/tab/tab-profile.png'}}"
+            mode="aspectFill"
+          />
+          <text class="publisher-name">{{item.publisherInfo.nickname}}</text>
+
           <text class="post-time">{{item.createTimeStr}}</text>
 
           <!-- 自己的帖子：编辑 + 删除 -->

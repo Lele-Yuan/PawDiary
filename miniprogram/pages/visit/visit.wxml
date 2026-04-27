@@ -1,0 +1,63 @@
+<view class="visit-page">
+  <!-- 顶部导航 -->
+  <nav-bar title="上门沟通" back="{{true}}" />
+
+  <!-- 加载中骨架 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="skeleton-card" wx:for="{{[1,2,3]}}" wx:key="index"></view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-wrap" wx:elif="{{!list.length}}">
+    <view class="empty-icon">🐾</view>
+    <text class="empty-text">还没有上门沟通记录</text>
+    <view class="empty-btn" bindtap="goCreate">发起沟通</view>
+  </view>
+
+  <!-- 列表 -->
+  <view class="visit-list" wx:else>
+    <view
+      class="visit-card"
+      wx:for="{{list}}"
+      wx:key="_id"
+      bindtap="onTapItem"
+      data-id="{{item._id}}"
+    >
+      <!-- 标题行 -->
+      <view class="card-header">
+        <text class="card-service-name">{{item.serviceName || '上门服务'}}</text>
+        <view class="card-status-tag" style="background:{{item.statusColor}}">{{item.statusLabel}}</view>
+      </view>
+
+      <!-- 上门次数 -->
+      <view class="card-row" wx:if="{{item.visitCountText}}">
+        <text class="card-icon">🚶</text>
+        <text class="card-text">{{item.visitCountText}}</text>
+      </view>
+
+      <!-- 最近一次待上门时间 -->
+      <view class="card-row" wx:if="{{item.nextVisitTime}}">
+        <text class="card-icon">📅</text>
+        <text class="card-text card-next-time">下次 {{item.nextVisitTime}}</text>
+      </view>
+
+      <!-- 双方昵称 -->
+      <view class="card-row">
+        <text class="card-icon">🏠</text>
+        <text class="card-text">{{item.ownerNickname || '未填写'}}</text>
+        <text class="card-sep">·</text>
+        <text class="card-icon">🐾</text>
+        <text class="card-text">{{item.helperNickname || '未填写'}}</text>
+      </view>
+
+      <!-- 位置 -->
+      <view class="card-row" wx:if="{{item.location && item.location.address}}">
+        <text class="card-icon">📍</text>
+        <text class="card-text card-address">{{item.location.address}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 悬浮新建按钮 -->
+  <view class="fab-btn" bindtap="goCreate">+</view>
+</view>

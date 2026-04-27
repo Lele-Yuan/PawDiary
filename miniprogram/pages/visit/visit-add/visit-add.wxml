@@ -1,0 +1,304 @@
+<view class="add-page">
+  <nav-bar title="{{isEdit ? '编辑沟通' : '发起沟通'}}" back="{{true}}" />
+
+  <!-- 无权限提示 -->
+  <view class="no-permission" wx:if="{{noPermission}}">
+    <view class="no-perm-icon">🔒</view>
+    <text class="no-perm-text">暂无权限查看此记录</text>
+    <text class="no-perm-sub">仅双方参与者可查看</text>
+  </view>
+
+  <!-- 表单主体 -->
+  <scroll-view class="form-scroll" scroll-y wx:else>
+
+    <!-- 状态栏（编辑模式展示） -->
+    <view class="status-bar" wx:if="{{isEdit}}">
+      <text class="status-label-text">当前状态：</text>
+      <view class="status-tag" style="background:{{statusColor}}">{{statusLabel}}</view>
+      <view class="confirm-marks">
+        <text class="confirm-mark {{ownerConfirmed ? 'confirmed' : ''}}">🏠{{ownerConfirmed ? ' 已确认' : ' 待确认'}}</text>
+        <text class="confirm-mark {{helperConfirmed ? 'confirmed' : ''}}">🐾{{helperConfirmed ? ' 已确认' : ' 待确认'}}</text>
+      </view>
+    </view>
+
+    <!-- ⓪ 角色选择（仅新建） -->
+    <view class="form-section" wx:if="{{!isEdit}}">
+      <view class="section-title">我的角色</view>
+      <view class="role-select-row">
+        <view
+          class="role-card {{creatorRole === 'owner' ? 'role-card-active' : ''}}"
+          bindtap="onSelectRole"
+          data-role="owner"
+        >
+          <text class="role-icon">🏠</text>
+          <text class="role-name">我是铲屎官</text>
+          <text class="role-desc">委托照看宠物</text>
+        </view>
+        <view
+          class="role-card {{creatorRole === 'helper' ? 'role-card-active' : ''}}"
+          bindtap="onSelectRole"
+          data-role="helper"
+        >
+          <text class="role-icon">🐾</text>
+          <text class="role-name">我是临时主</text>
+          <text class="role-desc">上门照看宠物</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ① 服务简介 -->
+    <view class="form-section form-role-section">
+      <view class="section-title">服务简介</view>
+      <view class="form-item">
+        <text class="form-label">铲屎官昵称<text class="my-tag" wx:if="{{myRole === 'owner'}}"> （我）</text></text>
+        <input
+          class="form-input"
+          placeholder="请输入铲屎官昵称"
+          value="{{ownerNickname}}"
+          bindinput="onInputOwnerNickname"
+          disabled="{{status === 'serving' || status === 'completed'}}"
+        />
+      </view>
+      <view class="form-item">
+        <text class="form-label">临时主昵称<text class="my-tag" wx:if="{{myRole === 'helper'}}"> （我）</text></text>
+        <input
+          class="form-input"
+          placeholder="请输入临时主昵称"
+          value="{{helperNickname}}"
+          bindinput="onInputHelperNickname"
+          disabled="{{status === 'serving' || status === 'completed'}}"
+        />
+      </view>
+      <view class="form-item">
+        <text class="form-label">服务名称</text>
+        <input
+          class="form-input"
+          placeholder="如：上门喂猫"
+          value="{{serviceName}}"
+          bindinput="onInputServiceName"
+          disabled="{{status === 'serving' || status === 'completed'}}"
+        />
+      </view>
+    </view>
+    <!-- ② 上门时间 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="section-title">上门时间</text>
+        <text class="checkin-progress" wx:if="{{status === 'serving' || status === 'completed'}}">已上门 {{checkinCount}}/{{visitTimes.length || 1}} 次</text>
+        <view
+          class="add-btn"
+          bindtap="onAddTime"
+          wx:if="{{status !== 'serving' && status !== 'completed'}}"
+        >+ 添加时间</view>
+      </view>
+      <view wx:if="{{!visitTimes.length}}" class="empty-hint">暂未添加上门时间</view>
+      <view
+        class="time-row {{index < ownerConfirmCount ? 'time-row-done' : ''}} {{draggingIndex >= 0 && dragOverIndex === index && draggingIndex !== index ? 'time-row-drag-target' : ''}} {{draggingIndex === index ? 'time-row-dragging' : ''}}"
+        wx:for="{{visitTimes}}"
+        wx:key="index"
+      >
+        <!-- 拖拽把手（可编辑状态的未完成行、列表项 >1 时显示） -->
+        <view
+          wx:if="{{index >= ownerConfirmCount && status !== 'serving' && status !== 'completed' && visitTimes.length > 1}}"
+          class="drag-handle"
+          catchtouchstart="onTimeDragStart"
+          catchtouchmove="onTimeDragMove"
+          catchtouchend="onTimeDragEnd"
+          data-index="{{index}}"
+        >⠿</view>
+        <picker mode="date" value="{{item.date}}" bindchange="onTimeDateChange" data-index="{{index}}" disabled="{{index < ownerConfirmCount}}">
+          <view class="time-picker-btn {{index < ownerConfirmCount ? 'time-picker-btn-done' : ''}}">
+            <text>{{item.date || '选择日期'}}</text>
+          </view>
+        </picker>
+        <picker mode="time" value="{{item.time}}" bindchange="onTimeTimeChange" data-index="{{index}}" disabled="{{index < ownerConfirmCount}}">
+          <view class="time-picker-btn {{index < ownerConfirmCount ? 'time-picker-btn-done' : ''}}">
+            <text>{{item.time || '选择时间'}}</text>
+          </view>
+        </picker>
+        <!-- 已完成 / 服务中 标记 -->
+        <view
+          wx:if="{{index < ownerConfirmCount}}"
+          class="time-done-tag time-done-tag-completed"
+        >已完成</view>
+        <view
+          wx:elif="{{index < checkinCount}}"
+          class="time-done-tag time-done-tag-serving"
+        >服务中</view>
+        <!-- 删除按钮（未完成且可编辑时） -->
+        <view
+          class="remove-btn"
+          bindtap="onRemoveTime"
+          data-index="{{index}}"
+          wx:elif="{{status !== 'serving' && status !== 'completed'}}"
+        >×</view>
+      </view>
+    </view>
+
+    <!-- ③ 具体位置 -->
+    <view class="form-section">
+      <view class="section-title">具体位置</view>
+      <view
+        class="location-choose-btn"
+        bindtap="onChooseLocation"
+        wx:if="{{status !== 'serving' && status !== 'completed'}}"
+      >
+        <text class="location-icon">📍</text>
+        <text>{{location.address ? location.address : '选择位置'}}</text>
+      </view>
+      <view class="location-address" wx:if="{{location.address && (status === 'serving' || status === 'completed')}}">
+        <text class="addr-tag">📍</text>
+        <text>{{location.address}}</text>
+      </view>
+      <input
+        class="form-input location-detail-input"
+        placeholder="补充门牌号/楼层等（可选）"
+        value="{{location.addressDetail}}"
+        bindinput="onInputAddressDetail"
+        disabled="{{status === 'serving' || status === 'completed'}}"
+      />
+    </view>
+
+    <!-- ④ 宠物信息 -->
+    <view class="form-section">
+      <view class="section-title-row">
+        <text class="section-title">宠物信息</text>
+        <view
+          class="add-btn"
+          bindtap="onAddPet"
+          wx:if="{{status !== 'serving' && status !== 'completed'}}"
+        >+ 添加宠物</view>
+      </view>
+      <view wx:if="{{!pets.length}}" class="empty-hint">暂未添加宠物信息</view>
+      <view class="pet-item" wx:for="{{pets}}" wx:key="index">
+        <view class="pet-item-header">
+          <text class="pet-item-title">宠物 {{index + 1}}</text>
+          <view
+            class="remove-btn"
+            bindtap="onRemovePet"
+            data-index="{{index}}"
+            wx:if="{{status !== 'serving' && status !== 'completed'}}"
+          >×</view>
+        </view>
+        <view class="pet-item-input">
+          <input
+            class="form-input"
+            placeholder="宠物昵称"
+            value="{{item.nickname}}"
+            bindinput="onPetFieldChange"
+            data-index="{{index}}"
+            data-field="nickname"
+            disabled="{{status === 'serving' || status === 'completed'}}"
+          />
+          <input
+            class="form-input"
+            placeholder="宠物类型（如：猫、狗）"
+            value="{{item.type}}"
+            bindinput="onPetFieldChange"
+            data-index="{{index}}"
+            data-field="type"
+            disabled="{{status === 'serving' || status === 'completed'}}"
+          />
+          <input
+            class="form-input form-input-full"
+            placeholder="特殊需求（如：定时喂药）"
+            value="{{item.specialNeeds}}"
+            bindinput="onPetFieldChange"
+            data-index="{{index}}"
+            data-field="specialNeeds"
+            disabled="{{status === 'serving' || status === 'completed'}}"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- ⑤ 补充留言 -->
+    <view class="form-section">
+      <view class="section-title">补充留言 <text class="section-hint">双方可见</text></view>
+      <textarea
+        class="form-textarea"
+        placeholder="补充说明，双方均可查看..."
+        value="{{message}}"
+        bindinput="onInputMessage"
+        maxlength="200"
+        disabled="{{status === 'serving' || status === 'completed'}}"
+      />
+      <text class="char-count">{{message.length}}/200</text>
+    </view>
+
+    <!-- ⑥ 我的备注（仅本人可见） -->
+    <view class="form-section note-section" wx:if="{{isEdit && myRole}}">
+      <view class="section-title">
+        我的备注
+        <text class="section-hint private-hint">🔒 仅自己可见</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        placeholder="私密备注，仅自己可见..."
+        value="{{myRole === 'owner' ? ownerNote : helperNote}}"
+        bindinput="{{myRole === 'owner' ? 'onInputOwnerNote' : 'onInputHelperNote'}}"
+        maxlength="200"
+        disabled="{{status === 'completed'}}"
+      />
+    </view>
+
+    <!-- 底部操作区占位 -->
+    <view style="height:200rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar" wx:if="{{!noPermission}}">
+
+    <!-- 新建时：保存并分享 -->
+    <view wx:if="{{!isEdit}}">
+      <button class="btn btn-primary" bindtap="onSave" loading="{{submitting}}">保存并分享</button>
+    </view>
+
+    <!-- pending 状态 -->
+    <view wx:elif="{{status === 'pending'}}" class="btn-row">
+      <button class="btn btn-secondary" bindtap="onSave" loading="{{submitting}}">保存</button>
+      <button
+        class="btn btn-primary {{(myRole === 'owner' && ownerConfirmed) || (myRole === 'helper' && helperConfirmed) ? 'btn-confirmed' : ''}}"
+        bindtap="onConfirm"
+      >
+        {{(myRole === 'owner' && ownerConfirmed) || (myRole === 'helper' && helperConfirmed) ? '已确认 ✓' : '确认信息'}}
+      </button>
+      <button class="btn btn-danger" bindtap="onDelete" wx:if="{{isCreator}}">废弃</button>
+    </view>
+
+    <!-- preparing 状态 -->
+    <view wx:elif="{{status === 'preparing'}}" class="btn-row">
+      <button class="btn btn-secondary" bindtap="onSave" loading="{{submitting}}">保存</button>
+      <button class="btn btn-primary" bindtap="onCheckin" wx:if="{{myRole === 'helper' && checkinCount < (visitTimes.length || 1)}}">上门 {{checkinCount}}/{{visitTimes.length || 1}}</button>
+      <button class="btn btn-danger" bindtap="onDelete" wx:if="{{isCreator}}">废弃</button>
+    </view>
+
+    <!-- serving 状态 -->
+    <view wx:elif="{{status === 'serving'}}" class="btn-row">
+      <!-- 铲屎官：有待确认的上门则显示确认按钮，否则等待 -->
+      <block wx:if="{{myRole === 'owner'}}">
+        <button class="btn btn-primary" bindtap="onConfirmVisit" wx:if="{{ownerConfirmCount < checkinCount}}">
+          确认第 {{ownerConfirmCount + 1}} 次上门
+        </button>
+        <view class="btn-placeholder" wx:else>
+          <text class="serving-hint">等待临时主第 {{checkinCount + 1}} 次上门</text>
+        </view>
+      </block>
+      <!-- 临时主：上一次已被确认则可继续上门，否则等待 -->
+      <block wx:if="{{myRole === 'helper'}}">
+        <button class="btn btn-primary" bindtap="onCheckin" wx:if="{{checkinCount < (visitTimes.length || 1) && checkinCount === ownerConfirmCount}}">
+          上门 {{checkinCount}}/{{visitTimes.length || 1}}
+        </button>
+        <view class="btn-placeholder" wx:else>
+          <text class="serving-hint">等待铲屎官确认第 {{ownerConfirmCount + 1}} 次上门</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- completed 状态 -->
+    <view wx:elif="{{status === 'completed'}}" class="completed-tip">
+      <text>🎉 服务已完成</text>
+    </view>
+
+  </view>
+</view>

@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
-          "name": "上门铲屎遛狗",
-          "pathName": "pages/care/care",
+          "name": "上门沟通",
+          "pathName": "pages/visit/visit",
           "query": "",
           "scene": null,
           "launchMode": "default"
+        },
+        {
+          "name": "上门铲屎遛狗",
+          "pathName": "pages/care/care",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "「雪糕」邀请成员",

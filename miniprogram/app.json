@@ -16,6 +16,8 @@
     "pages/map/place-detail/place-detail",
     "pages/care/care",
     "pages/care/care-add/care-add",
+    "pages/visit/visit",
+    "pages/visit/visit-add/visit-add",
     "pages/invite/invite",
     "pages/loading/loading",
     "pages/memorial/memorial",
