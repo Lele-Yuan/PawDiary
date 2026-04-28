@@ -172,7 +172,8 @@ const COLLECTIONS = {
   BILLS: 'bills',
   FAMILY_MEMBERS: 'pet_members',
   PET_PLACES: 'pet_places',
-  USER_LOCATIONS: 'user_locations'
+  USER_LOCATIONS: 'user_locations',
+  APP_CONFIG: 'app_config'
 };
 
 /**

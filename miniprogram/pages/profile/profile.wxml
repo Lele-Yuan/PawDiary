@@ -42,10 +42,10 @@
   <view class="quick-actions-section">
     <text class="quick-actions-title">常用功能</text>
     <view class="quick-actions-grid">
-      <view class="quick-action-item" bindtap="goToVisit">
+      <!-- <view class="quick-action-item" bindtap="goToVisit">
         <view class="quick-action-icon">✉️</view>
         <text class="quick-action-label">上门沟通</text>
-      </view>
+      </view> -->
       <view class="quick-action-item" bindtap="goToCustomerService">
         <view class="quick-action-icon">💁</view>
         <text class="quick-action-label">客服反馈</text>

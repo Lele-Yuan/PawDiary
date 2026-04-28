@@ -492,6 +492,12 @@ wx-button:not([size=mini]).family-member-add {
   line-height: 1;
 }
 
+/* 上门沟通入口样式 */
+.visit-entry-wrap {
+  background: linear-gradient(135deg, #E8F5F4 0%, #CFE8E4 100%);
+  box-shadow: 0 8rpx 32rpx rgba(142, 207, 201, 0.12);
+}
+
 /* ===== 提醒区域 ===== */
 .reminders-section {
   margin-top: 8rpx;

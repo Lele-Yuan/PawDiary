@@ -93,8 +93,8 @@
       </view>
     </view>
 
-    <!-- 宠物互助入口 -->
-    <view class="care-entry-wrap" bindtap="goToCare">
+    <!-- 宠物互助入口 - 根据云配置控制显示 -->
+    <view class="care-entry-wrap" wx:if="{{appConfig && appConfig.quickEntryCare && appConfig.quickEntryCare.enabled}}" bindtap="goToCare">
       <view class="care-entry-left">
         <view class="care-entry-icon-wrap">
           <text class="care-entry-icon">🐾</text>
@@ -107,6 +107,20 @@
       <view class="care-entry-tags">
         <text class="care-tag care-tag-helper">临时主</text>
         <text class="care-tag care-tag-owner">需求方</text>
+      </view>
+      <text class="care-entry-arrow">›</text>
+    </view>
+
+    <!-- 上门沟通入口 - 根据云配置控制显示 -->
+    <view class="care-entry-wrap visit-entry-wrap" wx:if="{{appConfig && appConfig.quickEntryVisit && appConfig.quickEntryVisit.enabled}}" bindtap="goToVisit">
+      <view class="care-entry-left">
+        <view class="care-entry-icon-wrap">
+          <text class="care-entry-icon">🏠</text>
+        </view>
+        <view class="care-entry-text">
+          <text class="care-entry-title">上门沟通</text>
+          <text class="care-entry-desc">预约上门服务，沟通更便捷</text>
+        </view>
       </view>
       <text class="care-entry-arrow">›</text>
     </view>

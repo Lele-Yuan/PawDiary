@@ -1,6 +1,11 @@
 const { formatDate } = require('../../utils/util');
 const { RECORD_TYPE_MAP } = require('../../utils/constants');
 
+// 云配置缓存
+let appConfigCache = null;
+let appConfigCacheTime = 0;
+const CONFIG_CACHE_DURATION = 5 * 60 * 1000; // 配置缓存5分钟
+
 // 将宠物对象中的 Date 字段序列化为 ISO 字符串，避免 setData 跨线程传输时 Date → {} 的问题
 function serializePet(pet) {
   if (!pet) return pet;
@@ -28,7 +33,8 @@ Page({
     userReady: false,
     showLoginModal: false,
     afterLoginCallback: null,
-    isGuest: false
+    isGuest: false,
+    appConfig: null
   },
 
   onLoad(options) {
@@ -86,6 +92,9 @@ Page({
     try {
       var app = getApp();
       var openid = app.globalData.openid;
+
+      // 加载云配置（优先加载，不依赖登录状态）
+      await this.loadAppConfig();
 
       // 检查登录状态
       if (!openid) {
@@ -154,6 +163,45 @@ Page({
     } catch (err) {
       console.error('加载首页数据失败：', err);
       this.setData({ loaded: true });
+    }
+  },
+
+  // 加载应用云配置
+  async loadAppConfig() {
+    const now = Date.now();
+    // 检查缓存是否有效
+    if (appConfigCache && (now - appConfigCacheTime) < CONFIG_CACHE_DURATION) {
+      this.setData({ appConfig: appConfigCache });
+      return;
+    }
+
+    try {
+      const db = wx.cloud.database();
+      const res = await db.collection('app_config').limit(1).get();
+
+      if (res.data.length > 0) {
+        const config = res.data[0];
+        appConfigCache = config;
+        appConfigCacheTime = now;
+        this.setData({ appConfig: config });
+      } else {
+        // 如果没有配置，使用默认配置
+        const defaultConfig = {
+          quickEntryCare: { enabled: true },
+          quickEntryVisit: { enabled: true }
+        };
+        appConfigCache = defaultConfig;
+        appConfigCacheTime = now;
+        this.setData({ appConfig: defaultConfig });
+      }
+    } catch (err) {
+      console.error('加载云配置失败：', err);
+      // 失败时使用默认配置（默认开启入口）
+      const defaultConfig = {
+        quickEntryCare: { enabled: true },
+        quickEntryVisit: { enabled: true }
+      };
+      this.setData({ appConfig: defaultConfig });
     }
   },
 
@@ -358,6 +406,21 @@ Page({
       return;
     }
     wx.navigateTo({ url: '/pages/care/care' });
+  },
+
+  // 快捷入口 - 上门沟通
+  goToVisit() {
+    // 未登录时，使用通用登录弹窗组件
+    if (this.data.isGuest) {
+      this.setData({
+        showLoginModal: true,
+        afterLoginCallback: () => {
+          wx.navigateTo({ url: '/pages/visit/visit' });
+        }
+      });
+      return;
+    }
+    wx.navigateTo({ url: '/pages/visit/visit' });
   },
 
   // 指南 - 养狗指南（跳转公众号合集）

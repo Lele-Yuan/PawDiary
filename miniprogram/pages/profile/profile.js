@@ -312,9 +312,9 @@ Page({
   },
 
   // 上门沟通
-  goToVisit() {
-    wx.navigateTo({ url: '/pages/visit/visit' });
-  },
+  // goToVisit() {
+  //   wx.navigateTo({ url: '/pages/visit/visit' });
+  // },
 
   // 客服反馈（跳转公众号文章）
   goToCustomerService() {
