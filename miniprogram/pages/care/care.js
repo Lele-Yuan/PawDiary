@@ -54,7 +54,8 @@ Page({
       { key: 'poop', label: '铲屎', icon: '💩' },
       { key: 'walk', label: '遛狗', icon: '🦮' },
       { key: 'other', label: '异宠', icon: '🐜' }
-    ]
+    ],
+    featureEnabled: false  // 功能是否开启
   },
 
   onLoad() {
@@ -67,13 +68,33 @@ Page({
         navHeight: statusBarHeight + navBarHeight
       });
     } catch (e) {}
+    this._loadConfig();
+  },
+
+  // 加载云配置
+  async _loadConfig() {
+    try {
+      const db = wx.cloud.database();
+      const res = await db.collection('app_config').limit(1).get();
+
+      if (res.data.length > 0) {
+        const config = res.data[0];
+        var enabled = config.quickEntryCare && config.quickEntryCare.enabled !== false;
+        this.setData({ featureEnabled: enabled });
+      }
+    } catch (e) {
+      // 读取失败，默认开启
+      console.error('加载配置失败，使用默认值', e);
+    }
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: -1 });
     }
-    this._getLocationAndLoad();
+    if (this.data.featureEnabled) {
+      this._getLocationAndLoad();
+    }
   },
 
   // 获取位置后加载列表
@@ -280,6 +301,7 @@ Page({
 
   // 跳转发布页
   onTapPublish() {
+    if (!this.data.featureEnabled) return;
     wx.navigateTo({ url: '/pages/care/care-add/care-add' });
   }
 });

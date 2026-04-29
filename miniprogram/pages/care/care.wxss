@@ -4,6 +4,14 @@
   padding-bottom: 180rpx;
 }
 
+/* 功能未开启时的提示 */
+.feature-disabled-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
 /* nav-bar 右侧发布按钮 */
 .nav-publish-btn {
   font-size: 26rpx;

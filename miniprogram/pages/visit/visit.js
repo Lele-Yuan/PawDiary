@@ -3,7 +3,8 @@ Page({
     list: [],
     loading: true,
     statusBarHeight: 20,
-    navHeight: 0
+    navHeight: 0,
+    featureEnabled: false  // 功能是否开启
   },
 
   onLoad() {
@@ -13,10 +14,30 @@ Page({
       statusBarHeight,
       navHeight: statusBarHeight + 44
     });
+    this._loadConfig();
+  },
+
+  // 加载云配置
+  async _loadConfig() {
+    try {
+      const db = wx.cloud.database();
+      const res = await db.collection('app_config').limit(1).get();
+
+      if (res.data.length > 0) {
+        const config = res.data[0];
+        var enabled = config.quickEntryVisit && config.quickEntryVisit.enabled !== false;
+        this.setData({ featureEnabled: enabled });
+      }
+    } catch (e) {
+      // 读取失败，默认开启
+      console.error('加载配置失败，使用默认值', e);
+    }
   },
 
   onShow() {
-    this._loadList();
+    if (this.data.featureEnabled) {
+      this._loadList();
+    }
   },
 
   async _loadList() {
@@ -57,6 +78,7 @@ Page({
   },
 
   goCreate() {
+    if (!this.data.featureEnabled) return;
     wx.navigateTo({ url: '/pages/visit/visit-add/visit-add' });
   },
 

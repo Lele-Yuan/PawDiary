@@ -45,8 +45,19 @@
 2. 进入"数据库" → "app_config" 集合（需要先创建集合）
 3. 添加一条记录，按照上面的数据结构填写
 4. 修改 `enabled` 为 `false` 可隐藏对应入口
-   - `quickEntryCare.enabled`: 控制首页"代铲屎遛狗"入口
-   - `quickEntryVisit.enabled`: 控制首页"上门沟通"入口
+   - `quickEntryCare.enabled`: 控制首页"代铲屎遛狗"入口及功能页面
+   - `quickEntryVisit.enabled`: 控制首页"上门沟通"入口及功能页面
+
+### 功能开关说明
+
+- 当配置项 `enabled` 为 `false` 时：
+  - 首页快捷入口将被隐藏
+  - 功能页面（代铲屎遛狗/上门沟通）将显示"功能建设中…"提示，无法访问
+  - 功能处于维护或下线状态
+
+- 当配置项 `enabled` 为 `true` 时：
+  - 首页快捷入口正常显示
+  - 功能页面正常访问
 
 ### 注意事项
 
