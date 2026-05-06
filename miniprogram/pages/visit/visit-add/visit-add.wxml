@@ -1,4 +1,15 @@
 <view class="add-page">
+  <!-- 功能未开启时的提示 -->
+  <view wx:if="{{!featureEnabled}}" class="feature-disabled-wrap">
+    <empty-state
+      icon="🚧"
+      title="功能建设中..."
+      desc="该功能正在升级优化，敬请期待"
+    />
+   </view>
+
+  <!-- 功能开启时显示正常内容 -->
+  <view wx:if="{{featureEnabled}}">
   <nav-bar title="{{isEdit ? '编辑沟通' : '发起沟通'}}" back="{{true}}" />
 
   <!-- 无权限提示 -->
@@ -300,5 +311,6 @@
       <text>🎉 服务已完成</text>
     </view>
 
+  </view>
   </view>
 </view>

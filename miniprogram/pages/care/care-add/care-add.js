@@ -4,6 +4,7 @@ Page({
     navHeight: 64,
     submitting: false,
     editId: '',    // 编辑模式时的帖子 ID
+    featureEnabled: false,  // 功能是否开启
 
     // 角色选项
     roleOptions: [
@@ -77,9 +78,27 @@ Page({
       calendarMonth: month,
       calendarDays: this._generateCalendar(year, month)
     });
+    this._loadConfig();
     if (options && options.editId) {
       this.setData({ editId: options.editId });
       this._loadPostForEdit(options.editId);
+    }
+  },
+
+  // 加载云配置
+  async _loadConfig() {
+    try {
+      const db = wx.cloud.database();
+      const res = await db.collection('app_config').limit(1).get();
+
+      if (res.data.length > 0) {
+        const config = res.data[0];
+        var enabled = config.quickEntryCare && config.quickEntryCare.enabled !== false;
+        this.setData({ featureEnabled: enabled });
+      }
+    } catch (e) {
+      // 读取失败，默认开启
+      console.error('加载配置失败，使用默认值', e);
     }
   },
 

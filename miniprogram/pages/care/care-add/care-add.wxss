@@ -3,6 +3,14 @@
   min-height: 100vh;
 }
 
+/* 功能未开启时的提示 */
+.feature-disabled-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
 /* 滚动容器（高度通过 wxml 内联 style 动态设置） */
 .add-scroll {
   box-sizing: border-box;

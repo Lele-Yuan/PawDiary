@@ -9,6 +9,7 @@ Page({
     recordId: '',
     noPermission: false,
     submitting: false,
+    featureEnabled: false,  // 功能是否开启
 
     // 当前用户身份
     myRole: '',            // 'owner' | 'helper' | ''
@@ -47,12 +48,31 @@ Page({
     var statusBarHeight = systemInfo.statusBarHeight || 20;
     this.setData({ statusBarHeight, navHeight: statusBarHeight + 44 });
 
+    this._loadConfig();
+
     if (options && options.editId) {
       this.setData({ isEdit: true, recordId: options.editId });
       this._loadRecord(options.editId);
     } else {
       var userInfo = app.globalData && app.globalData.userInfo;
       this._defaultNickname = (userInfo && userInfo.nickName) || '';
+    }
+  },
+
+  // 加载云配置
+  async _loadConfig() {
+    try {
+      const db = wx.cloud.database();
+      const res = await db.collection('app_config').limit(1).get();
+
+      if (res.data.length > 0) {
+        const config = res.data[0];
+        var enabled = config.quickEntryVisit && config.quickEntryVisit.enabled !== false;
+        this.setData({ featureEnabled: enabled });
+      }
+    } catch (e) {
+      // 读取失败，默认开启
+      console.error('加载配置失败，使用默认值', e);
     }
   },
 

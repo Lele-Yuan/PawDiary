@@ -1,4 +1,15 @@
 <view class="add-page">
+  <!-- 功能未开启时的提示 -->
+  <view wx:if="{{!featureEnabled}}" class="feature-disabled-wrap">
+    <empty-state
+      icon="🚧"
+      title="功能建设中..."
+      desc="该功能正在升级优化，敬请期待"
+    />
+   </view>
+
+  <!-- 功能开启时显示正常内容 -->
+  <view wx:if="{{featureEnabled}}">
   <!-- 顶部导航 -->
   <nav-bar title="{{editId ? '编辑互助' : '发布互助'}}" back="{{true}}" />
 
@@ -306,4 +317,5 @@
 
     <view class="safe-bottom"></view>
   </scroll-view>
+  </view>
 </view>
