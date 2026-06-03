@@ -272,6 +272,54 @@ Page({
     });
   },
 
+  // 重启清单：所有 todo 设为未完成
+  restartChecklist() {
+    wx.showModal({
+      title: '确认重启',
+      content: '将所有事项重置为未完成状态，确定要重启这个清单吗？',
+      success: async (res) => {
+        if (res.confirm) {
+          showLoading('重启中...');
+          try {
+            const items = this.data.detailChecklist.items.map(item => ({
+              ...item,
+              checked: false
+            }));
+
+            // 通过云函数更新
+            await wx.cloud.callFunction({
+              name: 'checklistManage',
+              data: {
+                action: 'update',
+                data: { _id: this.data.expandedId, items }
+              }
+            });
+
+            hideLoading();
+            showSuccess('已重启');
+
+            // 更新页面数据
+            this.setData({ 'detailChecklist.items': items });
+            this.updateDetailProgress();
+
+            // 同步更新卡片列表中的进度数据
+            const checklists = this.data.checklists.map(cl => {
+              if (cl._id === this.data.expandedId) {
+                return { ...cl, items, progress: 0, checkedCount: 0 };
+              }
+              return cl;
+            });
+            this.setData({ checklists });
+          } catch (err) {
+            hideLoading();
+            showError('重启失败');
+            console.error(err);
+          }
+        }
+      }
+    });
+  },
+
   // 删除整个清单
   deleteChecklist() {
     wx.showModal({

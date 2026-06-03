@@ -1,0 +1,200 @@
+page {
+  background-color: #FBF9F7;
+}
+
+.trends-page {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.trends-content {
+  padding: 0 32rpx;
+}
+
+/* 顶部宠物头部卡片 */
+.hero-card {
+  background: #ffffff80;
+  border-radius: 36rpx;
+  padding: 36rpx;
+  margin-top: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(232, 135, 90, 0.08);
+}
+
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-date {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #2D2D2D;
+  letter-spacing: 1rpx;
+  text-transform: uppercase;
+  margin-bottom: 16rpx;
+}
+
+.hero-title {
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #2D2D2D;
+  line-height: 1.15;
+  letter-spacing: -1rpx;
+}
+
+.hero-subtitle {
+  font-size: 48rpx;
+  font-style: italic;
+  color: #2D2D2D;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 28rpx;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 12rpx;
+}
+
+.hero-stat {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.55);
+  border-radius: 20rpx;
+  padding: 16rpx 18rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-stat-label {
+  font-size: 18rpx;
+  font-weight: 700;
+  color: #6B2D1A;
+  letter-spacing: 1rpx;
+  margin-bottom: 4rpx;
+}
+
+.hero-stat-value {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #2D2D2D;
+}
+
+/* 时间区间切换 */
+.range-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8rpx;
+  margin-bottom: 20rpx;
+  padding: 0 4rpx;
+}
+
+.range-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #2D2D2D;
+  background-color: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 14rpx 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+
+.range-tab.active {
+  background-color: #2D2D2D;
+  color: #FFFFFF;
+}
+
+.range-tab-arrow {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.custom-range-tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #888888;
+  margin: -8rpx 0 16rpx;
+}
+
+/* 图表卡片 */
+.chart-card {
+  background-color: #FFFFFF;
+  border-radius: 36rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(149, 73, 49, 0.04);
+}
+
+.chart-title {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #2D2D2D;
+  letter-spacing: -0.5rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.chart-unit {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #999999;
+  margin-left: 6rpx;
+  letter-spacing: 0;
+}
+
+.chart-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10rpx 22rpx;
+  margin-bottom: 12rpx;
+}
+
+.chart-legend-wrap {
+  gap: 8rpx 16rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 22rpx;
+  color: #666666;
+}
+
+.legend-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+}
+
+.legend-emoji {
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.chart-canvas {
+  width: 100%;
+  display: block;
+}
+
+.chart-canvas-line {
+  height: 360rpx;
+}
+
+.chart-canvas-heat {
+  height: 320rpx;
+}
+
+.empty-tip {
+  text-align: center;
+  font-size: 26rpx;
+  color: #BBBBBB;
+  padding: 80rpx 0;
+}

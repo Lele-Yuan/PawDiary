@@ -50,6 +50,9 @@
 /* ===== 节标题 ===== */
 .section-title-row {
   padding: 32rpx 32rpx 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .section-title {
@@ -57,6 +60,28 @@
   font-weight: 800;
   color: #313333;
   letter-spacing: -1rpx;
+}
+
+.trends-entry {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  background-color: #F5EDD0;
+  border-radius: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(232, 135, 90, 0.12);
+}
+
+.trends-entry-text {
+  font-size: 24rpx;
+  color: #6B2D1A;
+  font-weight: 600;
+  margin-right: 6rpx;
+}
+
+.trends-entry-arrow {
+  font-size: 28rpx;
+  color: #6B2D1A;
+  line-height: 1;
 }
 
 /* ===== 时间线容器 ===== */

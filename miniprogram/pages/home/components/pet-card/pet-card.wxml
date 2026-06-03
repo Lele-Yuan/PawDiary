@@ -17,14 +17,15 @@
       <view class="hero-stats">
         <view class="hero-stat">
           <view class="hero-stat-value">
+            <text class="hero-stat-label">陪伴</text>
             {{companionDays}}
-            <text class="hero-stat-label">天陪伴</text>
+            <text class="hero-stat-label">天</text>
           </view>
         </view>
         <view class="hero-stat">
           <view class="hero-stat-value">
-            {{pet.weight || '--'}}<text class="hero-stat-unit" wx:if="{{pet.weight}}">kg</text>
             <text class="hero-stat-label">当前体重</text>
+            {{pet.weight || '--'}}<text class="hero-stat-unit" wx:if="{{pet.weight}}">kg</text>
           </view>
         </view>
       </view>

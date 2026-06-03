@@ -121,14 +121,17 @@
     </view>
     <view class="form-group" wx:if="{{form.type === 'diet'}}">
       <view class="form-label">进食量</view>
-      <input
-        class="form-input"
-        type="digit"
-        placeholder="请输入进食量"
-        value="{{form.foodAmount}}"
-        bindinput="onInputChange"
-        data-field="foodAmount"
-      />
+      <view class="input-with-unit">
+        <input
+          class="form-input"
+          type="digit"
+          placeholder="请输入进食量"
+          value="{{form.foodAmount}}"
+          bindinput="onInputChange"
+          data-field="foodAmount"
+        />
+        <text class="unit-label">g</text>
+      </view>
     </view>
 
     <!-- 驱虫类型：驱虫类型选择框 -->

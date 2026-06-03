@@ -1,0 +1,121 @@
+<view class="trends-page">
+  <nav-bar title="趋势" back="{{true}}" />
+
+  <loading-view wx:if="{{!loaded}}" />
+
+  <view wx:if="{{loaded}}" class="trends-content">
+
+    <!-- 顶部宠物头部 -->
+    <view class="hero-card">
+      <view class="hero-meta">
+        <text class="hero-date">{{todayLabel}} · DAY {{daysWithUs}}</text>
+        <text class="hero-title">{{petInfo.name}}的健康，</text>
+        <text class="hero-subtitle">由你守护。</text>
+      </view>
+      <view class="hero-stats">
+        <view class="hero-stat">
+          <text class="hero-stat-label">AGE</text>
+          <text class="hero-stat-value">{{petInfo.ageText}}</text>
+        </view>
+        <view class="hero-stat">
+          <text class="hero-stat-label">WEIGHT</text>
+          <text class="hero-stat-value">{{petInfo.weightText}}</text>
+        </view>
+        <view class="hero-stat">
+          <text class="hero-stat-label">CONDITION</text>
+          <text class="hero-stat-value">{{petInfo.conditionText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 时间区间切换 -->
+    <view class="range-tabs">
+      <view
+        class="range-tab {{range === item.key ? 'active' : ''}}"
+        wx:for="{{rangeOptions}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onRangeTap"
+      >
+        <text>{{item.label}}</text>
+        <text wx:if="{{item.key === 'custom'}}" class="range-tab-arrow">›</text>
+      </view>
+    </view>
+
+    <view wx:if="{{range === 'custom' && customStart && customEnd}}" class="custom-range-tip">
+      {{customStart}} ~ {{customEnd}}
+    </view>
+
+    <!-- 体重折线图 -->
+    <view class="chart-card">
+      <text class="chart-title">体重 <text class="chart-unit">(kg)</text></text>
+      <view wx:if="{{!hasWeight}}" class="empty-tip">暂无数据</view>
+      <canvas
+        wx:else
+        type="2d"
+        id="weightCanvas"
+        class="chart-canvas chart-canvas-line"
+      ></canvas>
+    </view>
+
+    <!-- 食水量双折线 -->
+    <view class="chart-card">
+      <text class="chart-title">食水量 <text class="chart-unit">(食:g / 水:ml)</text></text>
+      <view class="chart-legend" wx:if="{{hasIntake}}">
+        <view class="legend-item">
+          <view class="legend-dot" style="background:#7CB342"></view>
+          <text>食物</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot" style="background:#42A5F5"></view>
+          <text>饮水</text>
+        </view>
+      </view>
+      <view wx:if="{{!hasIntake}}" class="empty-tip">暂无数据</view>
+      <canvas
+        wx:else
+        type="2d"
+        id="intakeCanvas"
+        class="chart-canvas chart-canvas-line"
+      ></canvas>
+    </view>
+
+    <!-- 健康异常热力图 -->
+    <view class="chart-card">
+      <text class="chart-title">健康异常</text>
+      <view class="chart-legend" wx:if="{{hasPoop}}">
+        <view class="legend-item" wx:for="{{abnormalLegend}}" wx:key="key">
+          <text class="legend-emoji">{{item.emoji}}</text>
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+      <view wx:if="{{!hasPoop}}" class="empty-tip">暂无数据</view>
+      <canvas
+        wx:else
+        type="2d"
+        id="poopCanvas"
+        class="chart-canvas chart-canvas-heat"
+      ></canvas>
+    </view>
+
+    <!-- 美容日记热力图 -->
+    <view class="chart-card">
+      <text class="chart-title">美容日记</text>
+      <view class="chart-legend chart-legend-wrap" wx:if="{{hasGrooming}}">
+        <view class="legend-item" wx:for="{{groomingLegend}}" wx:key="key">
+          <text class="legend-emoji">{{item.emoji}}</text>
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+      <view wx:if="{{!hasGrooming}}" class="empty-tip">暂无数据</view>
+      <canvas
+        wx:else
+        type="2d"
+        id="groomingCanvas"
+        class="chart-canvas chart-canvas-heat"
+      ></canvas>
+    </view>
+
+    <view style="height: 80rpx"></view>
+  </view>
+</view>

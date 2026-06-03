@@ -6,6 +6,7 @@
     "pages/record/record",
     "pages/record/record-type-select/record-type-select",
     "pages/record/record-add/record-add",
+    "pages/record/record-trends/record-trends",
     "pages/bill/bill",
     "pages/bill/bill-add/bill-add",
     "pages/bill/bill-stats/bill-stats",

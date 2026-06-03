@@ -229,6 +229,18 @@ Page({
     });
   },
 
+  // 跳转趋势页
+  goTrends() {
+    var app = getApp();
+    if (!app.globalData.currentPetId) {
+      wx.showToast({ title: '请先添加宠物', icon: 'none' });
+      return;
+    }
+    wx.navigateTo({
+      url: '/pages/record/record-trends/record-trends'
+    });
+  },
+
   // 立即完成：携带记录ID跳转到添加页面，先获取数据再预填
   onCompleteRecord(e) {
     var ds = e.currentTarget.dataset;

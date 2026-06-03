@@ -26,6 +26,10 @@
   <!-- 节标题 -->
   <view class="section-title-row" wx:if="{{records.length}}">
     <text class="section-title">健康时间线</text>
+    <view class="trends-entry" bindtap="goTrends">
+      <text class="trends-entry-text">趋势</text>
+      <text class="trends-entry-arrow">›</text>
+    </view>
   </view>
 
   <!-- 时间线记录列表 -->

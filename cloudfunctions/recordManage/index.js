@@ -244,7 +244,16 @@ async function listRecords(openid, data) {
     where.type = data.type;
   }
 
-  const limit = data.limit || 50;
+  // 按时间范围筛选（趋势页面使用）
+  if (data.startDate && data.endDate) {
+    where.date = _.gte(new Date(data.startDate)).and(_.lte(new Date(data.endDate)));
+  } else if (data.startDate) {
+    where.date = _.gte(new Date(data.startDate));
+  } else if (data.endDate) {
+    where.date = _.lte(new Date(data.endDate));
+  }
+
+  const limit = Math.min(data.limit || 50, 1000);
   const skip = data.skip || 0;
 
   const { data: records } = await db.collection('records')

@@ -60,10 +60,6 @@
       <!-- 标题区 -->
       <view class="title-section">
         <view class="title-main">
-          <view class="category-label">
-            <text class="label-icon">{{detailChecklist.icon || '📋'}}</text>
-            <text class="label-text">清单详情</text>
-          </view>
           <input
             class="title-input"
             value="{{detailChecklist.title}}"
@@ -121,6 +117,9 @@
 
     <!-- 底部操作 -->
     <view class="bottom-actions" wx-if="{{canEdit}}">
+      <button class="btn-outline restart-list-btn" hover-class="btn-outline-hover" bindtap="restartChecklist">
+        重启此清单
+      </button>
       <button class="btn-outline delete-list-btn" hover-class="btn-outline-hover" bindtap="deleteChecklist">
         删除此清单
       </button>
