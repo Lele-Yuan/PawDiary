@@ -1,0 +1,182 @@
+<!-- DGTI 首页 - 狗格研究所 -->
+<view class="page">
+
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="goBack">
+      <text class="nav-back-icon">←</text>
+    </view>
+    <text class="nav-title">DGTI 狗格研究所</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <scroll-view class="scroll-content" scroll-y>
+
+    <!-- Hero 区域 -->
+    <view class="hero-section">
+      <!-- <view class="hero-headline">
+        <text class="hero-title">每只狗都有隐藏人格</text>
+        <text class="hero-sub">你的狗可能比你更像人</text>
+      </view> -->
+
+      <!-- 主视觉扫描卡 -->
+      <view class="scan-card">
+        <image class="scan-dog-image" src="cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dogti.png"></image>
+        <view class="scan-card-inner">
+          <!-- 扫描顶部标签 -->
+          <view class="scan-labels">
+            <view class="scan-status-box">
+              <view class="scan-bar-1"></view>
+              <view class="scan-bar-2"></view>
+              <text class="scan-status-text">SCANNING SOUL...</text>
+            </view>
+            <view class="dna-lock-badge">
+              <text class="dna-lock-text">DNA_LOCK</text>
+            </view>
+          </view>
+          <!-- 狗狗图片区 -->
+          <view class="scan-dog-area">
+            <view class="scan-dog-placeholder">
+              <!-- <text class="scan-dog-emoji">🐾</text> -->
+              <text class="scan-dog-title">每只狗都有隐藏人格</text>
+              <text class="scan-dog-tip">每只狗都是独特的存在，你的狗可能比你更像人</text>
+            </view>
+          </view>
+          <!-- 底部 DNA 检测 -->
+          <view class="scan-bottom">
+            <view class="dna-detect-row">
+              <text class="dna-detect-dot">✦</text>
+              <text class="dna-detect-label">DNA PATTERN DETECTED</text>
+              <view class="dna-progress-wrap">
+                <view class="dna-progress-bar"></view>
+              </view>
+            </view>
+          </view>
+          <!-- 扫描线特效 -->
+          <view class="scan-line"></view>
+        </view>
+      </view>
+
+      <!-- CTA 按钮 -->
+      <!-- <view class="cta-btn" bindtap="startTest">
+        <text class="cta-btn-text">立即检测狗格</text>
+        <text class="cta-btn-arrow">→</text>
+      </view> -->
+    </view>
+
+    <!-- 底部 CTA -->
+    <view class="bottom-cta">
+      <view class="bottom-cta-card">
+        <text class="bottom-cta-title">Find Your Dog's Type</text>
+        <text class="bottom-cta-desc">不确定你的狗属于哪种狗格？来做个3分钟测试吧。</text>
+        <view class="bottom-cta-btn" bindtap="startTest">
+          <text class="bottom-cta-btn-text">Start Assessment</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 发现稀有狗格 -->
+    <view class="archive-section">
+      <view class="archive-header">
+        <view class="archive-header-left">
+          <text class="archive-title">发现稀有狗格</text>
+          <text class="archive-subtitle">RESEARCH ARCHIVE</text>
+        </view>
+        <view class="archive-more" bindtap="viewAll">
+          <text class="archive-more-text">查看全部</text>
+          <text class="archive-more-arrow">›</text>
+        </view>
+      </view>
+
+      <!-- 横向滚动卡片 -->
+      <scroll-view class="card-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="card-list">
+          <view
+            wx:for="{{personalities}}"
+            wx:key="id"
+            class="personality-card"
+            bindtap="viewPersonality"
+            data-id="{{item.id}}"
+          >
+            <!-- 图标 + 稀有度 -->
+            <view class="card-icon-row">
+              <image wx:if="{{item.iconImg}}" class="card-icon-img" src="{{item.iconImg}}"></image>
+              <view wx:else class="card-icon" style="background:{{item.iconBg}}">
+                <text class="card-icon-emoji">🐾</text>
+              </view>
+              <view class="card-rarity-badge" style="background:{{item.rarityBg}};color:{{item.rarityColor}}">
+                <text>{{item.rarity}}</text>
+              </view>
+            </view>
+            <!-- 名称 -->
+            <text class="card-name">{{item.name}}</text>
+            <!-- 身份 -->
+            <text class="card-identity">「{{item.identity}}」</text>
+            <!-- 简介 -->
+            <text class="card-desc">{{item.tagline}}</text>
+            <!-- Tag -->
+            <view class="card-tags">
+              <view wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="card-tag">
+                <text>BADGE: {{tag}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 5大模型介绍 -->
+    <view class="models-section">
+      <view class="models-header">
+        <text class="models-title">5 大核心模型</text>
+        <text class="models-subtitle">CORE MODELS</text>
+      </view>
+      <view class="models-grid">
+        <view wx:for="{{models}}" wx:key="code" class="model-item">
+          <view class="model-icon-wrap" style="background:{{item.bg}}">
+            <text class="model-icon">{{item.icon}}</text>
+          </view>
+          <text class="model-name">{{item.name}}</text>
+          <text class="model-en">{{item.en}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 历史测试结果 -->
+    <view class="history-section" wx:if="{{history.length > 0}}">
+      <view class="history-header">
+        <text class="history-title">测试记录</text>
+        <text class="history-subtitle">MY TEST HISTORY</text>
+      </view>
+      <view class="history-list">
+        <view
+          wx:for="{{history}}"
+          wx:key="time"
+          class="history-item"
+        >
+          <view class="history-item-main" bindtap="viewHistory" data-index="{{index}}">
+            <view class="history-icon" style="background:{{item.iconBg}}">
+              <text>🐾</text>
+            </view>
+            <view class="history-info">
+              <view class="history-info-top">
+                <text class="history-name">{{item.name}}</text>
+                <view class="history-rarity" style="background:{{item.rarityBg}};color:{{item.rarityColor}}">
+                  <text>{{item.rarity}}</text>
+                </view>
+              </view>
+              <text class="history-identity">「{{item.identity}}」</text>
+            </view>
+            <text class="history-arrow">›</text>
+          </view>
+          <view class="history-item-bottom">
+            <text class="history-time">{{item.dogName}}</text>
+            <text class="history-delete" catchtap="deleteHistory" data-index="{{index}}">删除</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </scroll-view>
+</view>

@@ -80,7 +80,8 @@ Page({
       const pets = ((res.result && res.result.code === 0) ? res.result.data : []).map(pet => {
         return {
           ...pet,
-          age: calcAge(pet.birthday) || ''
+          age: calcAge(pet.birthday) || '',
+          birthdayFormat: pet.birthday ? pet.birthday.slice(0, 10) : ''
         };
       });
 
@@ -292,6 +293,11 @@ Page({
     wx.navigateTo({
       url: '/pages/pet-edit/pet-edit?mode=add'
     });
+  },
+
+  // DGTI 狗格测试
+  goDgti() {
+    wx.navigateTo({ url: '/pages/dogti/index/index' });
   },
 
   // 纪念馆

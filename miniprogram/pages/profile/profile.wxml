@@ -54,6 +54,10 @@
         <view class="quick-action-icon">📋</view>
         <text class="quick-action-label">养宠知识</text>
       </view>
+      <view class="quick-action-item" bindtap="goDgti">
+        <view class="quick-action-icon">🐶</view>
+        <text class="quick-action-label">DGTI</text>
+      </view>
     </view>
   </view>
 
@@ -96,6 +100,7 @@
           <view class="pet-card-name">
             {{item.name}}
             <text class="pet-card-desc">{{item.age}}</text>
+            <text class="pet-card-desc">({{item.birthdayFormat}})</text>
           </view>
           <text class="pet-role-tag pet-role-joined" wx:if="{{item.role !== 'creator'}}">已加入</text>
         </view>

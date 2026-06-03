@@ -23,7 +23,11 @@
     "pages/memorial/memorial",
     "pages/memorial/memorial-add/memorial-add",
     "pages/memorial/blessing-detail/blessing-detail",
-    "pages/webview/webview"
+    "pages/webview/webview",
+    "pages/dogti/index/index",
+    "pages/dogti/test/test",
+    "pages/dogti/result/result",
+    "pages/dogti/atlas/atlas"
   ],
   "window": {
     "backgroundTextStyle": "light",

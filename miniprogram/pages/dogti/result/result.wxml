@@ -1,0 +1,197 @@
+<!-- DGTI 结果页 -->
+<view class="page" wx:if="{{personality}}">
+
+  <!-- 顶部导航 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="goBack">
+      <text class="nav-back-icon">←</text>
+    </view>
+    <text class="nav-title">狗格档案</text>
+    <view class="nav-placeholder"></view>
+  </view>
+
+  <scroll-view class="scroll-content" scroll-y>
+
+    <!-- 主图区域 -->
+    <view class="hero-section">
+      <view class="hero-bg" style="background:linear-gradient(135deg,{{personality.iconBg}} 0%,#FFF1ED 100%)">
+        <image wx:if="{{personality.iconImg}}" class="card-icon-img" src="{{personality.iconImg}}"></image>
+        <text wx:else class="hero-bg-emoji">🐾</text>
+      </view>
+      <view class="hero-overlay"></view>
+      <!-- RESULT UNLOCKED badge -->
+      <view class="result-badge">
+        <text class="result-badge-dot">✦</text>
+        <text class="result-badge-text">RESULT UNLOCKED</text>
+      </view>
+      <view class="hero-info">
+        <text class="hero-name">{{personality.name}}</text>
+        <text class="hero-tagline">"{{personality.tagline}}"</text>
+      </view>
+    </view>
+
+    <!-- 属性卡片行 -->
+    <view class="stat-cards">
+      <view class="stat-card stat-card-green">
+        <view class="stat-icon-wrap stat-icon-green">
+          <text class="stat-icon">💼</text>
+        </view>
+        <text class="stat-card-label">DOG JOB TITLE</text>
+        <text class="stat-card-value">{{personality.job}}</text>
+      </view>
+      <view class="stat-card stat-card-brown">
+        <view class="stat-icon-wrap stat-icon-brown">
+          <text class="stat-icon">🏆</text>
+        </view>
+        <text class="stat-card-label stat-label-light">SOUL RANK</text>
+        <text class="stat-card-value stat-value-light">{{personality.soulRank}}</text>
+      </view>
+    </view>
+
+    <!-- Soul DNA Breakdown - 雷达图 -->
+    <view class="dna-section">
+      <view class="section-header">
+        <text class="section-icon">✦</text>
+        <view class="section-title-wrap">
+          <text class="section-title">Soul DNA Breakdown</text>
+          <text class="section-title-cn">灵魂基因解析</text>
+        </view>
+      </view>
+      <!-- 雷达图 Canvas -->
+      <view class="radar-wrap">
+        <canvas type="2d" id="radar-canvas" class="radar-canvas"></canvas>
+      </view>
+      <!-- 图例 -->
+      <view class="radar-legend">
+        <view wx:for="{{radarData}}" wx:key="key" class="radar-legend-item">
+          <view class="radar-legend-dot" style="background:{{item.color}}"></view>
+          <text class="radar-legend-name">{{item.label}}</text>
+          <text class="radar-legend-val">{{item.value}}%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Trait Manifestation -->
+    <view class="traits-section">
+      <view class="traits-title-wrap">
+        <text class="traits-title">Trait Manifestation</text>
+        <text class="traits-title-cn">核心特征表现</text>
+      </view>
+      <view class="trait-item">
+        <view class="trait-line" style="background:{{personality.trait1Color}}"></view>
+        <view class="trait-content">
+          <text class="trait-name" style="color:{{personality.trait1Color}}">{{personality.trait1Title}}</text>
+          <text class="trait-desc">{{personality.trait1Desc}}</text>
+        </view>
+      </view>
+      <view class="trait-item">
+        <view class="trait-line" style="background:{{personality.trait2Color}}"></view>
+        <view class="trait-content">
+          <text class="trait-name" style="color:{{personality.trait2Color}}">{{personality.trait2Title}}</text>
+          <text class="trait-desc">{{personality.trait2Desc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 适配犬种 -->
+    <view class="breeds-section">
+      <text class="breeds-title">适配犬种</text>
+      <view class="breeds-list">
+        <view wx:for="{{personality.breeds}}" wx:key="*this" class="breed-tag">
+          <text>🐕 {{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分享海报预览卡 -->
+    <view class="share-card">
+      <view class="share-card-inner">
+        <view class="share-card-top">
+          <image wx:if="{{item.iconImg}}" class="share-card-icon-img" src="{{item.iconImg}}"></image>
+          <view wx:else class="share-card-icon" style="background:{{personality.iconBg}}">
+            <text class="share-card-icon-emoji">🐾</text>
+          </view>
+          <view class="share-card-info">
+            <text class="share-card-label">DOG PERSONALITY INVENTORY</text>
+            <text class="share-card-name">{{personality.name}}</text>
+            <text class="share-card-sub">Discover your dog's soul • DGTI 官方认证</text>
+          </view>
+        </view>
+        <view class="share-card-bottom">
+          <view class="share-badge-row">
+            <view class="share-badge share-badge-warm">
+              <text class="share-badge-small">危险指数</text>
+              <text class="share-badge-big">{{personality.danger}}%</text>
+            </view>
+            <view class="share-badge share-badge-green">
+              <text class="share-badge-small">狗届职业</text>
+              <text class="share-badge-big">{{personality.job}}</text>
+            </view>
+          </view>
+          <view class="share-hidden-trait">
+            <text class="share-hidden-label">隐藏属性</text>
+            <text class="share-hidden-value">{{personality.tags[0]}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-btns">
+      <view class="btn-primary" bindtap="onShare">
+        <text class="btn-icon">↑</text>
+        <text class="btn-text">生成分享海报</text>
+      </view>
+      <view class="btn-secondary" bindtap="goAtlas">
+        <text class="btn-icon-sec">🔙</text>
+        <text class="btn-text-sec">返回研究所</text>
+      </view>
+    </view>
+
+    <view class="safe-bottom"></view>
+  </scroll-view>
+
+  <!-- 海报模态框 -->
+  <view class="poster-modal" wx:if="{{showPosterModal}}">
+    <view class="poster-mask" bindtap="closePosterModal"></view>
+    <view class="poster-dialog">
+      <!-- 输入态 -->
+      <view wx:if="{{posterStep === 'input'}}" class="poster-input-wrap">
+        <text class="poster-dialog-title">给狗狗取个名字</text>
+        <text class="poster-dialog-desc">生成专属狗格海报</text>
+        <input class="poster-name-input" placeholder="输入狗狗的名字" placeholder-class="poster-input-placeholder" bindinput="onDogNameInput" value="{{dogName}}" maxlength="12" focus="{{posterStep === 'input'}}" />
+        <view class="poster-btn-row">
+          <view class="poster-btn-cancel" bindtap="closePosterModal">
+            <text>取消</text>
+          </view>
+          <view class="poster-btn-confirm" bindtap="confirmDogName">
+            <text>生成海报</text>
+          </view>
+        </view>
+      </view>
+      <!-- loading 态 -->
+      <view wx:if="{{posterStep === 'loading'}}" class="poster-loading-wrap">
+        <view class="poster-loading-spinner"></view>
+        <text class="poster-loading-text">海报生成中...</text>
+      </view>
+      <!-- 预览态 -->
+      <view wx:if="{{posterStep === 'preview'}}" class="poster-preview-wrap">
+        <text class="poster-preview-title">海报生成成功</text>
+        <image wx:if="{{posterImagePath}}" class="poster-preview-img" src="{{posterImagePath}}" mode="aspectFit" show-menu-by-longpress="true"></image>
+        <view class="poster-btn-row" style="margin-top:32rpx;">
+          <view class="poster-btn-cancel" bindtap="closePosterModal">
+            <text>关闭</text>
+          </view>
+          <view class="poster-btn-confirm" bindtap="savePoster">
+            <text>保存到相册</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 隐藏的离屏 Canvas 用于海报绘制 -->
+  <view style="position:fixed;left:-9999px;top:-9999px;">
+    <canvas type="2d" id="poster-canvas" style="width:750px;height:1334px;"></canvas>
+  </view>
+</view>

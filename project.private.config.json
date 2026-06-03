@@ -23,11 +23,32 @@
     "miniprogram": {
       "list": [
         {
+          "name": "DGTI",
+          "pathName": "pages/dogti/index/index",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "visit-add",
+          "pathName": "pages/visit/visit-add/visit-add",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "care-add",
+          "pathName": "pages/care/care-add/care-add",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "上门沟通",
           "pathName": "pages/visit/visit",
           "query": "",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "上门铲屎遛狗",

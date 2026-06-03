@@ -1,0 +1,76 @@
+<!-- DGTI 答题页 -->
+<view class="page">
+
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-left" bindtap="goBack">
+      <text class="nav-back-icon">←</text>
+      <text class="nav-logo">DGTI</text>
+    </view>
+    <view class="nav-right">
+      <text class="nav-menu">···</text>
+    </view>
+  </view>
+
+  <!-- 进度条区域 -->
+  <view class="progress-section">
+    <view class="progress-header">
+      <view class="progress-header-left" bindtap="prevQuestion" wx:if="{{currentIndex > 0}}">
+        <text class="prev-btn-text">← 上一题</text>
+      </view>
+      <view class="progress-header-left" wx:else></view>
+      <text class="progress-count">{{currentIndex + 1}} / {{total}}</text>
+    </view>
+    <view class="progress-track">
+      <view class="progress-fill" style="width:{{progressPercent}}%"></view>
+    </view>
+  </view>
+
+  <!-- 题目卡片区域 -->
+  <scroll-view class="scroll-content" scroll-y>
+    <view class="question-wrap">
+
+      <!-- 浮动装饰表情 -->
+      <view class="deco-paw">🐾</view>
+
+      <!-- 题目卡片 -->
+      <view class="question-card" wx:if="{{currentQuestion}}">
+
+        <!-- 情境图 -->
+        <view class="question-image-area">
+          <view class="question-image-placeholder">
+            <text class="question-image-emoji">{{currentQuestion.emoji}}</text>
+          </view>
+          <view class="question-image-fade"></view>
+        </view>
+
+        <!-- 题目文本 + 选项 -->
+        <view class="question-body">
+          <text class="question-text">{{currentQuestion.question}}</text>
+
+          <view class="options-list">
+            <view
+              wx:for="{{currentQuestion.options}}"
+              wx:key="label"
+              wx:for-index="idx"
+              class="option-item {{selectedIndex === idx ? 'option-selected' : ''}}"
+              bindtap="selectOption"
+              data-index="{{idx}}"
+            >
+              <view class="option-letter-wrap {{selectedIndex === idx ? 'letter-selected' : ''}}">
+                <text class="option-letter">{{optionLetters[idx]}}</text>
+              </view>
+              <text class="option-label">{{item.label}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 底部语录 -->
+      <view class="quote-area" wx:if="{{currentQuestion}}">
+        <text class="quote-text">"{{currentQuestion.quote}}"</text>
+      </view>
+    </view>
+  </scroll-view>
+
+</view>
