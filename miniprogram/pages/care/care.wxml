@@ -1,6 +1,6 @@
 <view class="care-page">
   <!-- 功能未开启时的提示 -->
-  <view wx:if="{{!featureEnabled}}" class="feature-disabled-wrap">
+  <view wx:if="{{!featureEnabled && !loading}}" class="feature-disabled-wrap">
     <empty-state
       icon="🚧"
       title="功能建设中..."

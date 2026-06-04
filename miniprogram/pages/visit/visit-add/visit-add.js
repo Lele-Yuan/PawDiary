@@ -33,7 +33,7 @@ Page({
     ownerOpenid: null,
     helperOpenid: null,
     statusLabel: '待确认',
-    statusColor: '#E8875A',
+    statusColor: '#7B5CF5',
     checkinCount: 0,        // 临时主已上门次数
     ownerConfirmCount: 0,   // 铲屎官已确认次数
     draggingIndex: -1,      // 正在拖拽的行索引
@@ -525,6 +525,6 @@ function _statusLabel(status) {
 }
 
 function _statusColor(status) {
-  var map = { pending: '#E8875A', preparing: '#5B8DEF', serving: '#9B7FE8', completed: '#5BC47A' };
+  var map = { pending: '#7B5CF5', preparing: '#5B8DEF', serving: '#9B7FE8', completed: '#5BC47A' };
   return map[status] || '#999';
 }

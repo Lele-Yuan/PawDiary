@@ -14,28 +14,35 @@ Page({
       statusBarHeight,
       navHeight: statusBarHeight + 44
     });
+    this._configLoaded = false;
     this._loadConfig();
   },
 
   // 加载云配置
   async _loadConfig() {
+    var enabled = true; // 读取失败默认开启
     try {
       const db = wx.cloud.database();
       const res = await db.collection('app_config').limit(1).get();
 
       if (res.data.length > 0) {
         const config = res.data[0];
-        var enabled = config.quickEntryVisit && config.quickEntryVisit.enabled !== false;
-        this.setData({ featureEnabled: enabled });
+        enabled = config.quickEntryVisit && config.quickEntryVisit.enabled !== false;
       }
     } catch (e) {
-      // 读取失败，默认开启
       console.error('加载配置失败，使用默认值', e);
+    }
+    this._configLoaded = true;
+    this.setData({ featureEnabled: enabled });
+    if (enabled) {
+      this._loadList();
+    } else {
+      this.setData({ loading: false });
     }
   },
 
   onShow() {
-    if (this.data.featureEnabled) {
+    if (this._configLoaded && this.data.featureEnabled) {
       this._loadList();
     }
   },
@@ -100,7 +107,7 @@ function _statusLabel(status) {
 
 function _statusColor(status) {
   var map = {
-    pending: '#E8875A',
+    pending: '#7B5CF5',
     preparing: '#5B8DEF',
     serving: '#9B7FE8',
     completed: '#5BC47A'

@@ -1,6 +1,6 @@
 .add-page {
   min-height: 100vh;
-  background-color: #FBF9F7;
+  background-color: var(--bg-color);
 }
 
 .add-scroll {
@@ -112,7 +112,7 @@
 }
 
 .required {
-  color: #E8875A;
+  color: var(--primary-color);
 }
 
 .form-input {
@@ -167,9 +167,9 @@
 }
 
 .radio-active {
-  color: #E8875A;
+  color: var(--primary-color);
   background-color: #FFF0E8;
-  border-color: #E8875A;
+  border-color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -188,7 +188,7 @@
 }
 
 .submit-btn {
-  background-color: #6B2D1A;
+  background-color: var(--primary-color);
   border-radius: 64rpx;
   height: 96rpx;
   display: flex;

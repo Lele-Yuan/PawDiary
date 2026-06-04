@@ -26,7 +26,9 @@ const RECORD_TYPES = [
   { key: 'toy', label: '洗玩具', hideTitle: true, color: '#FFA726', icon: '🧸' },
   { key: 'cage', label: '清洁窝笼', hideTitle: true, color: '#8D6E63', icon: '🏠' },
   // 异常情况
-  { key: 'abnormal', label: '异常情况', titlePlaceholder: '异常情况记录', color: '#F44336', icon: '⚠️' }
+  { key: 'abnormal', label: '异常情况', titlePlaceholder: '异常情况记录', color: '#F44336', icon: '⚠️' },
+  { key: 'stealfood', label: '偷吃', hideTitle: true, color: '#FF8A65', icon: '🍴' },
+  { key: 'trouble', label: '捅娄子', hideTitle: true, color: '#F4A300', icon: '🗑️' }
 ];
 
 /**
@@ -61,12 +63,12 @@ BILL_CATEGORIES.forEach(item => {
  * 账单分类颜色（用于图表）
  */
 const BILL_CATEGORY_COLORS = {
-  food: '#FF6B35',
-  medical: '#249654',
-  toy: '#F5A623',
-  grooming: '#9C27B0',
-  daily: '#3C6663',
-  other: '#607D8B'
+  food: '#7B5CF5',
+  medical: '#5A3FE0',
+  toy: '#A48BFA',
+  grooming: '#C8A2F5',
+  daily: '#6B4FF0',
+  other: '#8B6BF7'
 };
 
 /**
@@ -221,7 +223,7 @@ const NOTIFY_TEMPLATE_ID = 'ZuML7GbjCpKkV5ZvAy1BSvxTa0ns0RhPEZrAGa5MnG8';
  * 代铲屎遛狗 - 角色类型
  */
 const CARE_ROLE_TYPES = [
-  { key: 'helper', label: '临时主', desc: '我来帮忙', icon: '🙋', color: '#E8875A', bgColor: 'rgba(232,135,90,0.12)', borderColor: '#E8875A' },
+  { key: 'helper', label: '临时主', desc: '我来帮忙', icon: '🙋', color: '#7B5CF5', bgColor: 'rgba(232,135,90,0.12)', borderColor: '#7B5CF5' },
   { key: 'owner', label: '需求方', desc: '我需要帮助', icon: '🐾', color: '#3C6663', bgColor: 'rgba(142,207,201,0.15)', borderColor: '#8ECFC9' }
 ];
 
@@ -229,7 +231,7 @@ const CARE_ROLE_TYPES = [
  * 代铲屎遛狗 - 服务类型
  */
 const CARE_SERVICE_TYPES = [
-  { key: 'poop', label: '铲屎', icon: '💩', bgColor: '#F5EDD0', textColor: '#6B2D1A' },
+  { key: 'poop', label: '铲屎', icon: '💩', bgColor: '#EFEAFE', textColor: '#7B5CF5' },
   { key: 'walk', label: '遛狗', icon: '🦮', bgColor: '#E8F5F4', textColor: '#3C6663' },
   { key: 'other', label: '异宠', icon: '🐜', bgColor: '#F0F0F0', textColor: '#555555' }
 ];

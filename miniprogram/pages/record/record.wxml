@@ -11,10 +11,10 @@
     </view>
   </view>
   <!-- 标签筛选栏 -->
-  <scroll-view class="type-tabs" scroll-x enable-flex>
+  <scroll-view class="type-tabs {{tagsExpanded ? 'expanded' : ''}}" scroll-x="{{!tagsExpanded}}" enable-flex>
     <view
-      class="tab-item {{activeType === item.key ? 'active' : ''}}"
-      wx:for="{{typeList}}"
+      class="tab-item {{activeType === item.key ? 'active' : ''}} {{item.isAction ? 'is-action' : ''}}"
+      wx:for="{{displayTypeList}}"
       wx:key="key"
       data-type="{{item.key}}"
       bindtap="switchType"

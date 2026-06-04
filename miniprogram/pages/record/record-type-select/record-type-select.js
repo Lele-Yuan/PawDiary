@@ -30,6 +30,8 @@ Page({
     ],
     abnormalTypes: [
       RECORD_TYPE_MAP.abnormal,
+      RECORD_TYPE_MAP.trouble,
+      RECORD_TYPE_MAP.stealfood,
     ]
   },
 

@@ -325,6 +325,11 @@ Page({
   // 客服反馈（跳转公众号文章）
   goToCustomerService() {
     wx.navigateTo({
+      url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s/P87JA9MBevKplBd6osywLA')
+    });
+  },
+  goDogGuide() {
+    wx.navigateTo({
       url: '/pages/webview/webview?url=' + encodeURIComponent('https://mp.weixin.qq.com/s/iNC9psvhJEQ_f0YWqD-O_w')
     });
   },

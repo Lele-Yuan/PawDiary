@@ -479,7 +479,6 @@ page {
   color: #fff;
 }
 .btn-secondary {
-  height: 108rpx;
   border-radius: 64rpx;
   border: 3rpx solid rgba(218, 193, 186, 0.5);
   display: flex;

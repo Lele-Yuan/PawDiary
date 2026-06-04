@@ -15,12 +15,12 @@
   margin-right: 16rpx;
   border-radius: 60rpx;
   font-size: 26rpx;
-  color: #6B2D1A;
-  background-color: #F0EAD6;
+  color: var(--primary-color);
+  background-color: var(--primary-bg);
 }
 
 .mode-tab.active {
-  background: #6B2D1A;
+  background: var(--primary-color);
   color: #FFFFFF;
   font-weight: 600;
   box-shadow: 0 4rpx 16rpx rgba(107, 45, 26, 0.25);
@@ -127,7 +127,7 @@
 
 .place-category-tag {
   font-size: 22rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   background-color: rgba(232, 135, 90, 0.12);
   padding: 4rpx 14rpx;
   border-radius: 16rpx;
@@ -173,22 +173,4 @@
   color: #CCCCCC;
   margin-left: 12rpx;
   flex-shrink: 0;
-}
-
-/* ===== FAB 按钮 ===== */
-.fab-btn {
-  position: fixed;
-  bottom: 60rpx;
-  right: 40rpx;
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #E8875A, #D4734A);
-  color: #FFFFFF;
-  font-size: 52rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 8rpx 24rpx rgba(232, 135, 90, 0.4);
-  z-index: 100;
 }

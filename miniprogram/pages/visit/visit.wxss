@@ -10,25 +10,6 @@
   min-height: 60vh;
 }
 
-/* 悬浮新建按钮 */
-.fab-btn {
-  position: fixed;
-  right: 40rpx;
-  bottom: 200rpx;
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: #E8875A;
-  color: #fff;
-  font-size: 52rpx;
-  font-weight: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 12rpx 32rpx rgba(232, 135, 90, 0.4);
-  z-index: 999;
-}
-
 /* 加载骨架 */
 .loading-wrap {
   padding: 24rpx;
@@ -63,7 +44,7 @@
   margin-bottom: 40rpx;
 }
 .empty-btn {
-  background: #E8875A;
+  background: var(--primary-color);
   color: #fff;
   font-size: 28rpx;
   padding: 20rpx 60rpx;
@@ -130,7 +111,7 @@
 
 .card-more {
   font-size: 22rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   margin-left: 12rpx;
 }
 

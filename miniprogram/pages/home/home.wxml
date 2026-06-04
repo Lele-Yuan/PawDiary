@@ -45,8 +45,10 @@
     <pet-card
       wx:if="{{currentPet}}"
       pet="{{currentPet}}"
+      pets="{{pets}}"
       statusBarHeight="{{statusBarHeight}}"
       bind:edit="onEditPet"
+      bind:switch="onSwitchPet"
     />
 
     <!-- 家庭成员 -->
@@ -89,7 +91,7 @@
           <view class="guide-link-title">宠好地图</view>
           <view class="guide-link-desc">标记一处宠物友好地点，喊上好友去遛狗</view>
         </view>
-        <view class="guide-link-deco">🗺️</view>
+        <image class="guide-link-deco guide-link-deco-img" src="/images/guide/map-icon.svg" mode="aspectFit"></image>
       </view>
     </view>
 
@@ -132,7 +134,7 @@
         <text class="section-more" bindtap="goRecord">查看全部 ›</text>
       </view>
 
-      <view class="reminder-card card-sm" wx:for="{{upcomingReminders}}" wx:key="_id">
+      <view class="reminder-card card-sm {{item.daysLeft < 0 ? 'reminder-card-overdue' : ''}}" wx:for="{{upcomingReminders}}" wx:key="_id">
         <view class="reminder-left">
           <view class="reminder-dot" style="background-color: {{item.typeColor}};"></view>
         </view>

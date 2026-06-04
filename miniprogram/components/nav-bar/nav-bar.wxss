@@ -7,9 +7,9 @@
   height: calc(20vh + 88px);
   background: linear-gradient(
     to bottom,
-    #f9d568 0%,
-    #f0c6ae 40%,
-    rgba(240, 198, 174, 0) 100%
+    #cfb5fc 0%,
+    #e5c7fa 80%,
+    rgba(164, 139, 250, 0) 100%
   );
   pointer-events: none;
 }
@@ -41,14 +41,14 @@
 
 .back-icon {
   font-size: 54rpx;
-  color: #2D2D2D;
+  color: #FFFFFF;
   font-weight: 300;
   line-height: 1;
 }
 
 .nav-bar-title {
   font-size: 34rpx;
-  color: #2D2D2D;
+  color: #FFFFFF;
   font-weight: 600;
   max-width: 400rpx;
   overflow: hidden;

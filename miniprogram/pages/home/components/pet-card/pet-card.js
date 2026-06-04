@@ -6,6 +6,10 @@ Component({
       type: Object,
       value: {}
     },
+    pets: {
+      type: Array,
+      value: []
+    },
     statusBarHeight: {
       type: Number,
       value: 20
@@ -14,7 +18,9 @@ Component({
 
   data: {
     age: '',
-    companionDays: 0
+    companionDays: 0,
+    showDrawer: false,
+    petList: []
   },
 
   observers: {
@@ -40,6 +46,12 @@ Component({
         }
         this.setData({ age, companionDays });
       }
+    },
+    'pets': function (pets) {
+      const list = (pets || []).map(p => Object.assign({}, p, {
+        ageText: calcAge(p.birthday) || ''
+      }));
+      this.setData({ petList: list });
     }
   },
 
@@ -48,6 +60,25 @@ Component({
       if (this.properties.pet && this.properties.pet._id) {
         this.triggerEvent('edit', { petId: this.properties.pet._id });
       }
-    }
+    },
+
+    openDrawer() {
+      if ((this.data.petList || []).length <= 0) return;
+      this.setData({ showDrawer: true });
+    },
+
+    closeDrawer() {
+      this.setData({ showDrawer: false });
+    },
+
+    onPickPet(e) {
+      const petId = e.currentTarget.dataset.petId;
+      this.setData({ showDrawer: false });
+      if (petId && petId !== (this.properties.pet && this.properties.pet._id)) {
+        this.triggerEvent('switch', { petId });
+      }
+    },
+
+    noop() {}
   }
 });

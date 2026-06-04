@@ -75,10 +75,8 @@ Page({
     const { index } = e.currentTarget.dataset;
     const item = this.data.history[index];
     if (!item) return;
-    const radarStr = encodeURIComponent(JSON.stringify(item.radar));
-    const nameStr = item.dogName ? encodeURIComponent(item.dogName) : '';
     wx.navigateTo({
-      url: `/pages/dogti/result/result?id=${item.id}&radar=${radarStr}&preview=true&dogName=${nameStr}`,
+      url: `/pages/dogti/result/result?id=${item.id}&from=history`,
     });
   },
 

@@ -12,8 +12,8 @@
 
 .pet-tag {
   font-size: 26rpx;
-  color: #6B2D1A;
-  background-color: #F5EDD0;
+  color: #5A3FE0;
+  background-color: #EFEAFE;
   padding: 8rpx 20rpx;
   border-radius: 20rpx;
 }
@@ -35,7 +35,7 @@
 
 .categories-count {
   font-size: 26rpx;
-  color: #888888;
+  color: #333333;
 }
 
 /* ===== 横向滚动容器 ===== */
@@ -45,6 +45,7 @@
   padding: 8rpx 32rpx 24rpx;
   white-space: nowrap;
   width: auto;
+  height: 280rpx;
 }
 
 /* ===== 清单卡片 ===== */
@@ -52,8 +53,8 @@
   display: inline-flex;
   flex-direction: column;
   justify-content: flex-start;
-  width: 320rpx;
-  min-height: 280rpx;
+  width: 280rpx;
+  height: 280rpx;
   border-radius: 64rpx;
   padding: 40rpx;
   margin-right: 24rpx;
@@ -76,7 +77,7 @@
   right: 0;
   bottom: 0;
   border-radius: 64rpx;
-  border: 6rpx solid #3C6663;
+  border: 6rpx solid #7B5CF5;
 }
 
 /* 米黄色变体 */
@@ -170,9 +171,9 @@
 }
 
 .detail-card {
-  background: linear-gradient(135deg, #FFFFFF 65%, rgba(232, 135, 90, 0.07) 100%);
+  background: linear-gradient(135deg, #FFFFFF 65%, rgba(123, 92, 245, 0.07) 100%);
   border-radius: 96rpx;
-  box-shadow: 0 40rpx 80rpx rgba(149, 73, 49, 0.06);
+  box-shadow: 0 40rpx 80rpx rgba(123, 92, 245, 0.06);
   padding: 48rpx;
 }
 
@@ -236,14 +237,14 @@
 .progress-num {
   font-size: 60rpx;
   font-weight: 900;
-  color: #3C6663;
+  color: #7B5CF5;
   line-height: 1;
 }
 
 .progress-pct {
   font-size: 28rpx;
   font-weight: 900;
-  color: #3C6663;
+  color: #7B5CF5;
   align-self: flex-start;
   margin-top: 6rpx;
 }
@@ -270,7 +271,7 @@
 .detail-progress-fill {
   height: 100%;
   border-radius: 24rpx;
-  background-color: #3C6663;
+  background-color: #7B5CF5;
   transition: width 0.3s ease;
 }
 
@@ -289,14 +290,14 @@
 }
 
 .item-checked {
-  background-color: #F5F3F1;
-  opacity: 0.6;
+  background-color: #F8F5FF;
+  opacity: 0.65;
 }
 
 .item-unchecked {
-  background: linear-gradient(135deg, #FFFFFF 60%, rgba(232, 135, 90, 0.06) 100%);
-  border: 2rpx solid rgba(60, 102, 99, 0.2);
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #FFFFFF 60%, rgba(123, 92, 245, 0.06) 100%);
+  border: 2rpx solid rgba(123, 92, 245, 0.2);
+  box-shadow: 0 4rpx 16rpx rgba(123, 92, 245, 0.06);
 }
 
 .item-main {
@@ -318,12 +319,12 @@
 }
 
 .checkbox-checked {
-  background-color: #3C6663;
+  background-color: #7B5CF5;
   border: none;
 }
 
 .checkbox-unchecked {
-  border: 4rpx solid rgba(60, 102, 99, 0.3);
+  border: 4rpx solid rgba(123, 92, 245, 0.3);
   background-color: transparent;
 }
 
@@ -407,8 +408,8 @@
 
 .restart-list-btn {
   width: 100%;
-  color: #77321C;
-  border-color: #77321C;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
   font-size: 28rpx;
   margin-bottom: 24rpx;
 }
@@ -426,22 +427,6 @@
 
 .delete-list-btn::after {
   border: none;
-}
-
-/* 详情区 FAB */
-.detail-fab {
-  position: fixed;
-  right: 40rpx;
-  bottom: 200rpx;
-  width: 112rpx;
-  height: 112rpx;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 16rpx 40rpx rgba(0, 0, 0, 0.15), 0 40rpx 50rpx rgba(0, 0, 0, 0.10);
-  z-index: 100;
 }
 
 .detail-fab:active {
@@ -494,12 +479,12 @@
   display: flex;
   align-items: center;
   padding: 24rpx 20rpx;
-  background-color: #F5F0E8;
+  background-color: #F8F5FF;
   border-radius: 16rpx;
   margin-bottom: 16rpx;
 }
 
-.template-item:active { background-color: #F0F0F0; }
+.template-item:active { background-color: #EFEAFE; }
 
 .template-icon {
   font-size: 44rpx;

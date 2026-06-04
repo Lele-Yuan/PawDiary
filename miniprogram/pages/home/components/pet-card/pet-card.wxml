@@ -6,7 +6,10 @@
   <view class="hero-content">
     <view class="hero-copy">
       <!-- <view class="hero-caption">宠物管家</view> -->
-      <view class="hero-name">{{pet.name}}</view>
+      <view class="hero-name-row" catchtap="openDrawer">
+        <view class="hero-name">{{pet.name}}</view>
+        <view class="hero-name-arrow {{showDrawer ? 'is-open' : ''}}">▾</view>
+      </view>
 
       <view class="hero-meta">
         <text wx:if="{{pet.breed}}" class="hero-meta-text">{{pet.breed}}</text>
@@ -39,5 +42,30 @@
       />
       <view class="gender-badge {{pet.gender === 'female' ? 'female' : 'male'}}">{{pet.gender === 'female' ? '♀' : '♂'}}</view>
     </view>
+  </view>
+
+  <!-- 宠物切换抽屉 -->
+  <view class="pet-drawer-mask {{showDrawer ? 'is-show' : ''}}" catchtap="closeDrawer" catchtouchmove="noop"></view>
+  <view class="pet-drawer {{showDrawer ? 'is-show' : ''}}" style="padding-top: {{statusBarHeight + 20}}px;" catchtouchmove="noop">
+    <view class="pet-drawer-header">
+      <text class="pet-drawer-title">我的宠物</text>
+      <view class="pet-drawer-close" catchtap="closeDrawer">×</view>
+    </view>
+    <scroll-view class="pet-drawer-list" scroll-y enhanced show-scrollbar="{{false}}">
+      <view
+        class="pet-drawer-item {{item._id === pet._id ? 'is-active' : ''}}"
+        wx:for="{{petList}}"
+        wx:key="_id"
+        data-pet-id="{{item._id}}"
+        catchtap="onPickPet"
+      >
+        <image class="pet-drawer-avatar" src="{{item.avatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="pet-drawer-info">
+          <view class="pet-drawer-name">{{item.name}}</view>
+          <view class="pet-drawer-age">{{item.ageText || '年龄未知'}}</view>
+        </view>
+        <view class="pet-drawer-check" wx:if="{{item._id === pet._id}}">✓</view>
+      </view>
+    </scroll-view>
   </view>
 </view>

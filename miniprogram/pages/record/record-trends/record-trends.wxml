@@ -63,7 +63,7 @@
       <text class="chart-title">食水量 <text class="chart-unit">(食:g / 水:ml)</text></text>
       <view class="chart-legend" wx:if="{{hasIntake}}">
         <view class="legend-item">
-          <view class="legend-dot" style="background:#7CB342"></view>
+          <view class="legend-dot" style="background:#7B5CF5"></view>
           <text>食物</text>
         </view>
         <view class="legend-item">
@@ -112,6 +112,18 @@
         wx:else
         type="2d"
         id="groomingCanvas"
+        class="chart-canvas chart-canvas-heat"
+      ></canvas>
+    </view>
+
+    <!-- 捅娄子热力图 -->
+    <view class="chart-card">
+      <text class="chart-title">捅娄子</text>
+      <view wx:if="{{!hasTrouble}}" class="empty-tip">暂无数据</view>
+      <canvas
+        wx:else
+        type="2d"
+        id="troubleCanvas"
         class="chart-canvas chart-canvas-heat"
       ></canvas>
     </view>

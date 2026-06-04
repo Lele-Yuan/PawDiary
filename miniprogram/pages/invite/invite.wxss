@@ -66,7 +66,7 @@
 
 .pet-tag {
   font-size: 22rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   background-color: rgba(232, 135, 90, 0.12);
   padding: 8rpx 20rpx;
   border-radius: 20rpx;
@@ -76,7 +76,7 @@
   display: flex;
   justify-content: space-between;
   padding: 20rpx 0;
-  border-bottom: 1rpx solid #F0EAD6;
+  border-bottom: 1rpx solid var(--primary-bg);
 }
 
 .pet-detail-row:last-of-type {
@@ -122,13 +122,13 @@
 }
 
 .join-btn {
-  background: linear-gradient(135deg, #E8875A, #D4734A);
+  background: linear-gradient(135deg, var(--primary-color), #D4734A);
   color: #FFFFFF;
 }
 
 .cancel-btn {
-  background-color: #F0EAD6;
-  color: #6B2D1A;
+  background-color: var(--primary-bg);
+  color: var(--primary-color);
 }
 
 .joined-btn {
@@ -141,7 +141,7 @@
 }
 
 .switch-btn {
-  background-color: #6B2D1A;
+  background-color: var(--primary-color);
   color: #FFFFFF;
 }
 

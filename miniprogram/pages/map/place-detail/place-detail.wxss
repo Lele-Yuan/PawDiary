@@ -67,7 +67,7 @@
   border-radius: 48rpx;
   font-size: 22rpx;
   font-weight: 600;
-  background: linear-gradient(135deg, #E8875A, #D4734A);
+  background: linear-gradient(135deg, var(--primary-color), #D4734A);
   color: #FFFFFF;
   border: none;
   box-shadow: 0 8rpx 24rpx rgba(232, 135, 90, 0.35);
@@ -103,7 +103,7 @@ wx-button:not([size=mini]).nav-btn {
 
 .place-tag {
   font-size: 24rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   background-color: rgba(232, 135, 90, 0.12);
   padding: 6rpx 16rpx;
   border-radius: 16rpx;
@@ -261,7 +261,7 @@ wx-button:not([size=mini]).nav-btn {
 }
 
 .edit-btn {
-  background: linear-gradient(135deg, #E8875A, #D4734A);
+  background: linear-gradient(135deg, var(--primary-color), #D4734A);
   color: #FFFFFF;
 }
 

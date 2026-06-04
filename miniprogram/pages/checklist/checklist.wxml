@@ -127,7 +127,7 @@
   </view>
 
   <!-- FAB：详情展开时添加条目，否则新建清单 -->
-  <view wx:if="{{expandedId && detailChecklist && canEdit}}" class="detail-fab" bindtap="addItem">
+  <view wx:if="{{expandedId && detailChecklist && canEdit}}" class="fab-btn" bindtap="addItem">
     <text class="fab-icon">+</text>
   </view>
   <view wx:elif="{{!expandedId && canEdit}}" class="fab-btn" hover-class="fab-btn-hover" bindtap="showCreateOptions">+</view>
@@ -161,7 +161,7 @@
           bindinput="onCustomTitleInput"
         />
         <button
-          class="btn-primary btn-small create-btn"
+          class="btn-primary create-btn"
           hover-class="btn-primary-hover"
           bindtap="createCustom"
         >创建</button>

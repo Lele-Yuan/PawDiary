@@ -37,7 +37,7 @@
 
 .type-card:active {
   background-color: #F5F0E8;
-  border-color: #E8875A;
+  border-color: var(--primary-color);
   transform: scale(0.95);
 }
 

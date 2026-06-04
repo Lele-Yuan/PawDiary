@@ -85,13 +85,20 @@ Page({
       dosage: '',
       hospitalName: '',
       // 发情专用字段
-      heatStage: ''
+      heatStage: '',
+      // 捅娄子专用字段
+      troubleIcon: '🗑️',
+      troubleName: '',
+      // 偷吃专用字段
+      stealItem: ''
     },
     // 发情阶段选项
     heatStageOptions: [
       { key: 'started', label: '发情开始' },
       { key: 'ended', label: '发情结束' }
-    ]
+    ],
+    // 捅娄子可选图标
+    troubleIconOptions: ['🗑️', '🪣', '📦', '🛒', '🧺', '🥡', '🚮', '🧻', '🧦', '🪑', '🛋️', '🧸', '👟', '📚', '🍱', '🪴']
   },
 
   onLoad(options) {
@@ -383,7 +390,12 @@ Page({
           dosage: r.dosage || '',
           hospitalName: r.hospitalName || '',
           // 发情专用字段
-          heatStage: r.heatStage || ''
+          heatStage: r.heatStage || '',
+          // 捅娄子专用字段
+          troubleIcon: r.troubleIcon || '🗑️',
+          troubleName: r.troubleName || '',
+          // 偷吃专用字段
+          stealItem: r.stealItem || ''
         },
         typeIndex: typeIndex >= 0 ? typeIndex : null,
         titlePlaceholder: typeInfo ? typeInfo.titlePlaceholder : '标题',
@@ -434,6 +446,19 @@ Page({
     const index = e.detail.value;
     const stage = this.data.heatStageOptions[index].key;
     this.setData({ heatStageIndex: index, 'form.heatStage': stage });
+  },
+
+  // 捅娄子图标选择
+  onPickTroubleIcon() {
+    var self = this;
+    var options = this.data.troubleIconOptions;
+    wx.showActionSheet({
+      itemList: options,
+      success: function(res) {
+        var icon = options[res.tapIndex];
+        if (icon) self.setData({ 'form.troubleIcon': icon });
+      }
+    });
   },
 
   // 通用输入
@@ -636,6 +661,18 @@ Page({
         break;
       case 'checkup':
         break;
+      case 'trouble':
+        if (!form.troubleName || !form.troubleName.trim()) {
+          showError('请输入篓子名称');
+          return false;
+        }
+        break;
+      case 'stealfood':
+        if (!form.stealItem || !form.stealItem.trim()) {
+          showError('请填写偷吃了什么');
+          return false;
+        }
+        break;
     }
     // 如果开启了提醒，必须填写下次预计日期
     if (form.enableRemind && !form.nextDate) {
@@ -744,8 +781,22 @@ Page({
         dosage: form.dosage,
         hospitalName: form.hospitalName,
         // 发情专用字段
-        heatStage: form.heatStage
+        heatStage: form.heatStage,
+        // 捅娄子专用字段
+        troubleIcon: form.troubleIcon,
+        troubleName: form.troubleName,
+        // 偷吃专用字段
+        stealItem: form.stealItem
       };
+
+      // 捅娄子：用篓子名称作为标题
+      if (form.type === 'trouble' && form.troubleName) {
+        fields.title = form.troubleName.trim();
+      }
+      // 偷吃：用偷吃内容作为标题
+      if (form.type === 'stealfood' && form.stealItem) {
+        fields.title = form.stealItem.trim();
+      }
 
       if (this.data.editId) {
         // 编辑模式：通过云函数更新

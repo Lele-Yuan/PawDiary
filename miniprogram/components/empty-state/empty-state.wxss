@@ -13,7 +13,7 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 32rpx;
-  background-color: #F5F0E8;
+  background-color: var(--primary-bg, #EFEAFE);
   border-radius: 50%;
 }
 
@@ -23,14 +23,14 @@
 
 .empty-title {
   font-size: 32rpx;
-  color: #888888;
+  color: var(--text-secondary, #6B6585);
   margin-bottom: 12rpx;
   font-weight: 500;
 }
 
 .empty-desc {
   font-size: 26rpx;
-  color: #B8B8C8;
+  color: var(--text-light, #B5B0C8);
   text-align: center;
   line-height: 1.6;
   max-width: 480rpx;

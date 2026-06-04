@@ -48,7 +48,7 @@ async function addRecord(openid, data) {
     'weight', 'poop', 'diet', 'water',
     'deworm', 'vaccine', 'checkup', 'illness',
     'bath', 'nail', 'ear', 'paw', 'gland', 'teeth', 'beauty',
-    'disinfect', 'litter', 'toy', 'cage', 'abnormal', 'heat'
+    'disinfect', 'litter', 'toy', 'cage', 'abnormal', 'heat', 'trouble', 'stealfood'
   ];
   if (!validTypes.includes(data.type)) {
     return { code: -1, message: '无效的记录类型' };
@@ -97,6 +97,11 @@ async function addRecord(openid, data) {
     hour: data.hour !== undefined ? data.hour : 12,
     // 发情专用字段
     heatStage: data.heatStage || '',
+    // 捅娄子专用字段
+    troubleIcon: data.troubleIcon || '',
+    troubleName: data.troubleName || '',
+    // 偷吃专用字段
+    stealItem: data.stealItem || '',
     createdAt: new Date()
   };
 
@@ -191,6 +196,9 @@ async function updateRecord(openid, data) {
   if (data.hour !== undefined) updateData.hour = data.hour;
   // 发情专用字段
   if (data.heatStage !== undefined) updateData.heatStage = data.heatStage;
+  if (data.troubleIcon !== undefined) updateData.troubleIcon = data.troubleIcon;
+  if (data.troubleName !== undefined) updateData.troubleName = data.troubleName;
+  if (data.stealItem !== undefined) updateData.stealItem = data.stealItem;
 
   await db.collection('records').doc(data._id).update({ data: updateData });
   return { code: 0, message: '更新成功' };

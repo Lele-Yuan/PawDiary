@@ -12,8 +12,8 @@
 
 .pet-tag {
   font-size: 26rpx;
-  color: #6B2D1A;
-  background-color: #F5EDD0;
+  color: #5A3FE0;
+  background-color: #EFEAFE;
   padding: 8rpx 20rpx;
   border-radius: 20rpx;
 }
@@ -34,17 +34,41 @@
   margin-right: 16rpx;
   border-radius: 60rpx;
   font-size: 26rpx;
-  color: #6B2D1A;
-  background-color: #F0EAD6;
+  color: var(--primary-color);
+  background-color: var(--primary-bg);
   flex-shrink: 0;
   height: 32rpx;
 }
 
 .tab-item.active {
-  background: #6B2D1A;
+  background: var(--primary-color);
   color: #FFFFFF;
   font-weight: 600;
-  box-shadow: 0 4rpx 16rpx rgba(107, 45, 26, 0.25);
+  box-shadow: 0 4rpx 16rpx rgba(123, 92, 245, 0.32);
+}
+
+.type-tabs.expanded {
+  flex-wrap: wrap;
+  white-space: normal;
+  height: auto;
+  row-gap: 16rpx;
+}
+
+.type-tabs.expanded .tab-item {
+  margin-bottom: 0;
+}
+
+.tab-item.is-action {
+  background-color: #F4EFFB;
+  color: var(--primary-color);
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.tab-item.is-action.active {
+  background-color: #F4EFFB;
+  color: var(--primary-color);
+  box-shadow: none;
 }
 
 /* ===== 节标题 ===== */
@@ -66,21 +90,21 @@
   display: flex;
   align-items: center;
   padding: 8rpx 20rpx;
-  background-color: #F5EDD0;
+  background-color: var(--primary-bg);
   border-radius: 32rpx;
-  box-shadow: 0 2rpx 8rpx rgba(232, 135, 90, 0.12);
+  box-shadow: 0 2rpx 8rpx rgba(123, 92, 245, 0.16);
 }
 
 .trends-entry-text {
   font-size: 24rpx;
-  color: #6B2D1A;
+  color: var(--primary-color);
   font-weight: 600;
   margin-right: 6rpx;
 }
 
 .trends-entry-arrow {
   font-size: 28rpx;
-  color: #6B2D1A;
+  color: var(--primary-color);
   line-height: 1;
 }
 
@@ -95,7 +119,7 @@
 }
 
 .timeline-left {
-  width: 96rpx;
+  width: 120rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -135,7 +159,7 @@
 .timeline-line {
   width: 3rpx;
   flex: 1;
-  background-color: #E8E2D8;
+  background-color: #E4DCFB;
   margin: 8rpx 0;
 }
 
@@ -151,20 +175,19 @@
 
 /* upcoming：白底右上角渐变 */
 .card-upcoming {
-  background: linear-gradient(135deg, #FFFFFF 60%, rgba(232, 135, 90, 0.08) 100%);
-  box-shadow: 0 8rpx 32rpx rgba(149, 73, 49, 0.07);
+  background: linear-gradient(135deg, #FFFFFF 60%, rgba(123, 92, 245, 0.08) 100%);
+  box-shadow: var(--shadow-card);
 }
 
 /* completed：灰底 */
 .card-completed {
-  background-color: #F5F3F1;
+  background-color: var(--card-soft-bg);
 }
 
 /* ===== 即将到来标签 ===== */
 .upcoming-tag {
   display: inline-block;
-  /* background-color: #FE9D7F; */
-  color: #FE9D7F;
+  color: var(--primary-color);
   font-size: 18rpx;
   font-weight: 700;
   letter-spacing: 1rpx;
@@ -236,7 +259,7 @@
 wx-button[size=mini].complete-btn {
   height: 50rpx;
   line-height: 50rpx;
-  background-color: #6B2D1A;
+  background-color: var(--primary-color);
   color: #FFFFFF;
   font-size: 24rpx;
   font-weight: 600;
@@ -308,7 +331,7 @@ wx-button[size=mini].complete-btn {
 .remind-progress-track {
   flex: 1;
   height: 12rpx;
-  background-color: #E8E2D8;
+  background-color: #E4DCFB;
   border-radius: 6rpx;
   overflow: hidden;
   margin-right: 16rpx;
@@ -328,6 +351,6 @@ wx-button[size=mini].complete-btn {
 }
 
 .remind-days-text.overdue {
-  color: #C0392B;
+  color: var(--danger-color);
   font-weight: 600;
 }

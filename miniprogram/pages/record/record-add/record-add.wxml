@@ -191,6 +191,34 @@
       />
     </view>
 
+    <!-- 捅娄子类型：图标 + 篓子名称 -->
+    <view class="form-group" wx:if="{{form.type === 'trouble'}}">
+      <view class="form-label">篓子名称 <text class="required">*</text></view>
+      <view class="input-with-icon">
+        <input
+          class="form-input"
+          placeholder="请输入篓子名称"
+          value="{{form.troubleName}}"
+          bindinput="onInputChange"
+          data-field="troubleName"
+          maxlength="30"
+        />
+      </view>
+    </view>
+
+    <!-- 偷吃类型：偷吃了什么 -->
+    <view class="form-group" wx:if="{{form.type === 'stealfood'}}">
+      <view class="form-label">偷吃了什么 <text class="required">*</text></view>
+      <input
+        class="form-input"
+        placeholder="填写吃了什么东西的图标或名称，例如🧅"
+        value="{{form.stealItem}}"
+        bindinput="onInputChange"
+        data-field="stealItem"
+        maxlength="30"
+      />
+    </view>
+
     <!-- 详细描述 -->
     <view class="form-group">
       <view class="form-label">详细描述</view>
@@ -207,7 +235,7 @@
     <!-- 提醒开关 -->
     <view class="form-group remind-row">
       <view class="form-label">下次提醒</view>
-      <switch checked="{{form.enableRemind}}" bindchange="onRemindChange" color="#6B2D1A" />
+      <switch checked="{{form.enableRemind}}" bindchange="onRemindChange" color="#7B5CF5" />
     </view>
 
     <!-- 下次预计日期 -->

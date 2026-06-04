@@ -2,9 +2,9 @@ const { formatDate, calcAge } = require('../../../utils/util');
 
 // 健康异常事件类型
 const ABNORMAL_TYPES = [
-  { key: 'poop', emoji: '💩', label: '尿便异常', color: '#8D6E63', light: '#EFE4DD' },
-  { key: 'illness', emoji: '🏥', label: '给药', color: '#E53935', light: '#FBD9D8' },
-  { key: 'checkup', emoji: '🩺', label: '就医', color: '#3C6663', light: '#D4E4E2' }
+  { key: 'poop', emoji: '💩', label: '尿便异常', color: '#FF5722', light: '#FBDBCF' },
+  { key: 'illness', emoji: '🏥', label: '给药', color: '#E91E63', light: '#FBD9E6' },
+  { key: 'checkup', emoji: '🩺', label: '就医', color: '#E91E63', light: '#F9D5E2' }
 ];
 
 // 美容护理类型
@@ -13,14 +13,17 @@ const GROOMING_DEFS = [
   { key: 'nail', emoji: '💅', label: '剪指甲', color: '#795548', light: '#E5DCD5' },
   { key: 'ear', emoji: '👂', label: '洗耳朵', color: '#8D6E63', light: '#EBE0DA' },
   { key: 'paw', emoji: '🐾', label: '剃脚毛', color: '#A1887F', light: '#EFE5E0' },
-  { key: 'gland', emoji: '💉', label: '挤肛门腺', color: '#FF5722', light: '#FBDBCF' },
+  { key: 'gland', emoji: '💉', label: '挤肛门腺', color: '#A48BFA', light: '#EFEAFE' },
   { key: 'teeth', emoji: '🦷', label: '刷牙', color: '#78909C', light: '#DDE4E8' },
-  { key: 'beauty', emoji: '✂️', label: '美容', color: '#E91E63', light: '#F9D5E2' }
+  { key: 'beauty', emoji: '✂️', label: '美容', color: '#7B5CF5', light: '#DDD3FA' }
 ];
 
 const ABNORMAL_MAP = ABNORMAL_TYPES.reduce((m, t) => (m[t.key] = t, m), {});
 const GROOMING_MAP_DEF = GROOMING_DEFS.reduce((m, t) => (m[t.key] = t, m), {});
 const GROOMING_TYPES = GROOMING_DEFS.map(t => t.key);
+
+// 捅娄子配色
+const TROUBLE_THEME = { color: '#F4A300', light: '#FCEFD3' };
 
 const RANGE_OPTIONS = [
   { key: '7d', label: '7d', days: 7 },
@@ -71,6 +74,7 @@ Page({
     hasIntake: false,
     hasPoop: false,
     hasGrooming: false,
+    hasTrouble: false,
     abnormalLegend: ABNORMAL_TYPES,
     groomingLegend: GROOMING_DEFS
   },
@@ -234,17 +238,41 @@ Page({
       groomingMap[k].total++;
     });
 
+    // 捅娄子（含偷吃）：按 day 累计，记录首字符
+    const troubleMap = {};
+    records.filter(r => r.type === 'trouble' || r.type === 'stealfood').forEach(r => {
+      const k = dayKey(r.date);
+      if (!troubleMap[k]) {
+        troubleMap[k] = { total: 0, char: '' };
+      }
+      troubleMap[k].total++;
+      if (!troubleMap[k].char) {
+        const name = r.type === 'stealfood'
+          ? (r.stealItem || r.title || '')
+          : (r.troubleName || r.title || '');
+        let char = '';
+        if (name) {
+          const segmenter = new Intl.Segmenter('zh', { granularity: 'grapheme' });
+          const chars = [...segmenter.segment(name)].map(s => s.segment);
+          char = chars[0] || '';
+        }
+        troubleMap[k].char = char;
+      }
+    });
+
     this._weightArr = weightArr;
     this._intakeArr = intakeArr;
     this._poopMap = poopMap;
     this._groomingMap = groomingMap;
+    this._troubleMap = troubleMap;
     this._range = { start, end };
 
     this.setData({
       hasWeight: weightArr.length > 0,
       hasIntake: intakeArr.length > 0,
       hasPoop: Object.keys(poopMap).length > 0,
-      hasGrooming: Object.keys(groomingMap).length > 0
+      hasGrooming: Object.keys(groomingMap).length > 0,
+      hasTrouble: Object.keys(troubleMap).length > 0
     });
   },
 
@@ -275,6 +303,7 @@ Page({
     if (this.data.hasIntake) this.drawIntakeChart();
     if (this.data.hasPoop) this.drawPoopHeatmap();
     if (this.data.hasGrooming) this.drawGroomingHeatmap();
+    if (this.data.hasTrouble) this.drawTroubleHeatmap();
   },
 
   // ===== 体重折线图 =====
@@ -303,7 +332,7 @@ Page({
       // Y 轴刻度（3 条）
       ctx.font = '10px sans-serif';
       ctx.fillStyle = '#888888';
-      ctx.strokeStyle = '#EEE6DC';
+      ctx.strokeStyle = '#ECE7F7';
       ctx.lineWidth = 1;
       for (let i = 0; i <= 2; i++) {
         const v = min + (max - min) * i / 2;
@@ -328,8 +357,8 @@ Page({
       ctx.fillText(formatDate(end, 'MM-DD'), width - padding.right, height - padding.bottom + 8);
 
       // 折线
-      ctx.strokeStyle = '#2D2D2D';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#7B5CF5';
+      ctx.lineWidth = 2;
       ctx.beginPath();
       arr.forEach((p, i) => {
         const x = xOf(p.date), y = yOf(p.value);
@@ -339,14 +368,16 @@ Page({
 
       // 数据点 + 数值标签
       ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = '#7B5CF5';
+      ctx.lineWidth = 2;
       arr.forEach(p => {
         const x = xOf(p.date), y = yOf(p.value);
         ctx.beginPath();
-        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
       });
-      ctx.fillStyle = '#2D2D2D';
+      ctx.fillStyle = '#1F1A3D';
       ctx.font = '10px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
@@ -379,7 +410,7 @@ Page({
       const yWater = (v) => padding.top + (1 - v / waterMax) * chartH;
 
       // 水平网格
-      ctx.strokeStyle = '#F0E8DC';
+      ctx.strokeStyle = '#ECE7F7';
       ctx.lineWidth = 1;
       ctx.font = '10px sans-serif';
       for (let i = 0; i <= 3; i++) {
@@ -390,7 +421,7 @@ Page({
         ctx.stroke();
       }
       // 左 Y 轴（食物 g）
-      ctx.fillStyle = '#7CB342';
+      ctx.fillStyle = '#7B5CF5';
       ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
       ctx.fillText(Math.round(foodMax) + 'g', padding.left - 4, padding.top);
       ctx.fillText('0', padding.left - 4, padding.top + chartH);
@@ -408,7 +439,7 @@ Page({
       ctx.fillText(formatDate(end, 'MM-DD'), width - padding.right, height - padding.bottom + 8);
 
       // 食物折线
-      ctx.strokeStyle = '#7CB342';
+      ctx.strokeStyle = '#7B5CF5';
       ctx.lineWidth = 2;
       ctx.beginPath();
       let started = false;
@@ -433,7 +464,7 @@ Page({
       // 数据点
       arr.forEach(b => {
         if (b.food > 0) {
-          ctx.fillStyle = '#7CB342';
+          ctx.fillStyle = '#7B5CF5';
           ctx.beginPath();
           ctx.arc(xOf(b.date), yFood(b.food), 2.5, 0, Math.PI * 2);
           ctx.fill();
@@ -530,6 +561,27 @@ Page({
     }
   },
 
+  // ===== 捅娄子热力图 =====
+  async drawTroubleHeatmap() {
+    try {
+      const { ctx, width, height } = await this.getCanvasCtx('troubleCanvas');
+      ctx.clearRect(0, 0, width, height);
+      const { start, end } = this._range;
+      const matrix = this.buildHeatmapMatrix(start, end);
+      const dataMap = this._troubleMap;
+      let maxC = 1;
+      Object.keys(dataMap).forEach(k => { if (dataMap[k].total > maxC) maxC = dataMap[k].total; });
+      this._drawHeat(ctx, width, height, matrix, (cell) => {
+        const v = dataMap[cell.key];
+        if (!v || v.total === 0) return null;
+        const t = Math.min(1, v.total / maxC);
+        return { fill: mixColor(TROUBLE_THEME.light, TROUBLE_THEME.color, t), emoji: v.char };
+      });
+    } catch (e) {
+      console.error('drawTroubleHeatmap failed', e);
+    }
+  },
+
   _drawHeat(ctx, width, height, matrix, colorFn) {
     const padding = { top: 24, right: 8, bottom: 8, left: 28 };
     const chartW = width - padding.left - padding.right;
@@ -576,13 +628,13 @@ Page({
           continue;
         }
         const result = colorFn(cell);
-        let fill = '#EFE9DD';
+        let fill = '#F0EBFC';
         let emoji = '';
         if (result) {
           if (typeof result === 'string') {
             fill = result;
           } else {
-            fill = result.fill || '#EFE9DD';
+            fill = result.fill || '#F0EBFC';
             emoji = result.emoji || '';
           }
         }

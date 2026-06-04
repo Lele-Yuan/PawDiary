@@ -90,9 +90,9 @@
 
 .add-btn {
   font-size: 26rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   padding: 6rpx 16rpx;
-  border: 1rpx solid #E8875A;
+  border: 1rpx solid var(--primary-color);
   border-radius: 20rpx;
 }
 
@@ -121,7 +121,7 @@
 
 .my-tag {
   font-size: 22rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   font-weight: 500;
 }
 
@@ -169,7 +169,7 @@
   transition: all 0.2s;
 }
 .role-card-active {
-  border-color: #E8875A;
+  border-color: var(--primary-color);
 }
 .role-icon { font-size: 48rpx; margin-bottom: 12rpx; }
 .role-name { font-size: 28rpx; font-weight: 600; color: #333; margin-bottom: 6rpx; }
@@ -195,7 +195,7 @@
 }
 
 .time-row-drag-target {
-  border-top: 3rpx solid #E8875A;
+  border-top: 3rpx solid var(--primary-color);
 }
 
 .drag-handle {
@@ -258,7 +258,7 @@
   padding: 20rpx 24rpx;
   border-radius: 14rpx;
   font-size: 28rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   margin-bottom: 16rpx;
 }
 .location-icon { font-size: 30rpx; }
@@ -336,7 +336,7 @@
 }
 
 .btn-primary {
-  background: #E8875A;
+  background: var(--primary-color);
   color: #fff;
 }
 .btn-confirmed {
@@ -344,7 +344,6 @@
   color: #fff;
 }
 .btn-secondary {
-  background: #f5f0eb;
   color: #666;
   flex: 0.6;
 }

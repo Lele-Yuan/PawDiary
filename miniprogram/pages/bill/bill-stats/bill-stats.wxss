@@ -18,8 +18,7 @@
   align-items: center;
   justify-content: center;
   font-size: 48rpx;
-  color: #6B2D1A;
-  cursor: pointer;
+  color: var(--primary-color);
   transition: opacity 0.2s ease;
 }
 
@@ -30,7 +29,7 @@
 .month-display {
   font-size: 32rpx;
   font-weight: 600;
-  color: #2D2D2D;
+  color: var(--text-color);
 }
 
 /* 切换标签 */
@@ -38,7 +37,7 @@
   display: flex;
   padding: 8rpx;
   margin-top: 16rpx;
-  background-color: #F5F0E8;
+  background-color: var(--primary-bg);
   border-radius: 16rpx;
 }
 
@@ -47,16 +46,16 @@
   text-align: center;
   padding: 16rpx 0;
   font-size: 28rpx;
-  color: #888888;
+  color: var(--text-secondary);
   border-radius: 12rpx;
   transition: all 0.3s ease;
 }
 
 .period-tab.active {
   background-color: #FFFFFF;
-  color: #6B2D1A;
+  color: var(--primary-color);
   font-weight: 600;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2rpx 8rpx rgba(123, 92, 245, 0.16);
 }
 
 /* 总额 */
@@ -82,14 +81,14 @@
 .total-currency {
   font-size: 36rpx;
   font-weight: 600;
-  color: #6B2D1A;
+  color: var(--primary-color);
   margin-right: 4rpx;
 }
 
 .total-value {
   font-size: 64rpx;
   font-weight: 700;
-  color: #6B2D1A;
+  color: var(--primary-color);
   line-height: 1.1;
 }
 
@@ -103,7 +102,7 @@
 .trend-title {
   font-size: 30rpx;
   font-weight: 600;
-  color: #2D2D2D;
+  color: var(--text-color);
   margin-bottom: 24rpx;
 }
 
@@ -135,13 +134,13 @@
 
 .legend-label {
   font-size: 24rpx;
-  color: #6B6B80;
+  color: var(--text-secondary);
   flex: 1;
 }
 
 .legend-percent {
   font-size: 24rpx;
-  color: #2D2D2D;
+  color: var(--text-color);
   font-weight: 500;
 }
 
@@ -158,7 +157,7 @@
   display: flex;
   align-items: center;
   padding: 20rpx 0;
-  border-bottom: 1rpx solid #F5F0E8;
+  border-bottom: 1rpx solid var(--primary-bg);
 }
 
 .rank-item:last-child {
@@ -169,7 +168,7 @@
   width: 40rpx;
   font-size: 28rpx;
   font-weight: 700;
-  color: #6B2D1A;
+  color: var(--primary-color);
   flex-shrink: 0;
 }
 
@@ -186,7 +185,7 @@
 
 .rank-name {
   font-size: 26rpx;
-  color: #2D2D2D;
+  color: var(--text-color);
   font-weight: 500;
   display: block;
   margin-bottom: 8rpx;
@@ -194,7 +193,7 @@
 
 .rank-bar-track {
   height: 12rpx;
-  background-color: #F0F0F2;
+  background-color: var(--primary-bg);
   border-radius: 6rpx;
   overflow: hidden;
 }
@@ -214,7 +213,7 @@
 
 .rank-money {
   font-size: 28rpx;
-  color: #2D2D2D;
+  color: var(--text-color);
   font-weight: 600;
   display: block;
 }
@@ -259,7 +258,7 @@
 
 .trend-bar-inner {
   width: 100%;
-  background: #6B2D1A;
+  background: var(--primary-color);
   border-radius: 8rpx 8rpx 4rpx 4rpx;
   min-height: 4rpx;
   transition: height 0.3s ease;
@@ -274,7 +273,7 @@
 
 .trend-month-label {
   font-size: 22rpx;
-  color: #6B6B80;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 

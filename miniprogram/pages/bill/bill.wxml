@@ -18,7 +18,7 @@
   </view>
 
   <!-- 月度概览卡 -->
-  <view class="overview-card card">
+  <view class="hero-purple card">
     <!-- 右上角装饰圆 -->
     <view class="overview-deco-circle"></view>
     <!-- 标题行 + 右上角图标 -->

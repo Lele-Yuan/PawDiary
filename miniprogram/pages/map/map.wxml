@@ -36,9 +36,9 @@
   <view class="list-view" wx:if="{{viewMode === 'list'}}">
     <!-- 宠物友好地点列表 -->
     <view class="section">
-      <view class="section-header">
+      <!-- <view class="section-header">
         <text class="section-title">宠物友好地点</text>
-      </view>
+      </view> -->
 
       <empty-state
         wx:if="{{!places.length}}"

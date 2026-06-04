@@ -143,7 +143,6 @@
         <text class="btn-text">生成分享海报</text>
       </view>
       <view class="btn-secondary" bindtap="goAtlas">
-        <text class="btn-icon-sec">🔙</text>
         <text class="btn-text-sec">返回研究所</text>
       </view>
     </view>

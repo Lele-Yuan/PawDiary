@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- 折叠地图主体（3 段） -->
+  <g stroke="#5A3FE0" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- 左段（向上折） -->
+    <path d="M14 36 L42 28 L42 96 L14 104 Z" fill="#A48BFA" fill-opacity="0.55"/>
+    <!-- 中段（向下折） -->
+    <path d="M42 28 L78 36 L78 104 L42 96 Z" fill="#7B5CF5" fill-opacity="0.7"/>
+    <!-- 右段（向上折） -->
+    <path d="M78 36 L106 28 L106 96 L78 104 Z" fill="#A48BFA" fill-opacity="0.55"/>
+  </g>
+
+  <!-- 地图上的路径线 -->
+  <path d="M22 60 Q38 50 50 64 T82 70 Q92 72 100 60"
+        stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"
+        stroke-dasharray="4 5" fill="none" opacity="0.85"/>
+
+  <!-- 地图上的小定位点 -->
+  <circle cx="22" cy="60" r="3" fill="#FFFFFF"/>
+  <circle cx="100" cy="60" r="3" fill="#FFFFFF"/>
+
+  <!-- 顶部大定位 Pin -->
+  <g>
+    <path d="M62 8 C50 8 42 17 42 28 C42 40 56 56 60 60 C61 61 63 61 64 60 C68 56 82 40 82 28 C82 17 74 8 62 8 Z"
+          fill="#5A3FE0"/>
+    <circle cx="62" cy="28" r="7" fill="#FFFFFF"/>
+  </g>
+</svg>

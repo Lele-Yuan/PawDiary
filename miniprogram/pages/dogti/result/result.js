@@ -25,7 +25,7 @@ Page({
   },
 
   onLoad(options) {
-    let { id, scores, radar, preview, scene, dogName } = options;
+    let { id, scores, radar, preview, scene, dogName, from } = options;
     // 小程序码扫码进入：scene 形如 "p=qi-tian"
     if (!id && scene) {
       try {
@@ -35,6 +35,24 @@ Page({
       } catch (e) {}
     }
     const personality = PERSONALITIES.find(p => p.id === id) || PERSONALITIES[0];
+
+    // 从历史记录进入：根据 id 查 storage 获取 radar 与 dogName
+    if (from === 'history' && id) {
+      try {
+        const list = wx.getStorageSync('dgti_history') || [];
+        const hist = list.find(h => h.id === id);
+        if (hist) {
+          if (hist.radar && !radar) {
+            radar = decodeURIComponent(hist.radar);
+          }
+          if (hist.dogName && !dogName) {
+            dogName = decodeURIComponent(hist.dogName);
+          }
+        }
+        console.log('hist: ', hist);
+      } catch (e) {}
+      preview = 'true';
+    }
 
     const dynamicRadar = radar ? JSON.parse(decodeURIComponent(radar)) : {
       social: personality.social,

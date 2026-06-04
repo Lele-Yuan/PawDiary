@@ -14,13 +14,13 @@
   width: 160rpx;
   height: 160rpx;
   border-radius: 50%;
-  border: 4rpx solid #E8875A;
+  border: 4rpx solid var(--primary-color);
   box-shadow: 0 8rpx 24rpx rgba(232, 135, 90, 0.25);
 }
 
 .avatar-tip {
   font-size: 24rpx;
-  color: #E8875A;
+  color: var(--primary-color);
   margin-top: 16rpx;
 }
 
@@ -54,7 +54,7 @@
 
 .species-item.active {
   background-color: rgba(107, 45, 26, 0.1);
-  border-color: #6B2D1A;
+  border-color: var(--primary-color);
 }
 
 .species-icon {
@@ -68,7 +68,7 @@
 }
 
 .species-item.active .species-label {
-  color: #6B2D1A;
+  color: var(--primary-color);
   font-weight: 500;
 }
 
@@ -92,7 +92,7 @@
 
 .gender-item.active {
   background-color: rgba(107, 45, 26, 0.1);
-  border-color: #6B2D1A;
+  border-color: var(--primary-color);
 }
 
 .gender-icon {
@@ -106,7 +106,7 @@
 }
 
 .gender-item.active .gender-label {
-  color: #6B2D1A;
+  color: var(--primary-color);
   font-weight: 500;
 }
 

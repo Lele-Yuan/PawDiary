@@ -8,17 +8,35 @@ Page({
     navTitleOpacity: 1,
     canEdit: true,
     records: [],
-    typeList: [],
+    defaultTypeList: [],
+    expandedTypeList: [],
+    displayTypeList: [],
+    tagsExpanded: false,
     loaded: false,
     RECORD_TYPE_MAP
   },
 
   onLoad() {
-    const typeList = [{ key: 'all', label: '全部' }];
-    RECORD_TYPES.forEach(function (t) {
-      typeList.push({ key: t.key, label: t.label });
+    const defaultKeys = ['weight', 'deworm', 'bath'];
+    const defaultTypeList = [{ key: 'all', label: '全部' }];
+    defaultKeys.forEach(function (k) {
+      const t = RECORD_TYPES.find(function (x) { return x.key === k; });
+      if (t) defaultTypeList.push({ key: t.key, label: t.label });
     });
-    this.setData({ typeList: typeList });
+    defaultTypeList.push({ key: '__more__', label: '更多', isAction: true });
+
+    const expandedTypeList = [{ key: 'all', label: '全部' }];
+    RECORD_TYPES.forEach(function (t) {
+      expandedTypeList.push({ key: t.key, label: t.label });
+    });
+    expandedTypeList.push({ key: '__collapse__', label: '收起', isAction: true });
+
+    this.setData({
+      defaultTypeList: defaultTypeList,
+      expandedTypeList: expandedTypeList,
+      displayTypeList: defaultTypeList,
+      tagsExpanded: false
+    });
   },
 
   onShow() {
@@ -165,7 +183,7 @@ Page({
           remindProgress: 0,
           remindOverdue: false,
           remindDaysText: '',
-          remindProgressColor: '#249654'
+          remindProgressColor: 'var(--info-color)'
         };
 
         // 提醒进度计算
@@ -191,11 +209,11 @@ Page({
             }
 
             if (remainDays < 0 || progress >= 90) {
-              item.remindProgressColor = '#C0392B';
+              item.remindProgressColor = 'var(--danger-color)';
             } else if (progress >= 60) {
-              item.remindProgressColor = '#F5A623';
+              item.remindProgressColor = 'var(--warning-color)';
             } else {
-              item.remindProgressColor = '#249654';
+              item.remindProgressColor = 'var(--info-color)';
             }
           }
         }
@@ -213,6 +231,14 @@ Page({
   // 切换类型
   switchType(e) {
     const type = e.currentTarget.dataset.type;
+    if (type === '__more__') {
+      this.setData({ tagsExpanded: true, displayTypeList: this.data.expandedTypeList });
+      return;
+    }
+    if (type === '__collapse__') {
+      this.setData({ tagsExpanded: false, displayTypeList: this.data.defaultTypeList });
+      return;
+    }
     this.setData({ activeType: type });
     this.loadRecords();
   },

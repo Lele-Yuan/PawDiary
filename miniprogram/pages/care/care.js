@@ -68,23 +68,31 @@ Page({
         navHeight: statusBarHeight + navBarHeight
       });
     } catch (e) {}
+    this._configLoaded = false;
     this._loadConfig();
   },
 
   // 加载云配置
   async _loadConfig() {
+    var enabled = true; // 读取失败默认开启
     try {
       const db = wx.cloud.database();
       const res = await db.collection('app_config').limit(1).get();
 
       if (res.data.length > 0) {
         const config = res.data[0];
-        var enabled = config.quickEntryCare && config.quickEntryCare.enabled !== false;
-        this.setData({ featureEnabled: enabled });
+        enabled = config.quickEntryCare && config.quickEntryCare.enabled !== false;
       }
     } catch (e) {
-      // 读取失败，默认开启
       console.error('加载配置失败，使用默认值', e);
+    }
+    this._configLoaded = true;
+    this.setData({ featureEnabled: enabled });
+    if (enabled) {
+      this._getLocationAndLoad();
+    } else {
+      // 功能未开启，结束 loading 态，避免页面持续转圈
+      this.setData({ loading: false });
     }
   },
 
@@ -92,7 +100,8 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: -1 });
     }
-    if (this.data.featureEnabled) {
+    // 仅在配置加载完成且功能开启时刷新；首次由 _loadConfig 触发
+    if (this._configLoaded && this.data.featureEnabled) {
       this._getLocationAndLoad();
     }
   },

@@ -13,6 +13,37 @@
   flex: 1;
 }
 
+/* 带图标按钮的输入框（捅娄子） */
+.input-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.input-with-icon .form-input {
+  flex: 1;
+}
+
+.trouble-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  height: 80rpx;
+  padding: 0 16rpx 0 20rpx;
+  background-color: var(--card-soft-bg);
+  border-radius: 16rpx;
+}
+
+.trouble-icon-btn .trouble-icon {
+  font-size: 36rpx;
+  line-height: 1;
+}
+
+.trouble-icon-btn .arrow {
+  font-size: 28rpx;
+  color: #B5B5C8;
+}
+
 .unit-label,
 .unit-picker {
   display: flex;
@@ -21,7 +52,7 @@
   padding: 0 24rpx;
   font-size: 28rpx;
   color: #6B6B80;
-  background-color: #F5F3F1;
+  background-color: var(--card-soft-bg);
   border-radius: 16rpx;
   min-width: 80rpx;
   justify-content: space-between;
@@ -65,8 +96,8 @@
 }
 
 .type-item.active {
-  background-color: rgba(107, 45, 26, 0.1);
-  border-color: #6B2D1A;
+  background-color: rgba(123, 92, 245, 0.1);
+  border-color: var(--primary-color);
 }
 
 .type-icon {
@@ -80,7 +111,7 @@
 }
 
 .type-item.active .type-label {
-  color: #6B2D1A;
+  color: var(--primary-color);
   font-weight: 500;
 }
 
@@ -187,9 +218,9 @@
 }
 
 .interval-tag.active {
-  background-color: rgba(107, 45, 26, 0.1);
-  border-color: #6B2D1A;
-  color: #6B2D1A;
+  background-color: rgba(123, 92, 245, 0.1);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -203,7 +234,7 @@
 .interval-input {
   flex: 1;
   height: 72rpx;
-  background-color: #F5F3F1;
+  background-color: var(--card-soft-bg);
   border-radius: 16rpx;
   padding: 0 24rpx;
   font-size: 28rpx;
@@ -261,9 +292,9 @@
 }
 
 .tab-item.active {
-  background-color: rgba(107, 45, 26, 0.1);
-  border-color: #6B2D1A;
-  color: #6B2D1A;
+  background-color: rgba(123, 92, 245, 0.1);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -273,7 +304,7 @@
   justify-content: space-between;
   margin-top: 16rpx;
   padding: 20rpx 24rpx;
-  background-color: #F5F3F1;
+  background-color: var(--card-soft-bg);
   border-radius: 16rpx;
 }
 

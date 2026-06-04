@@ -23,7 +23,7 @@
   width: 20rpx;
   height: 20rpx;
   border-radius: 50%;
-  background-color: #6B2D1A;
+  background-color: var(--primary-color, #7B5CF5);
   animation: bounce 1.4s ease-in-out infinite;
 }
 
@@ -52,6 +52,6 @@
 
 .loading-text {
   font-size: 32rpx;
-  color: #888888;
+  color: var(--text-secondary, #6B6585);
   text-align: center;
 }

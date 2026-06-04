@@ -32,15 +32,15 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#f9d568",
+    "navigationBarBackgroundColor": "#7B5CF5",
     "navigationBarTitleText": "宠物管家",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#FBF9F7"
+    "backgroundColor": "#F6F3FF"
   },
   "tabBar": {
     "custom": true,
-    "color": "#999999",
-    "selectedColor": "#E8875A",
+    "color": "#B5B0C8",
+    "selectedColor": "#7B5CF5",
     "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [
