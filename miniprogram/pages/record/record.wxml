@@ -101,7 +101,7 @@
                 mode="aspectFill"
                 data-urls="{{item.images}}"
                 data-current="{{img}}"
-                bindtap="previewImage"
+                catchtap="previewImage"
               />
             </view>
             <!-- 提醒倒计时进度条 -->

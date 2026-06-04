@@ -13,7 +13,8 @@
 ## 改动
 ### `miniprogram/pages/map/map.js`
 - data 增加 `mapCategory: 'all'` 和 `mapCategoryOptions`
-- `buildMarkers` 改造：先按 mapCategory 过滤
+- `loadData` 加载后先按 ≤ 10km 过滤一份用于列表模式的 places（distance 单位为米，已存在）
+- `buildMarkers` 改造：先按 mapCategory 过滤（地图模式不限制 10km）
 - 新增 `onSelectMapCategory(e)`：setData mapCategory + 调 buildMarkers
 
 ### `miniprogram/pages/map/map.wxml`
@@ -26,6 +27,8 @@
 ## 边界
 - 分类切换不需要重新拉数据，纯前端过滤已加载的 places
 - hospital/shop 类目地点在地图模式下选择"全部"时仍展示（保持完整）
+- 列表模式 10km 过滤独立于地图模式分类筛选；地图模式不做距离限制
+- distance 字段由云函数 `mapManage.listPlaces` 返回（米），无需重新计算
 
 ## 预期
 - 地图模式顶部出现 5 个胶囊按钮，点击高亮并实时过滤地图 markers

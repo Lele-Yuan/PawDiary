@@ -1,6 +1,8 @@
 .map-page {
-  padding-bottom: 140rpx;
-  min-height: 100vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* ===== 模式切换栏 ===== */
@@ -34,7 +36,7 @@
 .map-view {
   position: relative;
   width: 100%;
-  height: calc(100vh - 200rpx);
+  flex: 1;
 }
 
 .pet-map {
@@ -58,6 +60,37 @@
 
 .location-btn-icon {
   font-size: 36rpx;
+}
+
+/* 地图分类浮层 */
+.map-category-bar {
+  position: absolute;
+  top: 16rpx;
+  left: 16rpx;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 160rpx;
+  text-align: center;
+}
+
+.map-category-tab {
+  flex-shrink: 0;
+  padding: 12rpx 0;
+  margin-bottom: 12rpx;
+  background-color: #FFFFFF;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: var(--text-color);
+  box-shadow: 0 4rpx 12rpx rgba(31, 26, 61, 0.12);
+}
+
+.map-category-tab.active {
+  background-color: var(--primary-color);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 4rpx 16rpx rgba(123, 92, 245, 0.32);
 }
 
 /* ===== 列表视图 ===== */

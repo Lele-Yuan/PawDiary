@@ -23,6 +23,13 @@
     "miniprogram": {
       "list": [
         {
+          "name": "地图",
+          "pathName": "pages/map/map",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "DGTI",
           "pathName": "pages/dogti/index/index",
           "query": "",

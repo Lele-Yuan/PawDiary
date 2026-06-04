@@ -1,9 +1,17 @@
-var { PLACE_CATEGORY_MAP } = require('../../utils/constants');
+var { PLACE_CATEGORY_MAP, PLACE_CATEGORIES } = require('../../utils/constants');
 
 Page({
   data: {
     viewMode: 'list',
     places: [],
+    nearbyPlaces: [],
+    mapCategorySelected: Object.keys(PLACE_CATEGORY_MAP),
+    mapCategorySelectedMap: (function () {
+      var m = {};
+      Object.keys(PLACE_CATEGORY_MAP).forEach(function (k) { m[k] = true; });
+      return m;
+    })(),
+    mapCategoryOptions: PLACE_CATEGORIES,
     myLatitude: 0,
     myLongitude: 0,
     markers: [],
@@ -87,6 +95,7 @@ Page({
 
       this.setData({
         places: places,
+        nearbyPlaces: places.filter(function (p) { return p.distance <= 10000; }),
         loading: false,
         loaded: true
       });
@@ -102,6 +111,10 @@ Page({
   buildMarkers() {
     var markers = [];
     var places = this.data.places;
+    var keys = this.data.mapCategorySelected;
+    if (keys && keys.length) {
+      places = places.filter(function (p) { return keys.indexOf(p.category) !== -1; });
+    }
 
     // 地点标记 - 使用 label 替代 iconPath
     for (var i = 0; i < places.length; i++) {
@@ -135,6 +148,27 @@ Page({
   onSwitchMode(e) {
     var mode = e.currentTarget.dataset.mode;
     this.setData({ viewMode: mode });
+  },
+
+  // 切换地图分类浮层（多选：默认全选中，点击切换；不可全部取消）
+  onSelectMapCategory(e) {
+    var key = e.currentTarget.dataset.key;
+    if (!key) return;
+    var keys = (this.data.mapCategorySelected || []).slice();
+    var idx = keys.indexOf(key);
+    if (idx === -1) {
+      keys.push(key);
+    } else {
+      // 已选中状态：仅当还有其他选中项时才允许取消，避免全部取消
+      if (keys.length <= 1) return;
+      keys.splice(idx, 1);
+    }
+    var selectedMap = {};
+    for (var i = 0; i < keys.length; i++) {
+      selectedMap[keys[i]] = true;
+    }
+    this.setData({ mapCategorySelected: keys, mapCategorySelectedMap: selectedMap });
+    this.buildMarkers();
   },
 
   // 点击地点卡片

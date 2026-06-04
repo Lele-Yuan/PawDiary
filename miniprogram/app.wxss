@@ -61,6 +61,9 @@ page {
   color: var(--text-color);
   background-color: transparent;
   box-sizing: border-box;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== 通用布局 ===== */

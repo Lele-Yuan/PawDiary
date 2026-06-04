@@ -590,6 +590,7 @@ Page({
       return;
     }
     const remaining = Math.min(MAX_PHOTOS_PER_DETAIL - currentCount, photoCheck.remaining);
+    var that = this;
     wx.chooseMedia({
       count: remaining,
       mediaType: ['image'],
@@ -602,8 +603,8 @@ Page({
         }
         if (sizeResult.validFiles.length === 0) return;
         var newImages = sizeResult.validFiles.map(function(f) { return f.tempFilePath; });
-        const images = this.data.form.images.concat(newImages).slice(0, MAX_PHOTOS_PER_DETAIL);
-        this.setData({ 'form.images': images });
+        const images = that.data.form.images.concat(newImages).slice(0, MAX_PHOTOS_PER_DETAIL);
+        that.setData({ 'form.images': images });
       }
     });
   },

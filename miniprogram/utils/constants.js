@@ -200,9 +200,9 @@ const PLACE_CATEGORIES = [
   { key: 'cafe', label: '咖啡厅', icon: '☕' },
   { key: 'park', label: '公园', icon: '🌳' },
   { key: 'hospital', label: '宠物医院', icon: '🏥' },
-  { key: 'shop', label: '宠物店', icon: '🏪' },
-  { key: 'restaurant', label: '餐厅', icon: '🍽️' },
-  { key: 'other', label: '其他', icon: '📍' }
+  { key: 'shop', label: '创意园', icon: '🏟️' },
+  { key: 'restaurant', label: '商场', icon: '🏪' },
+  { key: 'other', label: '其他', icon: '🌏️' }
 ];
 
 /**

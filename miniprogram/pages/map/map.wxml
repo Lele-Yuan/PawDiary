@@ -26,6 +26,18 @@
       enable-zoom
       enable-scroll
     ></map>
+    <!-- 分类浮层 -->
+    <view class="map-category-bar">
+      <view
+        wx:for="{{mapCategoryOptions}}"
+        wx:key="key"
+        class="map-category-tab {{mapCategorySelectedMap[item.key] ? 'active' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onSelectMapCategory"
+      >
+        <text>{{item.icon}} {{item.label}}</text>
+      </view>
+    </view>
     <!-- 回到当前位置按钮 -->
     <view class="location-btn" bindtap="onMoveToLocation">
       <text class="location-btn-icon">📍</text>
@@ -41,15 +53,15 @@
       </view> -->
 
       <empty-state
-        wx:if="{{!places.length}}"
+        wx:if="{{!nearbyPlaces.length}}"
         icon="📍"
-        title="附近暂无地点"
+        title="附近 10km 内暂无地点"
         description="成为第一个标记宠物友好地点的人吧"
         btnText="添加地点"
         bind:action="goAddPlace"
       />
 
-      <view class="place-card card" wx:for="{{places}}" wx:key="_id" data-id="{{item._id}}" data-lat="{{item.latitude}}" data-lng="{{item.longitude}}" bindtap="onTapPlace">
+      <view class="place-card card" wx:for="{{nearbyPlaces}}" wx:key="_id" data-id="{{item._id}}" data-lat="{{item.latitude}}" data-lng="{{item.longitude}}" bindtap="onTapPlace">
         <view class="place-card-main">
           <view class="place-icon-circle">
             <text>{{item.categoryIcon}}</text>
