@@ -11,17 +11,19 @@
     </view>
   </view>
   <!-- 标签筛选栏 -->
-  <scroll-view class="type-tabs {{tagsExpanded ? 'expanded' : ''}}" scroll-x="{{!tagsExpanded}}" enable-flex>
-    <view
-      class="tab-item {{activeType === item.key ? 'active' : ''}} {{item.isAction ? 'is-action' : ''}}"
-      wx:for="{{displayTypeList}}"
-      wx:key="key"
-      data-type="{{item.key}}"
-      bindtap="switchType"
-    >
-      <text class="tab-label">{{item.label}}</text>
-    </view>
-  </scroll-view>
+  <view class="type-tabs-wrap">
+    <scroll-view class="type-tabs {{tagsExpanded ? 'expanded' : ''}}" scroll-x="{{!tagsExpanded}}" enable-flex>
+      <view
+        class="tab-item {{selectedTypeMap[item.key] ? 'active' : ''}} {{item.isAction ? 'is-action' : ''}}"
+        wx:for="{{displayTypeList}}"
+        wx:key="key"
+        data-type="{{item.key}}"
+        bindtap="switchType"
+      >
+        <text class="tab-label">{{item.label}}</text>
+      </view>
+    </scroll-view>
+  </view>
 
   <!-- 节标题 -->
   <view class="section-title-row" wx:if="{{records.length}}">

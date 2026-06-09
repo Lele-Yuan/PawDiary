@@ -115,7 +115,8 @@ Page({
     // 检查是否游客（昵称为「未知游客」表示游客）
     const app = getApp();
     const userInfo = app.globalData.userInfo;
-    if (!userInfo || !userInfo.nickName || userInfo.nickName === '未知游客') {
+    const isGuest = !userInfo.nickName || userInfo.nickName === '未知游客';
+    if (isGuest) {
       wx.showToast({ title: '请先登录后再留言', icon: 'none', duration: 2000 });
       return;
     }

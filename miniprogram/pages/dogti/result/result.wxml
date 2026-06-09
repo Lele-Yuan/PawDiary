@@ -10,7 +10,7 @@
     <view class="nav-placeholder"></view>
   </view>
 
-  <scroll-view class="scroll-content" scroll-y>
+  <view class="scroll-content">
 
     <!-- 主图区域 -->
     <view class="hero-section">
@@ -27,6 +27,21 @@
       <view class="hero-info">
         <text class="hero-name">{{personality.name}}</text>
         <text class="hero-tagline">"{{personality.tagline}}"</text>
+        <view wx:if="{{primaryFit > 0}}" class="hero-fit-badge">
+          <text>匹配度 {{primaryFit}}%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 次人格卡片 -->
+    <view wx:if="{{showSecondary && secondaryPersonality}}" class="secondary-card">
+      <view class="secondary-label">次人格 · {{secondaryFit}}%</view>
+      <view class="secondary-row">
+        <image wx:if="{{secondaryPersonality.iconImg}}" class="secondary-icon" src="{{secondaryPersonality.iconImg}}"></image>
+        <view class="secondary-info">
+          <text class="secondary-name">{{secondaryPersonality.name}}</text>
+          <text class="secondary-tag">{{secondaryPersonality.tagline}}</text>
+        </view>
       </view>
     </view>
 
@@ -120,8 +135,8 @@
         <view class="share-card-bottom">
           <view class="share-badge-row">
             <view class="share-badge share-badge-warm">
-              <text class="share-badge-small">危险指数</text>
-              <text class="share-badge-big">{{personality.danger}}%</text>
+              <text class="share-badge-small">行动力</text>
+              <text class="share-badge-big">{{dynamicRadar.action}}%</text>
             </view>
             <view class="share-badge share-badge-green">
               <text class="share-badge-small">狗届职业</text>
@@ -148,7 +163,7 @@
     </view>
 
     <view class="safe-bottom"></view>
-  </scroll-view>
+  </view>
 
   <!-- 海报模态框 -->
   <view class="poster-modal" wx:if="{{showPosterModal}}">

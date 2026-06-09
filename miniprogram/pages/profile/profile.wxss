@@ -6,7 +6,7 @@
 .user-section {
   display: flex;
   align-items: center;
-  padding: 56rpx 36rpx 32rpx;
+  padding: 16rpx 36rpx 48rpx;
   /* margin: 24rpx 24rpx 16rpx; */
   border-radius: 36rpx;
   /* background: linear-gradient(135deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 100%);
@@ -99,13 +99,13 @@
 
 /* ===== 游客态登录引导 ===== */
 .login-guide-btn {
-  background-color: rgba(255, 255, 255, 0.22);
+  background-color: var(--card-bg);
   border-radius: 60rpx;
   padding: 8rpx 28rpx;
   margin-top: 8rpx;
   font-size: 24rpx;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--primary-color);
   letter-spacing: 2rpx;
 }
 

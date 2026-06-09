@@ -90,7 +90,7 @@ async function listMembers(openid, data) {
         .get();
       if (userRes.data.length > 0) {
         var user = userRes.data[0];
-        members[i].nickName = user.nickName || m.nickName || '未知游客';
+        members[i].nickName = user.nickName || m.nickName;
         members[i].avatarUrl = user.avatarUrl || m.avatarUrl || '';
       }
     } catch (e) {

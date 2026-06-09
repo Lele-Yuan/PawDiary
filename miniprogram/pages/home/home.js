@@ -225,7 +225,7 @@ Page({
         .get();
       if (res.data.length > 0) {
         await db.collection('pet_members').doc(res.data[0]._id).update({
-          data: { role: 'creator', nickName: userInfo.nickName || '未知游客', avatarUrl: userInfo.avatarUrl || '' }
+          data: { role: 'creator', nickName: userInfo.nickName, avatarUrl: userInfo.avatarUrl || '' }
         });
       }
     } catch (e) {
@@ -393,6 +393,11 @@ Page({
     wx.navigateTo({ url: '/pages/map/map' });
   },
 
+  // 快捷入口 - DGTI 狗格测试
+  goDgti() {
+    wx.navigateTo({ url: '/pages/dogti/index/index' });
+  },
+
   // 快捷入口 - 代铲屎遛狗
   goToCare() {
     // 未登录时，使用通用登录弹窗组件
@@ -531,7 +536,8 @@ Page({
 
   // 移除成员（创建者操作）
   removeMember(targetOpenid) {
-    async function removeMemberFn(targetOpenid) {
+    var that = this;
+    async function removeMemberFn() {
       try {
         var confirmRes = await wx.showModal({
           title: '确认移除',
@@ -540,12 +546,17 @@ Page({
         });
         if (!confirmRes.confirm) return;
 
-        await wx.cloud.callFunction({
+        var callRes = await wx.cloud.callFunction({
           name: 'familyManage',
-          data: { action: 'remove', data: { petId: this.data.currentPetId, targetOpenid: targetOpenid } }
+          data: { action: 'remove', data: { petId: that.data.currentPetId, targetOpenid: targetOpenid } }
         });
+        var result = callRes && callRes.result;
+        if (result && result.code !== undefined && result.code !== 0) {
+          wx.showToast({ title: result.message || '操作失败', icon: 'none' });
+          return;
+        }
         wx.showToast({ title: '已移除', icon: 'success' });
-        this.loadFamilyMembers(this.data.currentPetId);
+        that.loadFamilyMembers(that.data.currentPetId);
       } catch (err) {
         console.error('移除成员失败', err);
         wx.showToast({ title: '操作失败', icon: 'none' });

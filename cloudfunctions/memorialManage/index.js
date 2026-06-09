@@ -30,12 +30,12 @@ async function addMemorial(openid, data) {
   }
 
   // 查询用户信息（冗余存储）
-  var ownerNickName = '未知用户';
+  var ownerNickName = '';
   var ownerAvatar = '';
   try {
     var userRes = await db.collection('users').where({ _openid: openid }).limit(1).get();
     if (userRes.data.length > 0) {
-      ownerNickName = userRes.data[0].nickName || '未知用户';
+      ownerNickName = userRes.data[0].nickName || '';
       ownerAvatar = userRes.data[0].avatarUrl || '';
     }
   } catch (e) {

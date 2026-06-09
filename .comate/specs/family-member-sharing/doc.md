@@ -185,7 +185,7 @@ async function joinFamily(openid, data) {
       _openid: openid,
       petId: petId,
       role: 'member',
-      nickName: user.nickName || '未知游客',
+      nickName: user.nickName,
       avatarUrl: user.avatarUrl || '',
       createdAt: new Date()
     }
@@ -207,7 +207,7 @@ await db.collection('pet_members').add({
     _openid: openid,
     petId: res._id,
     role: 'creator',
-    nickName: user.nickName || '未知游客',
+    nickName: user.nickName,
     avatarUrl: user.avatarUrl || '',
     createdAt: new Date()
   }

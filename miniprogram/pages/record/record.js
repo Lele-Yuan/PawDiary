@@ -4,6 +4,9 @@ const { RECORD_TYPES, RECORD_TYPE_MAP } = require('../../utils/constants');
 Page({
   data: {
     activeType: 'all',
+    selectedTypes: [],
+    selectedTypeMap: {},
+    isAllSelected: true,
     currentPetName: '',
     navTitleOpacity: 1,
     canEdit: true,
@@ -31,11 +34,15 @@ Page({
     });
     expandedTypeList.push({ key: '__collapse__', label: '收起', isAction: true });
 
+    // 默认：全部选中（"全部" 标签激活，其他标签均未选中）
     this.setData({
       defaultTypeList: defaultTypeList,
       expandedTypeList: expandedTypeList,
       displayTypeList: defaultTypeList,
-      tagsExpanded: false
+      tagsExpanded: false,
+      selectedTypes: [],
+      selectedTypeMap: { all: true },
+      isAllSelected: true
     });
   },
 
@@ -91,19 +98,22 @@ Page({
         return;
       }
 
-      // 通过云函数获取记录数据
+      // 通过云函数获取记录数据（拉全量，类型过滤在前端按多选执行）
       const res = await wx.cloud.callFunction({
         name: 'recordManage',
         data: {
           action: 'list',
           data: {
             petId,
-            type: this.data.activeType
+            type: 'all'
           }
         }
       });
 
-      const data = res.result && res.result.code === 0 ? res.result.data : [];
+      var rawData = res.result && res.result.code === 0 ? res.result.data : [];
+      var typeMap = this.data.selectedTypeMap || {};
+      var isAll = this.data.isAllSelected;
+      const data = isAll ? rawData : rawData.filter(function (r) { return typeMap[r.type]; });
 
       var tagClassMap = {
         deworm: 'tag-success',
@@ -228,7 +238,7 @@ Page({
     }
   },
 
-  // 切换类型
+  // 切换类型：支持多选；"全部" 与其他标签互斥；点击具体标签切换其选中状态；全部取消后回退到 "全部"
   switchType(e) {
     const type = e.currentTarget.dataset.type;
     if (type === '__more__') {
@@ -239,7 +249,45 @@ Page({
       this.setData({ tagsExpanded: false, displayTypeList: this.data.defaultTypeList });
       return;
     }
-    this.setData({ activeType: type });
+
+    var nextKeys;
+    var nextIsAll;
+
+    if (type === 'all') {
+      // 点击"全部"：互斥地激活"全部"，清空其他选择
+      nextKeys = [];
+      nextIsAll = true;
+    } else {
+      var current = this.data.isAllSelected ? [] : (this.data.selectedTypes || []).slice();
+      var idx = current.indexOf(type);
+      if (idx === -1) {
+        current.push(type);
+      } else {
+        current.splice(idx, 1);
+      }
+      if (current.length === 0) {
+        // 取消到全空：回退为"全部"
+        nextKeys = [];
+        nextIsAll = true;
+      } else {
+        nextKeys = current;
+        nextIsAll = false;
+      }
+    }
+
+    var nextMap = {};
+    if (nextIsAll) {
+      nextMap.all = true;
+    } else {
+      nextKeys.forEach(function (k) { nextMap[k] = true; });
+    }
+
+    this.setData({
+      selectedTypes: nextKeys,
+      selectedTypeMap: nextMap,
+      isAllSelected: nextIsAll,
+      activeType: nextIsAll ? 'all' : (nextKeys.length === 1 ? nextKeys[0] : 'multi')
+    });
     this.loadRecords();
   },
 

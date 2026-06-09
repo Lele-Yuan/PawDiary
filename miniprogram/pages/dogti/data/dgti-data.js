@@ -1,48 +1,26 @@
-// DGTI 狗格测试 - 核心数据层
-// 5大模型 × 3子维度 = 15个狗格维度，派生16种经典狗格人格
+// DGTI 狗格测试 - 五大人格轴版本
+// 5 大对立轴 → 5 维雷达 → 16 名著人格软匹配
 
-// ===== 15个维度定义 =====
-const DIMENSIONS = {
-  // MODEL 1: 社交能量模型 Social Paw
-  E: { code: 'E', name: '外向疯狗型', model: 'Social Paw', color: '#FFB59E' },
-  I: { code: 'I', name: '内向观察型', model: 'Social Paw', color: '#CFE99F' },
-  A: { code: 'A', name: '焦虑雷达型', model: 'Social Paw', color: '#EFDDD B' },
-  // MODEL 2: 情绪表达模型 Emotional Tail
-  F: { code: 'F', name: '戏精情绪型', model: 'Emotional Tail', color: '#FFB59E' },
-  S: { code: 'S', name: '稳定老干部型', model: 'Emotional Tail', color: '#CFE99F' },
-  M: { code: 'M', name: '黏人恋爱脑型', model: 'Emotional Tail', color: '#EFDDD B' },
-  // MODEL 3: 行动策略模型 Action Drive
-  C: { code: 'C', name: '领导控制型', model: 'Action Drive', color: '#D3C5AD' },
-  G: { code: 'G', name: '快乐摆烂型', model: 'Action Drive', color: '#CFE99F' },
-  D: { code: 'D', name: '拆迁爆破型', model: 'Action Drive', color: '#FFB59E' },
-  // MODEL 4: 脑回路模型 Brain Circuit
-  P: { code: 'P', name: '心机军师型', model: 'Brain Circuit', color: '#D3C5AD' },
-  Z: { code: 'Z', name: '天才疯狗型', model: 'Brain Circuit', color: '#FFB59E' },
-  T: { code: 'T', name: '学霸执行型', model: 'Brain Circuit', color: '#CFE99F' },
-  // MODEL 5: 生活价值观模型 Life Philosophy
-  R: { code: 'R', name: '仪式感贵族型', model: 'Life Philosophy', color: '#D3C5AD' },
-  B: { code: 'B', name: '街溜子自由型', model: 'Life Philosophy', color: '#FFB59E' },
-  H: { code: 'H', name: '治愈天使型', model: 'Life Philosophy', color: '#CFE99F' },
-};
+// ===== 5 大对立轴定义 =====
+// 每轴归一化为 0-100，>50 偏正极，<50 偏反极
+const AXES = [
+  { key: 'social',   posKey: 'S', negKey: 'O', posLabel: '社牛', negLabel: '观察', radarLabel: '社交能力' },
+  { key: 'clingy',   posKey: 'M', negKey: 'I', posLabel: '黏人', negLabel: '独立', radarLabel: '依赖指数' },
+  { key: 'action',   posKey: 'A', negKey: 'H', posLabel: '冲动', negLabel: '稳健', radarLabel: '行动力' },
+  { key: 'strategy', posKey: 'P', negKey: 'E', posLabel: '策略', negLabel: '执行', radarLabel: '策略值' },
+  { key: 'freedom',  posKey: 'F', negKey: 'R', posLabel: '自由', negLabel: '秩序', radarLabel: '自由度' },
+];
 
-// ===== 16个狗格人格 =====
+// ===== 16 个狗格人格 =====
+// match: 软匹配条件数组，op ∈ {'>', '<'}
 const PERSONALITIES = [
   {
-    id: 'qi-tian',
-    name: '齐天疯狗型',
-    subtitle: '孙悟空系',
-    code: 'Z+D+E',
-    identity: '精神状态遥遥领先',
-    tagline: '它不是在发疯，它是在修仙。',
-    rarity: 'SSR',
-    rarityColor: '#77321C',
-    rarityBg: '#CFE99F',
-    iconBg: '#CFE99F',
+    id: 'qi-tian', name: '齐天疯狗型', subtitle: '孙悟空系', code: 'S+A+F',
+    identity: '精神状态遥遥领先', tagline: '它不是在发疯，它是在修仙。',
+    rarity: 'SSR', rarityColor: '#77321C', rarityBg: '#CFE99F', iconBg: '#CFE99F',
     traits: ['半夜跑酷', '永远坐不住', '精力核爆', '越管越疯'],
     behaviors: ['客厅大闹天宫', '五分钟拆一个玩具', '情绪像过山车'],
-    breeds: ['哈士奇', '柴犬', '澳洲牧羊犬'],
-    job: '极限运动员',
-    soulRank: 'S-Tier Chaotic',
+    breeds: ['哈士奇', '柴犬', '澳洲牧羊犬'], job: '极限运动员', soulRank: 'S-Tier Chaotic',
     social: 90, danger: 85, destroy: 99, clingy: 30, mental: 5,
     tags: ['狂暴之源', '传送门大师'],
     trait1Title: 'Energy Nuke（能量核爆）',
@@ -52,23 +30,19 @@ const PERSONALITIES = [
     trait2Desc: '在没有任何预兆的情况下，以0.3秒完成从"乖"到"发疯"的切换。',
     trait2Color: '#FFB59E',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_01.png',
+    match: [
+      { axis: 'social', op: '>', threshold: 70 },
+      { axis: 'action', op: '>', threshold: 80 },
+      { axis: 'freedom', op: '>', threshold: 70 },
+    ],
   },
   {
-    id: 'kong-ming',
-    name: '孔明军师型',
-    subtitle: '诸葛亮系',
-    code: 'T+P+C',
-    identity: '全家战略指挥官',
-    tagline: '它已经开始复盘你的失误了。',
-    rarity: 'SSR',
-    rarityColor: '#54662E',
-    rarityBg: '#CFE99F',
-    iconBg: '#D3C5AD',
+    id: 'kong-ming', name: '孔明军师型', subtitle: '诸葛亮系', code: 'O+P+R',
+    identity: '全家战略指挥官', tagline: '它已经开始复盘你的失误了。',
+    rarity: 'SSR', rarityColor: '#54662E', rarityBg: '#CFE99F', iconBg: '#D3C5AD',
     traits: ['高智商', '观察力恐怖', '喜欢管理别人', '会套路主人'],
     behaviors: ['偷偷布局', '精准骗零食', '指挥全家行动'],
-    breeds: ['边牧', '杜宾', '德牧'],
-    job: '战略顾问',
-    soulRank: 'S-Tier Strategist',
+    breeds: ['边牧', '杜宾', '德牧'], job: '战略顾问', soulRank: 'S-Tier Strategist',
     social: 60, danger: 40, destroy: 30, clingy: 70, mental: 95,
     tags: ['智商压制', '零食骗局'],
     trait1Title: 'Master Plan（大局为先）',
@@ -78,23 +52,19 @@ const PERSONALITIES = [
     trait2Desc: '装出最无辜的眼神，在你毫无防备时精准出击，零食到手率99%。',
     trait2Color: '#FFB59E',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_02.png',
+    match: [
+      { axis: 'social', op: '<', threshold: 40 },
+      { axis: 'strategy', op: '>', threshold: 80 },
+      { axis: 'freedom', op: '<', threshold: 40 },
+    ],
   },
   {
-    id: 'dai-yu',
-    name: '黛玉敏感型',
-    subtitle: '林黛玉系',
-    code: 'F+M+I',
-    identity: '玻璃心情绪艺术家',
-    tagline: '它不是脆弱，它只是情绪细腻。',
-    rarity: 'SR',
-    rarityColor: '#77321C',
-    rarityBg: '#F0E0C8',
-    iconBg: '#FFF1ED',
+    id: 'dai-yu', name: '黛玉敏感型', subtitle: '林黛玉系', code: 'O+M+A',
+    identity: '玻璃心情绪艺术家', tagline: '它不是脆弱，它只是情绪细腻。',
+    rarity: 'SR', rarityColor: '#77321C', rarityBg: '#F0E0C8', iconBg: '#FFF1ED',
     traits: ['超级敏感', '情绪波动大', '黏人', '容易委屈'],
     behaviors: ['你语气不对它都知道', '被忽略会emo', '喜欢贴贴'],
-    breeds: ['比熊', '博美', '小体贵宾'],
-    job: '情绪感知师',
-    soulRank: 'A-Tier Sensitive',
+    breeds: ['比熊', '博美', '小体贵宾'], job: '情绪感知师', soulRank: 'A-Tier Sensitive',
     social: 55, danger: 20, destroy: 25, clingy: 98, mental: 40,
     tags: ['玻璃心', '贴贴专家'],
     trait1Title: 'Heart Radar（情绪雷达）',
@@ -104,23 +74,19 @@ const PERSONALITIES = [
     trait2Desc: '被轻微忽视后，可持续释放"委屈光环"长达30分钟，直到获得充分安抚。',
     trait2Color: '#B6D088',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_03.png',
+    match: [
+      { axis: 'social', op: '<', threshold: 40 },
+      { axis: 'clingy', op: '>', threshold: 80 },
+      { axis: 'action', op: '>', threshold: 70 },
+    ],
   },
   {
-    id: 'bao-yu',
-    name: '宝玉摆烂型',
-    subtitle: '贾宝玉系',
-    code: 'G+H+B',
-    identity: '快乐废物哲学家',
-    tagline: '狗生这么短，何必上班。',
-    rarity: 'SR',
-    rarityColor: '#54662E',
-    rarityBg: '#CFE99F',
-    iconBg: '#CFE99F',
+    id: 'bao-yu', name: '宝玉摆烂型', subtitle: '贾宝玉系', code: 'F+H+M',
+    identity: '快乐废物哲学家', tagline: '狗生这么短，何必上班。',
+    rarity: 'SR', rarityColor: '#54662E', rarityBg: '#CFE99F', iconBg: '#CFE99F',
     traits: ['能躺绝不站', '喜欢享受', '温柔', '不爱竞争'],
     behaviors: ['晒太阳一下午', '对世界毫无攻击性', '吃完就睡'],
-    breeds: ['金毛', '拉布拉多', '柯基'],
-    job: '首席躺平官',
-    soulRank: 'B-Tier Zen Master',
+    breeds: ['金毛', '拉布拉多', '柯基'], job: '首席躺平官', soulRank: 'B-Tier Zen Master',
     social: 75, danger: 5, destroy: 15, clingy: 85, mental: 80,
     tags: ['摆烂哲学家', '温柔系'],
     trait1Title: 'Golden Sloth（黄金懒虫）',
@@ -130,23 +96,19 @@ const PERSONALITIES = [
     trait2Desc: '对任何冲突毫无兴趣。路遇吵架自动绕道，世界和平靠它守护。',
     trait2Color: '#D3C5AD',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_04.png',
+    match: [
+      { axis: 'freedom', op: '>', threshold: 80 },
+      { axis: 'action', op: '<', threshold: 40 },
+      { axis: 'clingy', op: '>', threshold: 60 },
+    ],
   },
   {
-    id: 'wu-song',
-    name: '武松战神型',
-    subtitle: '水浒系',
-    code: 'A+C+D',
-    identity: '家门口第一保镖',
-    tagline: '这个家，得靠它镇场子。',
-    rarity: 'SSR',
-    rarityColor: '#77321C',
-    rarityBg: '#FFB59E',
-    iconBg: '#FFB59E',
+    id: 'wu-song', name: '武松战神型', subtitle: '水浒系', code: 'O+A+E',
+    identity: '家门口第一保镖', tagline: '这个家，得靠它镇场子。',
+    rarity: 'SSR', rarityColor: '#77321C', rarityBg: '#FFB59E', iconBg: '#FFB59E',
     traits: ['战斗欲强', '领地意识爆棚', '护主'],
     behaviors: ['快递员宿敌', '觉得全世界危险', '随时准备开战'],
-    breeds: ['罗威纳', '德牧', '杜宾'],
-    job: '保镖队长',
-    soulRank: 'S-Tier Guardian',
+    breeds: ['罗威纳', '德牧', '杜宾'], job: '保镖队长', soulRank: 'S-Tier Guardian',
     social: 30, danger: 95, destroy: 70, clingy: 60, mental: 55,
     tags: ['领地守卫', '快递员克星'],
     trait1Title: 'Territory Lock（领地锁定）',
@@ -156,23 +118,19 @@ const PERSONALITIES = [
     trait2Desc: '凶猛表面之下是对家人无条件的守护。它不是攻击性强，它只是爱得深。',
     trait2Color: '#B6D088',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_05.png',
+    match: [
+      { axis: 'social', op: '<', threshold: 50 },
+      { axis: 'action', op: '>', threshold: 70 },
+      { axis: 'strategy', op: '<', threshold: 50 },
+    ],
   },
   {
-    id: 'song-jiang',
-    name: '宋江老大型',
-    subtitle: '水浒系',
-    code: 'E+C+H',
-    identity: '狗届社交教父',
-    tagline: '它不是社牛，它是梁山编制。',
-    rarity: 'SR',
-    rarityColor: '#77321C',
-    rarityBg: '#D3C5AD',
-    iconBg: '#D3C5AD',
+    id: 'song-jiang', name: '宋江老大型', subtitle: '水浒系', code: 'S+M+P',
+    identity: '狗届社交教父', tagline: '它不是社牛，它是梁山编制。',
+    rarity: 'SR', rarityColor: '#77321C', rarityBg: '#D3C5AD', iconBg: '#D3C5AD',
     traits: ['喜欢交朋友', '爱组织', '有领导欲'],
     behaviors: ['公园建群', '谁都认识', '主动调停狗界矛盾'],
-    breeds: ['金毛', '萨摩耶', '伯恩山'],
-    job: '社区大使',
-    soulRank: 'A-Tier Social Leader',
+    breeds: ['金毛', '萨摩耶', '伯恩山'], job: '社区大使', soulRank: 'A-Tier Social Leader',
     social: 99, danger: 35, destroy: 40, clingy: 80, mental: 65,
     tags: ['社交教父', '和事佬'],
     trait1Title: 'PR Manager（公关大师）',
@@ -182,23 +140,19 @@ const PERSONALITIES = [
     trait2Desc: '每次出门回来朋友圈又多了三个联系人。它在社交市场的估值持续走高。',
     trait2Color: '#FFB59E',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_06.png',
+    match: [
+      { axis: 'social', op: '>', threshold: 80 },
+      { axis: 'clingy', op: '>', threshold: 60 },
+      { axis: 'strategy', op: '>', threshold: 50 },
+    ],
   },
   {
-    id: 'lu-zhi-shen',
-    name: '鲁智深拆迁型',
-    subtitle: '水浒系',
-    code: 'D+F+Z',
-    identity: '暴力拆家艺术家',
-    tagline: '装修风格它说了算。',
-    rarity: 'SSR',
-    rarityColor: '#77321C',
-    rarityBg: '#FFB59E',
-    iconBg: '#FFB59E',
+    id: 'lu-zhi-shen', name: '鲁智深拆迁型', subtitle: '水浒系', code: 'A+F+E',
+    identity: '暴力拆家艺术家', tagline: '装修风格它说了算。',
+    rarity: 'SSR', rarityColor: '#77321C', rarityBg: '#FFB59E', iconBg: '#FFB59E',
     traits: ['力气巨大', '情绪奔放', '行为离谱'],
     behaviors: ['连窝端', '拖鞋碎尸案', '一言不合开始发疯'],
-    breeds: ['哈士奇', '阿拉斯加', '拉布拉多幼犬'],
-    job: '室内改造师',
-    soulRank: 'S-Tier Destroyer',
+    breeds: ['哈士奇', '阿拉斯加', '拉布拉多幼犬'], job: '室内改造师', soulRank: 'S-Tier Destroyer',
     social: 70, danger: 75, destroy: 99, clingy: 65, mental: 20,
     tags: ['拆迁之神', '情绪核弹'],
     trait1Title: 'Demo Mode（拆迁模式）',
@@ -208,23 +162,19 @@ const PERSONALITIES = [
     trait2Desc: '拥有奥斯卡级的委屈表演技巧，在拆完东西后还能展现出"不是我"的神情。',
     trait2Color: '#B6D088',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_07.png',
+    match: [
+      { axis: 'action', op: '>', threshold: 80 },
+      { axis: 'freedom', op: '>', threshold: 70 },
+      { axis: 'strategy', op: '<', threshold: 40 },
+    ],
   },
   {
-    id: 'tang-seng',
-    name: '唐僧圣母型',
-    subtitle: '西游记系',
-    code: 'H+S+M',
-    identity: '温柔小天使',
-    tagline: '它觉得世界应该充满爱。',
-    rarity: 'SR',
-    rarityColor: '#54662E',
-    rarityBg: '#CFE99F',
-    iconBg: '#CFE99F',
+    id: 'tang-seng', name: '唐僧圣母型', subtitle: '西游记系', code: 'M+H+R',
+    identity: '温柔小天使', tagline: '它觉得世界应该充满爱。',
+    rarity: 'SR', rarityColor: '#54662E', rarityBg: '#CFE99F', iconBg: '#CFE99F',
     traits: ['共情能力强', '不爱冲突', '黏主人'],
     behaviors: ['主人难过会陪着', '不喜欢吵架', '喜欢贴贴'],
-    breeds: ['金毛', '比格', '拉布拉多'],
-    job: '情绪疗愈师',
-    soulRank: 'A-Tier Angel',
+    breeds: ['金毛', '比格', '拉布拉多'], job: '情绪疗愈师', soulRank: 'A-Tier Angel',
     social: 85, danger: 10, destroy: 15, clingy: 99, mental: 75,
     tags: ['治愈天使', '和平使者'],
     trait1Title: 'Healing Beam（治愈光线）',
@@ -234,23 +184,19 @@ const PERSONALITIES = [
     trait2Desc: '遇到任何冲突自动开启"劝和模式"，用温柔眼神消弭所有敌意。',
     trait2Color: '#D3C5AD',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_08.png',
+    match: [
+      { axis: 'clingy', op: '>', threshold: 80 },
+      { axis: 'action', op: '<', threshold: 40 },
+      { axis: 'freedom', op: '<', threshold: 50 },
+    ],
   },
   {
-    id: 'zhu-ba-jie',
-    name: '八戒干饭型',
-    subtitle: '猪八戒系',
-    code: 'G+B+F',
-    identity: '干饭快乐主义者',
-    tagline: '天大地大，吃饭最大。',
-    rarity: 'R',
-    rarityColor: '#77321C',
-    rarityBg: '#F0E0C8',
-    iconBg: '#F0E0C8',
+    id: 'zhu-ba-jie', name: '八戒干饭型', subtitle: '猪八戒系', code: 'F+H+M',
+    identity: '干饭快乐主义者', tagline: '天大地大，吃饭最大。',
+    rarity: 'R', rarityColor: '#77321C', rarityBg: '#F0E0C8', iconBg: '#F0E0C8',
     traits: ['爱吃', '爱睡', '快乐'],
     behaviors: ['厨房永动机', '听到塑料袋立刻闪现', '减肥永远失败'],
-    breeds: ['柯基', '法斗', '巴哥'],
-    job: '美食评论家',
-    soulRank: 'B-Tier Foodie',
+    breeds: ['柯基', '法斗', '巴哥'], job: '美食评论家', soulRank: 'B-Tier Foodie',
     social: 65, danger: 20, destroy: 45, clingy: 70, mental: 60,
     tags: ['干饭之神', '睡眠大师'],
     trait1Title: 'Food Radar（食物雷达）',
@@ -260,23 +206,19 @@ const PERSONALITIES = [
     trait2Desc: '人生哲学：吃好睡好就是赢。对任何焦虑免疫，是全家的精神稳定剂。',
     trait2Color: '#B6D088',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_09.png',
+    match: [
+      { axis: 'freedom', op: '>', threshold: 70 },
+      { axis: 'action', op: '<', threshold: 50 },
+      { axis: 'clingy', op: '>', threshold: 60 },
+    ],
   },
   {
-    id: 'sha-seng',
-    name: '沙僧老实型',
-    subtitle: '沙和尚系',
-    code: 'S+T+H',
-    identity: '稳定可靠老员工',
-    tagline: '它可能是全家唯一成熟的。',
-    rarity: 'R',
-    rarityColor: '#54662E',
-    rarityBg: '#CFE99F',
-    iconBg: '#CFE99F',
+    id: 'sha-seng', name: '沙僧老实型', subtitle: '沙和尚系', code: 'H+E+R',
+    identity: '稳定可靠老员工', tagline: '它可能是全家唯一成熟的。',
+    rarity: 'R', rarityColor: '#54662E', rarityBg: '#CFE99F', iconBg: '#CFE99F',
     traits: ['情绪稳定', '老实听话', '默默陪伴'],
     behaviors: ['永远不惹事', '指令完成度高', '情绪稳定得像AI'],
-    breeds: ['拉布拉多', '金毛', '边牧'],
-    job: '首席执行员',
-    soulRank: 'A-Tier Reliable',
+    breeds: ['拉布拉多', '金毛', '边牧'], job: '首席执行员', soulRank: 'A-Tier Reliable',
     social: 70, danger: 15, destroy: 10, clingy: 88, mental: 92,
     tags: ['稳定之源', '可靠伙伴'],
     trait1Title: 'Rock Solid（稳如磐石）',
@@ -286,23 +228,19 @@ const PERSONALITIES = [
     trait2Desc: '不争不抢，不闹不哭。它活成了所有人羡慕的精神状态。',
     trait2Color: '#D3C5AD',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_10.png',
+    match: [
+      { axis: 'action', op: '<', threshold: 40 },
+      { axis: 'freedom', op: '<', threshold: 40 },
+      { axis: 'strategy', op: '<', threshold: 50 },
+    ],
   },
   {
-    id: 'wang-xi-feng',
-    name: '王熙凤掌控型',
-    subtitle: '红楼梦系',
-    code: 'P+C+F',
-    identity: '心机管理大师',
-    tagline: '它已经学会管理这个家了。',
-    rarity: 'SSR',
-    rarityColor: '#77321C',
-    rarityBg: '#D3C5AD',
-    iconBg: '#D3C5AD',
+    id: 'wang-xi-feng', name: '王熙凤掌控型', subtitle: '红楼梦系', code: 'S+P+R',
+    identity: '心机管理大师', tagline: '它已经学会管理这个家了。',
+    rarity: 'SSR', rarityColor: '#77321C', rarityBg: '#D3C5AD', iconBg: '#D3C5AD',
     traits: ['控制欲', '高情商', '会拿捏人'],
     behaviors: ['精准拿捏主人', '会演', '很懂人类情绪'],
-    breeds: ['博美', '贵宾', '柴犬'],
-    job: '家务总管',
-    soulRank: 'S-Tier Controller',
+    breeds: ['博美', '贵宾', '柴犬'], job: '家务总管', soulRank: 'S-Tier Controller',
     social: 88, danger: 55, destroy: 50, clingy: 75, mental: 90,
     tags: ['情绪大师', '家庭CEO'],
     trait1Title: 'Mind Reader（读心神技）',
@@ -312,23 +250,19 @@ const PERSONALITIES = [
     trait2Desc: '每一个动作都经过精密计算。那个"偶然"撒娇，其实排练了三遍。',
     trait2Color: '#FFB59E',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_11.png',
+    match: [
+      { axis: 'social', op: '>', threshold: 70 },
+      { axis: 'strategy', op: '>', threshold: 80 },
+      { axis: 'freedom', op: '<', threshold: 50 },
+    ],
   },
   {
-    id: 'li-kui',
-    name: '李逵疯批型',
-    subtitle: '水浒系',
-    code: 'D+Z+A',
-    identity: '移动型危险生物',
-    tagline: '它的情绪像没拴绳。',
-    rarity: 'SSR',
-    rarityColor: '#77321C',
-    rarityBg: '#FFB59E',
-    iconBg: '#FFB59E',
+    id: 'li-kui', name: '李逵疯批型', subtitle: '水浒系', code: 'A+S+E',
+    identity: '移动型危险生物', tagline: '它的情绪像没拴绳。',
+    rarity: 'SSR', rarityColor: '#77321C', rarityBg: '#FFB59E', iconBg: '#FFB59E',
     traits: ['冲动', '情绪爆炸', '发疯不可预测'],
     behaviors: ['突然暴冲', '半夜起飞', '永远控制不住'],
-    breeds: ['哈士奇', '马犬', '斗牛犬'],
-    job: '混乱制造者',
-    soulRank: 'S-Tier Unpredictable',
+    breeds: ['哈士奇', '马犬', '斗牛犬'], job: '混乱制造者', soulRank: 'S-Tier Unpredictable',
     social: 60, danger: 98, destroy: 95, clingy: 50, mental: 8,
     tags: ['混乱之源', '不可预测'],
     trait1Title: 'Chaos Spike（混乱峰值）',
@@ -338,23 +272,19 @@ const PERSONALITIES = [
     trait2Desc: '凌晨3点是它的黄金时段。全家熟睡时，它正在规划下一次大行动。',
     trait2Color: '#B6D088',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_12.png',
+    match: [
+      { axis: 'action', op: '>', threshold: 80 },
+      { axis: 'social', op: '>', threshold: 50 },
+      { axis: 'strategy', op: '<', threshold: 30 },
+    ],
   },
   {
-    id: 'xue-bao-chai',
-    name: '薛宝钗完美型',
-    subtitle: '红楼梦系',
-    code: 'R+S+H',
-    identity: '优等生小狗',
-    tagline: '它活得像宠物教材。',
-    rarity: 'SR',
-    rarityColor: '#54662E',
-    rarityBg: '#CFE99F',
-    iconBg: '#CFE99F',
+    id: 'xue-bao-chai', name: '薛宝钗完美型', subtitle: '红楼梦系', code: 'R+H+P',
+    identity: '优等生小狗', tagline: '它活得像宠物教材。',
+    rarity: 'SR', rarityColor: '#54662E', rarityBg: '#CFE99F', iconBg: '#CFE99F',
     traits: ['稳定', '体面', '高配合度'],
     behaviors: ['不乱叫', '不拆家', '出门像别人家孩子'],
-    breeds: ['金毛', '拉布拉多', '贵宾'],
-    job: '宠物代言人',
-    soulRank: 'A-Tier Perfect',
+    breeds: ['金毛', '拉布拉多', '贵宾'], job: '宠物代言人', soulRank: 'A-Tier Perfect',
     social: 80, danger: 10, destroy: 5, clingy: 90, mental: 95,
     tags: ['完美模板', '别人家的狗'],
     trait1Title: 'Perfect Score（满分档案）',
@@ -364,23 +294,19 @@ const PERSONALITIES = [
     trait2Desc: '永远保持得体。出门是形象大使，在家是情绪稳定器。',
     trait2Color: '#D3C5AD',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_13.png',
+    match: [
+      { axis: 'freedom', op: '<', threshold: 30 },
+      { axis: 'action', op: '<', threshold: 40 },
+      { axis: 'strategy', op: '>', threshold: 60 },
+    ],
   },
   {
-    id: 'sun-er-niang',
-    name: '孙二娘黑店型',
-    subtitle: '水浒系',
-    code: 'P+B+D',
-    identity: '表面可爱，背后搞事',
-    tagline: '监控里全是它的犯罪证据。',
-    rarity: 'SSR',
-    rarityColor: '#77321C',
-    rarityBg: '#FFB59E',
-    iconBg: '#FFB59E',
+    id: 'sun-er-niang', name: '孙二娘黑店型', subtitle: '水浒系', code: 'P+F+I',
+    identity: '表面可爱，背后搞事', tagline: '监控里全是它的犯罪证据。',
+    rarity: 'SSR', rarityColor: '#77321C', rarityBg: '#FFB59E', iconBg: '#FFB59E',
     traits: ['坏心眼', '会套路', '社会气质'],
     behaviors: ['偷偷报复', '假装无辜', '专挑你不在时作案'],
-    breeds: ['柴犬', '哈士奇', '边牧'],
-    job: '地下侦探',
-    soulRank: 'S-Tier Sneaky',
+    breeds: ['柴犬', '哈士奇', '边牧'], job: '地下侦探', soulRank: 'S-Tier Sneaky',
     social: 65, danger: 70, destroy: 88, clingy: 55, mental: 85,
     tags: ['犯罪天才', '无辜脸大师'],
     trait1Title: 'Innocent Face（无辜专业户）',
@@ -390,23 +316,19 @@ const PERSONALITIES = [
     trait2Desc: '你以为它忘了上次你拒绝给它零食的事。它没有。它只是在等。',
     trait2Color: '#D3C5AD',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_14.png',
+    match: [
+      { axis: 'strategy', op: '>', threshold: 70 },
+      { axis: 'freedom', op: '>', threshold: 60 },
+      { axis: 'clingy', op: '<', threshold: 40 },
+    ],
   },
   {
-    id: 'lin-chong',
-    name: '林冲隐忍型',
-    subtitle: '水浒系',
-    code: 'I+S+A',
-    identity: '沉默防御型人格',
-    tagline: '它平静，但不好惹。',
-    rarity: 'SR',
-    rarityColor: '#77321C',
-    rarityBg: '#D3C5AD',
-    iconBg: '#D3C5AD',
+    id: 'lin-chong', name: '林冲隐忍型', subtitle: '水浒系', code: 'O+H+P',
+    identity: '沉默防御型人格', tagline: '它平静，但不好惹。',
+    rarity: 'SR', rarityColor: '#77321C', rarityBg: '#D3C5AD', iconBg: '#D3C5AD',
     traits: ['安静', '高警觉', '忍耐型'],
     behaviors: ['平时不吭声', '真出事最猛', '有自己的边界感'],
-    breeds: ['德牧', '边牧', '秋田'],
-    job: '低调守护者',
-    soulRank: 'A-Tier Silent',
+    breeds: ['德牧', '边牧', '秋田'], job: '低调守护者', soulRank: 'A-Tier Silent',
     social: 40, danger: 65, destroy: 35, clingy: 72, mental: 85,
     tags: ['沉默之力', '边界感大师'],
     trait1Title: 'Silent Watch（沉默守望）',
@@ -416,23 +338,19 @@ const PERSONALITIES = [
     trait2Desc: '知道自己的边界在哪，也尊重你的。不靠近，不远离，刚刚好的距离。',
     trait2Color: '#B6D088',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_15.png',
+    match: [
+      { axis: 'social', op: '<', threshold: 30 },
+      { axis: 'action', op: '<', threshold: 50 },
+      { axis: 'strategy', op: '>', threshold: 50 },
+    ],
   },
   {
-    id: 'bai-long-ma',
-    name: '白龙马打工型',
-    subtitle: '西游记系',
-    code: 'T+S+M',
-    identity: '高配得感打工狗',
-    tagline: '它像狗界公务员。',
-    rarity: 'R',
-    rarityColor: '#54662E',
-    rarityBg: '#CFE99F',
-    iconBg: '#CFE99F',
+    id: 'bai-long-ma', name: '白龙马打工型', subtitle: '西游记系', code: 'E+H+M',
+    identity: '高配得感打工狗', tagline: '它像狗界公务员。',
+    rarity: 'R', rarityColor: '#54662E', rarityBg: '#CFE99F', iconBg: '#CFE99F',
     traits: ['配合度高', '任劳任怨', '稳定输出'],
     behaviors: ['主人说啥都配合', '默默工作', '很少闹情绪'],
-    breeds: ['拉布拉多', '金毛', '边牧'],
-    job: '全能助理',
-    soulRank: 'B-Tier Reliable',
+    breeds: ['拉布拉多', '金毛', '边牧'], job: '全能助理', soulRank: 'B-Tier Reliable',
     social: 72, danger: 18, destroy: 12, clingy: 85, mental: 88,
     tags: ['打工之魂', '配合度MAX'],
     trait1Title: 'Duty First（职责至上）',
@@ -442,377 +360,430 @@ const PERSONALITIES = [
     trait2Desc: '不高调，不耍脾气，不摆烂。每天准时出勤，从不缺席你的情感需求。',
     trait2Color: '#D3C5AD',
     iconImg: 'cloud://dev-5gfdj03w258c6084.6465-dev-5gfdj03w258c6084-1258320488/dgti/dog_16.png',
+    match: [
+      { axis: 'strategy', op: '<', threshold: 50 },
+      { axis: 'action', op: '<', threshold: 40 },
+      { axis: 'clingy', op: '>', threshold: 60 },
+    ],
   },
 ];
 
-// ===== 24道题目 =====
-// 每个选项包含对应维度的得分权重
+// ===== 25 道场景行为题 =====
+// 每个选项 scores 中：正数 = 正极加分，负数 = 反极加分；主+次维度 +2/+1
 const QUESTIONS = [
   {
     id: 1,
-    question: 'Q1: 你家狗看到快递员时？',
+    question: 'Q1: 你拿着零食却迟迟不给，它通常会？',
     options: [
-      { label: '准备战斗，大声警告', scores: { A: 2, C: 1 } },
-      { label: '兴奋贴贴，恨不得帮人家卸货', scores: { E: 2, F: 1 } },
-      { label: '完全无视，继续睡觉', scores: { I: 2, G: 1 } },
-      { label: '暗中观察，不动声色', scores: { A: 1, I: 1, P: 1 } },
+      { label: '安静等待', scores: { action: -2, freedom: -1 } },
+      { label: '一直盯着你', scores: { clingy: 2, social: -1 } },
+      { label: '用爪子扒你', scores: { action: 2, clingy: 1 } },
+      { label: '偷偷寻找别的获取方式', scores: { strategy: 2, freedom: 1 } },
     ],
-    quote: '"Understanding the silent language of their reaction reveals the heart of their protective soul."',
+    quote: 'How they pursue what they want reveals their soul.',
   },
   {
     id: 2,
-    question: 'Q2: 去公园遇到陌生狗时？',
+    question: 'Q2: 第一次见陌生狗时？',
     options: [
-      { label: '第一个冲上去打招呼', scores: { E: 2, F: 1 } },
-      { label: '躲在你身后偷看', scores: { I: 2, M: 1 } },
-      { label: '原地警戒，发出警告', scores: { A: 2, C: 1 } },
-      { label: '若无其事地绕过去', scores: { S: 2, I: 1 } },
+      { label: '主动打招呼', scores: { social: 2, action: 1 } },
+      { label: '躲在主人身边观察', scores: { social: -2, clingy: 1 } },
+      { label: '绕圈观察后再接近', scores: { strategy: 2, social: -1 } },
+      { label: '压根不感兴趣', scores: { freedom: 2, social: -1 } },
     ],
-    quote: '"The way a dog meets the world tells you everything about its inner world."',
+    quote: 'Meeting strangers tells you everything about the inner world.',
   },
   {
     id: 3,
-    question: 'Q3: 你出门上班时，它的反应是？',
+    question: 'Q3: 散步时突然发现新路线？',
     options: [
-      { label: '趴门口等你回来，一动不动', scores: { M: 2, H: 1 } },
-      { label: '继续睡觉，毫不在意', scores: { G: 2, S: 1 } },
-      { label: '嚎叫、抓门，分离焦虑拉满', scores: { M: 2, F: 1 } },
-      { label: '玩玩具自娱自乐', scores: { B: 2, G: 1 } },
+      { label: '立刻冲过去', scores: { action: 2, freedom: 1 } },
+      { label: '看看主人意见', scores: { clingy: 2, freedom: -1 } },
+      { label: '先观察环境', scores: { strategy: 2, action: -1 } },
+      { label: '按原路线继续走', scores: { freedom: -2 } },
     ],
-    quote: '"Separation reveals the depth of attachment."',
+    quote: 'A new path is a mirror of the heart\'s courage.',
   },
   {
     id: 4,
-    question: 'Q4: 给它洗澡时？',
+    question: 'Q4: 主人回家时？',
     options: [
-      { label: '满浴室追逃，誓死不从', scores: { B: 2, D: 1 } },
-      { label: '安静配合，就是偶尔抖一下', scores: { S: 2, T: 1 } },
-      { label: '委屈巴巴，用眼神控诉你', scores: { F: 2, M: 1 } },
-      { label: '配合完毕立刻在沙发蹭干', scores: { G: 1, D: 1, B: 1 } },
+      { label: '疯狂迎接', scores: { social: 2, clingy: 1 } },
+      { label: '默默靠近蹭蹭', scores: { clingy: 2, action: -1 } },
+      { label: '观察一会再行动', scores: { strategy: 2 } },
+      { label: '继续做自己的事', scores: { freedom: 2 } },
     ],
-    quote: '"How they endure discomfort speaks to their emotional depth."',
+    quote: 'Reunion is the purest test of bonds.',
   },
   {
     id: 5,
-    question: 'Q5: 看到你拿出零食袋子时？',
+    question: 'Q5: 玩具掉到沙发底下？',
     options: [
-      { label: '以光速出现在你面前', scores: { G: 2, F: 1 } },
-      { label: '假装淡定，实则已进入伏击状态', scores: { P: 2, I: 1 } },
-      { label: '学各种才艺主动讨好', scores: { T: 2, E: 1 } },
-      { label: '望着你，眼里满是温柔', scores: { H: 2, M: 1 } },
+      { label: '疯狂扒拉', scores: { action: 2 } },
+      { label: '求助主人', scores: { clingy: 2 } },
+      { label: '寻找角度取出', scores: { strategy: 2 } },
+      { label: '放弃再找别的玩具', scores: { freedom: 2 } },
     ],
-    quote: '"The pursuit of treats reveals the strategy of the soul."',
+    quote: 'Obstacles reveal whether one solves, asks, or moves on.',
   },
   {
     id: 6,
-    question: 'Q6: 家里来了新成员（人或动物），它的反应？',
+    question: 'Q6: 遇到比自己大的狗？',
     options: [
-      { label: '立刻领地宣示，我是老大', scores: { C: 2, A: 1 } },
-      { label: '热情迎接，立刻成为最佳友人', scores: { E: 2, H: 1 } },
-      { label: '观察一周，确认对方安全再接触', scores: { I: 2, P: 1 } },
-      { label: '继续自己的事，无所谓', scores: { G: 2, S: 1 } },
+      { label: '照样冲过去', scores: { action: 2, social: 1 } },
+      { label: '靠近主人', scores: { clingy: 2 } },
+      { label: '观察后决定', scores: { strategy: 2 } },
+      { label: '主动绕开', scores: { freedom: 1, action: -1 } },
     ],
-    quote: '"How a dog welcomes strangers mirrors its place in the pack."',
+    quote: 'Facing the bigger reveals the truer self.',
   },
   {
     id: 7,
-    question: 'Q7: 训练新指令时，它的学习方式？',
+    question: 'Q7: 下雨不能出门时？',
     options: [
-      { label: '学10遍记住，执行率100%', scores: { T: 2, S: 1 } },
-      { label: '学会了，但只在有零食时执行', scores: { P: 2, G: 1 } },
-      { label: '好像懂了，但过了一天就忘', scores: { Z: 2, F: 1 } },
-      { label: '根本不学，走自己的路', scores: { B: 2, I: 1 } },
+      { label: '满屋乱跑', scores: { action: 2, freedom: 1 } },
+      { label: '守在主人身边', scores: { clingy: 2 } },
+      { label: '自己找乐子', scores: { strategy: 2 } },
+      { label: '睡觉接受现实', scores: { action: -2 } },
     ],
-    quote: '"Intelligence is not just about learning; it\'s about choosing what to learn."',
+    quote: 'How one spends a closed day reveals an open soul.',
   },
   {
     id: 8,
-    question: 'Q8: 你心情不好的时候，它会？',
+    question: 'Q8: 家里来了客人？',
     options: [
-      { label: '主动靠过来蹭你，不离开', scores: { H: 2, M: 1 } },
-      { label: '感受到气氛不对，也默默在角落陪着', scores: { S: 2, H: 1 } },
-      { label: '叼玩具来找你玩，试图让你开心', scores: { E: 2, F: 1 } },
-      { label: '照常睡觉，好像不太察觉', scores: { G: 2, I: 1 } },
+      { label: '立刻接待', scores: { social: 2 } },
+      { label: '贴着主人', scores: { clingy: 2 } },
+      { label: '远处观察', scores: { strategy: 2, social: -1 } },
+      { label: '无所谓继续休息', scores: { freedom: 2 } },
     ],
-    quote: '"The most loyal companions feel what words cannot say."',
+    quote: 'How a dog welcomes strangers mirrors its inner pack.',
   },
   {
     id: 9,
-    question: 'Q9: 家里某个角落突然出现奇怪的声音？',
+    question: 'Q9: 主人训练新指令时？',
     options: [
-      { label: '立刻冲过去，誓要查个清楚', scores: { A: 2, C: 1 } },
-      { label: '警惕地原地注视，不轻举妄动', scores: { A: 1, P: 1, I: 1 } },
-      { label: '叫几声就算了，不管了', scores: { E: 1, G: 1, F: 1 } },
-      { label: '睁开眼看一眼，继续睡', scores: { G: 2, S: 1 } },
+      { label: '马上尝试', scores: { action: 2 } },
+      { label: '看主人表情', scores: { clingy: 2 } },
+      { label: '先研究规律', scores: { strategy: 2 } },
+      { label: '兴趣一般', scores: { freedom: 2 } },
     ],
-    quote: '"Vigilance and calm are two faces of the same coin."',
+    quote: 'Intelligence is not just learning, but choosing what to learn.',
   },
   {
     id: 10,
-    question: 'Q10: 遛狗时，谁决定走哪条路？',
+    question: 'Q10: 闻到厨房香味？',
     options: [
-      { label: '它，永远是它', scores: { C: 2, B: 1 } },
-      { label: '你走哪它跟哪，乖乖的', scores: { T: 2, S: 1 } },
-      { label: '走着走着就发现它早偏离了20米', scores: { Z: 2, B: 1 } },
-      { label: '走到一半原地趴下，拒绝继续走', scores: { G: 2, I: 1 } },
+      { label: '直接冲过去', scores: { action: 2 } },
+      { label: '坐下等投喂', scores: { clingy: 2 } },
+      { label: '寻找偷吃机会', scores: { strategy: 2 } },
+      { label: '闻闻就走', scores: { freedom: 2 } },
     ],
-    quote: '"The direction of a walk reveals who\'s truly in charge."',
+    quote: 'Hunger reveals the truest problem-solving instinct.',
   },
   {
     id: 11,
-    question: 'Q11: 碰到它喜欢的人时？',
+    question: 'Q11: 洗澡前发现情况不妙？',
     options: [
-      { label: '扑上去，全身撒欢，无差别热情', scores: { E: 2, F: 1 } },
-      { label: '靠近蹭蹭，但保持矜持', scores: { I: 1, M: 1, S: 1 } },
-      { label: '远远看着，不主动但也不拒绝', scores: { I: 2, A: 1 } },
-      { label: '先闻一圈确认，再决定是否接受', scores: { P: 2, I: 1 } },
+      { label: '拔腿就跑', scores: { action: 2, freedom: 1 } },
+      { label: '向主人撒娇', scores: { clingy: 2 } },
+      { label: '提前藏起来', scores: { strategy: 2 } },
+      { label: '平静接受', scores: { freedom: -2 } },
     ],
-    quote: '"Affection, when freely given, is the purest language."',
+    quote: 'How they endure discomfort speaks of emotional depth.',
   },
   {
     id: 12,
-    question: 'Q12: 独处时，它在干什么？',
+    question: 'Q12: 家里有新玩具？',
     options: [
-      { label: '把家里所有玩具拖出来研究', scores: { Z: 2, D: 1 } },
-      { label: '趴在你常坐的地方，等你回来', scores: { M: 2, H: 1 } },
-      { label: '睡觉，吃水，继续睡觉', scores: { G: 2, S: 1 } },
-      { label: '悄悄翻你的包/垃圾桶', scores: { P: 2, B: 1 } },
+      { label: '第一时间试玩', scores: { action: 2 } },
+      { label: '叼给主人看', scores: { clingy: 2 } },
+      { label: '研究怎么玩', scores: { strategy: 2 } },
+      { label: '过会再说', scores: { freedom: 1 } },
     ],
-    quote: '"What a dog does alone is its truest self."',
+    quote: 'Play is the most honest window into a dog\'s mind.',
   },
   {
     id: 13,
-    question: 'Q13: 你给它穿衣服时？',
+    question: 'Q13: 面对不喜欢吃的食物？',
     options: [
-      { label: '全程配合，像个模特', scores: { T: 2, R: 1 } },
-      { label: '不情愿，但最终妥协', scores: { S: 2, M: 1 } },
-      { label: '穿好后原地静止，一动不动装死', scores: { F: 2, I: 1 } },
-      { label: '立刻开始脱，任何布料都是挑战', scores: { B: 2, D: 1 } },
+      { label: '直接拒绝', scores: { freedom: 2 } },
+      { label: '委屈看主人', scores: { clingy: 2 } },
+      { label: '挑着吃', scores: { strategy: 2 } },
+      { label: '硬着头皮吃掉', scores: { freedom: -2 } },
     ],
-    quote: '"The way they wear clothes reveals how they wear their soul."',
+    quote: 'The ritual of eating reveals the philosophy of living.',
   },
   {
     id: 14,
-    question: 'Q14: 玩玩具时，它的风格？',
+    question: 'Q14: 主人心情不好时？',
     options: [
-      { label: '3分钟内咬烂，解剖研究', scores: { D: 2, Z: 1 } },
-      { label: '温柔对待，玩具能用很久', scores: { S: 2, R: 1 } },
-      { label: '要你陪它玩，不然没意思', scores: { M: 2, E: 1 } },
-      { label: '把玩具藏起来，不让你拿走', scores: { P: 2, C: 1 } },
+      { label: '主动安慰', scores: { social: 2, clingy: 1 } },
+      { label: '安静陪着', scores: { clingy: 2 } },
+      { label: '观察状态再行动', scores: { strategy: 2 } },
+      { label: '没察觉', scores: { freedom: 1 } },
     ],
-    quote: '"Play is the most honest window into a dog\'s mind."',
+    quote: 'Loyal companions feel what words cannot say.',
   },
   {
     id: 15,
-    question: 'Q15: 吃饭时的表现？',
+    question: 'Q15: 公园里很多狗聚会？',
     options: [
-      { label: '飞速吃完，还在原地盯着你要更多', scores: { G: 2, F: 1 } },
-      { label: '优雅进食，吃完碗还是干净的', scores: { R: 2, S: 1 } },
-      { label: '挑食，不喜欢的不吃', scores: { R: 1, C: 1, I: 1 } },
-      { label: '边吃边玩，把粮弄得到处都是', scores: { Z: 2, B: 1 } },
+      { label: '挨个认识', scores: { social: 2 } },
+      { label: '跟着熟悉的狗', scores: { clingy: 2 } },
+      { label: '观察群体关系', scores: { strategy: 2 } },
+      { label: '独自探索', scores: { freedom: 2 } },
     ],
-    quote: '"The ritual of eating reveals the philosophy of living."',
+    quote: 'Social capacity mirrors openness to the world.',
   },
   {
     id: 16,
-    question: 'Q16: 在车上/外出时，它的表现？',
+    question: 'Q16: 被主人制止时？',
     options: [
-      { label: '把头伸出窗外，极度兴奋', scores: { E: 2, B: 1 } },
-      { label: '安静趴着，偶尔看窗外', scores: { S: 2, I: 1 } },
-      { label: '一直叫，紧张焦虑', scores: { A: 2, F: 1 } },
-      { label: '直接睡着，哪都一样', scores: { G: 2, S: 1 } },
+      { label: '继续试探', scores: { action: 2 } },
+      { label: '马上停下', scores: { clingy: 2 } },
+      { label: '换种方式达成目的', scores: { strategy: 2 } },
+      { label: '满不在乎', scores: { freedom: 2 } },
     ],
-    quote: '"How they face the unknown world speaks of their inner courage."',
+    quote: 'How one receives correction reveals the bond.',
   },
   {
     id: 17,
-    question: 'Q17: 你做家务时，它会？',
+    question: 'Q17: 听到门外有动静？',
     options: [
-      { label: '一直跟着你，你走到哪它到哪', scores: { M: 2, H: 1 } },
-      { label: '趁机占领你刚离开的位置', scores: { P: 2, C: 1 } },
-      { label: '把你的工具叼走藏起来', scores: { D: 1, Z: 1, P: 1 } },
-      { label: '完全不干扰，该干嘛干嘛', scores: { S: 2, G: 1 } },
+      { label: '立刻冲过去', scores: { action: 2 } },
+      { label: '看看主人反应', scores: { clingy: 2 } },
+      { label: '先观察来源', scores: { strategy: 2 } },
+      { label: '懒得理会', scores: { freedom: 2 } },
     ],
-    quote: '"The helper who follows your every step has a heart full of devotion."',
+    quote: 'Vigilance and calm are two faces of the same coin.',
   },
   {
     id: 18,
-    question: 'Q18: 你责备它时，它的反应？',
+    question: 'Q18: 主人准备出门？',
     options: [
-      { label: '立刻摆出最委屈的表情', scores: { F: 2, M: 1 } },
-      { label: '低头认错，尾巴夹起来', scores: { S: 2, T: 1 } },
-      { label: '满不在乎，继续干原来的事', scores: { B: 2, G: 1 } },
-      { label: '看你一眼，转身就走', scores: { I: 2, C: 1 } },
+      { label: '兴奋跟随', scores: { social: 2 } },
+      { label: '舍不得离开', scores: { clingy: 2 } },
+      { label: '提前守门', scores: { strategy: 2 } },
+      { label: '继续睡觉', scores: { freedom: 2 } },
     ],
-    quote: '"How one receives correction reveals the depth of the relationship."',
+    quote: 'Separation reveals the depth of attachment.',
   },
   {
     id: 19,
-    question: 'Q19: 睡觉时，它的位置？',
+    question: 'Q19: 拿到新零食？',
     options: [
-      { label: '非要挤进你被窝，黏着你睡', scores: { M: 2, E: 1 } },
-      { label: '有自己固定的地方，规律到位', scores: { R: 2, S: 1 } },
-      { label: '今天床上，明天地板，随心所欲', scores: { B: 2, Z: 1 } },
-      { label: '在门口/走廊守着，随时警戒', scores: { A: 2, C: 1 } },
+      { label: '立刻吃掉', scores: { action: 2 } },
+      { label: '给主人看看', scores: { clingy: 2 } },
+      { label: '藏起来以后吃', scores: { strategy: 2 } },
+      { label: '想吃再吃', scores: { freedom: 2 } },
     ],
-    quote: '"Where a dog chooses to rest is where its heart truly lies."',
+    quote: 'What one does with abundance reveals their nature.',
   },
   {
     id: 20,
-    question: 'Q20: 它和你的关系更像？',
+    question: 'Q20: 参加狗狗聚会？',
     options: [
-      { label: '你的孩子，依赖感极强', scores: { M: 2, H: 1 } },
-      { label: '你的同事，各有分工', scores: { T: 2, S: 1 } },
-      { label: '你的老大，它说了算', scores: { C: 2, P: 1 } },
-      { label: '你的朋友，轻松自在', scores: { G: 2, B: 1 } },
+      { label: '全场社交', scores: { social: 2 } },
+      { label: '跟熟人待一起', scores: { clingy: 2 } },
+      { label: '观察局势', scores: { strategy: 2 } },
+      { label: '自己玩自己的', scores: { freedom: 2 } },
     ],
-    quote: '"The bond you share defines the soul connection."',
+    quote: 'In a crowd, the soul chooses its own orbit.',
   },
   {
     id: 21,
-    question: 'Q21: 遇到它害怕的事（雷声、鞭炮）？',
+    question: 'Q21: 玩追逐游戏时？',
     options: [
-      { label: '躲进你怀里，颤抖不止', scores: { M: 2, F: 1 } },
-      { label: '躲进角落，不发声', scores: { I: 2, S: 1 } },
-      { label: '大叫还击，用声音抗争', scores: { A: 2, E: 1 } },
-      { label: '皱眉看看，继续睡', scores: { G: 2, S: 1 } },
+      { label: '全力冲刺', scores: { action: 2 } },
+      { label: '跟着主人玩', scores: { clingy: 2 } },
+      { label: '找最佳路线', scores: { strategy: 2 } },
+      { label: '跑两步就躺', scores: { freedom: 2 } },
     ],
-    quote: '"How one faces fear reveals the architecture of the soul."',
+    quote: 'The chase reveals what truly drives the heart.',
   },
   {
     id: 22,
-    question: 'Q22: 家里来了很多客人时？',
+    question: 'Q22: 家里换家具？',
     options: [
-      { label: '全场最活跃，逐一问候所有人', scores: { E: 2, F: 1 } },
-      { label: '只对熟悉的人热情，陌生人免谈', scores: { I: 2, A: 1 } },
-      { label: '躲进卧室，直到客人离开', scores: { I: 2, S: 1 } },
-      { label: '到处乱窜，什么东西都要检查', scores: { Z: 2, B: 1 } },
+      { label: '立刻探索', scores: { action: 2 } },
+      { label: '跟主人确认', scores: { clingy: 2 } },
+      { label: '仔细检查', scores: { strategy: 2 } },
+      { label: '无所谓', scores: { freedom: 2 } },
     ],
-    quote: '"The social capacity of a dog mirrors its openness to the world."',
+    quote: 'Change tests whether the soul is curious or content.',
   },
   {
     id: 23,
-    question: 'Q23: 你给它拍照时？',
+    question: 'Q23: 发现陌生声音？',
     options: [
-      { label: '自动摆pose，天生模特', scores: { R: 2, E: 1 } },
-      { label: '完全不看镜头，自顾自地溜', scores: { B: 2, I: 1 } },
-      { label: '凑近来舔镜头/你的脸', scores: { E: 1, M: 1, F: 1 } },
-      { label: '被闪光灯吓到，扭头就跑', scores: { A: 2, F: 1 } },
+      { label: '马上查看', scores: { action: 2 } },
+      { label: '贴近主人', scores: { clingy: 2 } },
+      { label: '先分析来源', scores: { strategy: 2 } },
+      { label: '不感兴趣', scores: { freedom: 2 } },
     ],
-    quote: '"Vanity in dogs, as in humans, is just love turned outward."',
+    quote: 'How one faces the unknown speaks of inner courage.',
   },
   {
     id: 24,
-    question: 'Q24: 最后一题：它让你感受最多的是？',
+    question: 'Q24: 很久没见的人来了？',
     options: [
-      { label: '快乐和活力，每天都被它治愈', scores: { H: 2, G: 1 } },
-      { label: '依赖和爱，它好像离不开你', scores: { M: 2, H: 1 } },
-      { label: '挑战和刺激，但也很有趣', scores: { Z: 1, D: 1, B: 1 } },
-      { label: '安心和稳定，它是你的情绪锚点', scores: { S: 2, T: 1 } },
+      { label: '冲上去撒娇', scores: { action: 2, clingy: 1 } },
+      { label: '贴着对方不走', scores: { clingy: 2 } },
+      { label: '观察是否可信', scores: { strategy: 2 } },
+      { label: '爱搭不理', scores: { freedom: 2 } },
     ],
-    quote: '"The feeling they leave in your heart is the truest measure of their soul."',
+    quote: 'Old bonds are weighed in the moment of return.',
+  },
+  {
+    id: 25,
+    question: 'Q25: 理想中的一天？',
+    options: [
+      { label: '到处玩到累', scores: { action: 2 } },
+      { label: '和主人待一起', scores: { clingy: 2 } },
+      { label: '探索新东西', scores: { strategy: 2 } },
+      { label: '想吃就吃想睡就睡', scores: { freedom: 2 } },
+    ],
+    quote: 'The dream of a perfect day reveals the soul\'s true compass.',
   },
 ];
 
-// ===== 算分逻辑 =====
+// ===== 计分逻辑 =====
+
+// 单轴最大可能正向得分（用于归一化）
+const AXIS_MAX = 20;
 
 /**
- * 计算各维度得分总计
+ * 累计 5 轴原始得分（带正负号）
  * @param {Array} answers - [{questionId, optionIndex}]
- * @returns {Object} scores - {E:0, I:0, A:0, ...}
+ * @returns {Object} {social, clingy, action, strategy, freedom}（原始累加值，可正可负）
  */
-function calcScores(answers) {
-  const scores = { E:0, I:0, A:0, F:0, S:0, M:0, C:0, G:0, D:0, P:0, Z:0, T:0, R:0, B:0, H:0 };
-  answers.forEach(({ questionId, optionIndex }) => {
+function calcAxisRaw(answers) {
+  const raw = { social: 0, clingy: 0, action: 0, strategy: 0, freedom: 0 };
+  (answers || []).forEach(({ questionId, optionIndex }) => {
     const q = QUESTIONS.find(q => q.id === questionId);
     if (!q) return;
     const option = q.options[optionIndex];
     if (!option) return;
-    Object.entries(option.scores).forEach(([dim, val]) => {
-      scores[dim] = (scores[dim] || 0) + val;
+    Object.entries(option.scores).forEach(([axis, val]) => {
+      if (raw[axis] !== undefined) raw[axis] += val;
     });
   });
-  return scores;
+  return raw;
 }
 
 /**
- * 从一组维度中取得分最高的
+ * 归一化为 0-100，>50 偏正极，<50 偏反极
  */
-function maxDimension(scores, dims) {
-  return dims.reduce((max, d) => (scores[d] || 0) > (scores[max] || 0) ? d : max, dims[0]);
+function normalizeAxis(rawValue) {
+  const v = Math.round((rawValue + AXIS_MAX) / (2 * AXIS_MAX) * 100);
+  return Math.max(0, Math.min(100, v));
 }
 
 /**
- * 根据答题记录匹配狗格
+ * 计算 5 轴雷达分（0-100）
  * @param {Array} answers
- * @returns {Object} personality
+ * @returns {Object} {social, clingy, action, strategy, freedom}
+ */
+function calcAxisScores(answers) {
+  const raw = calcAxisRaw(answers);
+  return {
+    social: normalizeAxis(raw.social),
+    clingy: normalizeAxis(raw.clingy),
+    action: normalizeAxis(raw.action),
+    strategy: normalizeAxis(raw.strategy),
+    freedom: normalizeAxis(raw.freedom),
+  };
+}
+
+/**
+ * 兼容旧入参：传 axisScores 时直接返回；传 answers 时先 calcAxisScores
+ */
+function calcRadarScores(input) {
+  if (!input) return { social: 50, clingy: 50, action: 50, strategy: 50, freedom: 50 };
+  // 已是 axisScores 对象
+  if (typeof input.social === 'number' && typeof input.action === 'number') {
+    return {
+      social: input.social,
+      clingy: input.clingy,
+      action: input.action,
+      strategy: input.strategy,
+      freedom: input.freedom,
+    };
+  }
+  // 兼容旧调用：calcRadarScores(scoresFromAnswers)，但此处 scores 已是 15 维 → 走兜底
+  return { social: 50, clingy: 50, action: 50, strategy: 50, freedom: 50 };
+}
+
+/**
+ * 软匹配单条件：超过阈值越多匹配度越高，反向跌破不计分
+ * @returns {Number} 0-1
+ */
+function matchCondition(value, op, threshold) {
+  if (op === '>') {
+    return Math.max(0, Math.min(1, (value - threshold) / 30));
+  }
+  if (op === '<') {
+    return Math.max(0, Math.min(1, (threshold - value) / 30));
+  }
+  return 0;
+}
+
+/**
+ * 根据 5 轴得分匹配人格
+ * @returns {{ primary, secondary, fitMap, primaryFit, secondaryFit }}
+ */
+function calcPersonalityV2(axisScores) {
+  const fitMap = {};
+  PERSONALITIES.forEach(p => {
+    if (!p.match || !p.match.length) {
+      fitMap[p.id] = 0;
+      return;
+    }
+    const sum = p.match.reduce((acc, cond) => {
+      return acc + matchCondition(axisScores[cond.axis] || 0, cond.op, cond.threshold);
+    }, 0);
+    fitMap[p.id] = Math.round(sum / p.match.length * 100);
+  });
+
+  // 取 top 2
+  const sortedIds = Object.keys(fitMap).sort((a, b) => fitMap[b] - fitMap[a]);
+  const primaryId = sortedIds[0];
+  const secondaryId = sortedIds[1];
+  const primary = PERSONALITIES.find(p => p.id === primaryId) || PERSONALITIES[0];
+  const secondary = PERSONALITIES.find(p => p.id === secondaryId);
+  const primaryFit = fitMap[primaryId] || 0;
+  const secondaryFit = fitMap[secondaryId] || 0;
+
+  return { primary, secondary, fitMap, primaryFit, secondaryFit };
+}
+
+/**
+ * 根据答题记录匹配狗格（保持旧接口兼容）
+ * @param {Array} answers
+ * @returns {Object} { personality, secondary, primaryFit, secondaryFit, scores, radar, fitMap }
  */
 function calcPersonality(answers) {
-  const scores = calcScores(answers);
-  // 5个模型各取最高维度
-  const m1 = maxDimension(scores, ['E', 'I', 'A']);
-  const m2 = maxDimension(scores, ['F', 'S', 'M']);
-  const m3 = maxDimension(scores, ['C', 'G', 'D']);
-  const m4 = maxDimension(scores, ['P', 'Z', 'T']);
-  const m5 = maxDimension(scores, ['R', 'B', 'H']);
-
-  // 前3主维度组合
-  const top3 = [m1, m2, m3].sort().join('+');
-
-  // 精确匹配
-  let match = PERSONALITIES.find(p => {
-    const pCode = p.code.split('+').sort().join('+');
-    return pCode === top3;
-  });
-
-  // 若无精确匹配，按特征相似度找最近的
-  if (!match) {
-    const allDims = [m1, m2, m3, m4, m5];
-    let maxScore = -1;
-    PERSONALITIES.forEach(p => {
-      const pDims = p.code.split('+');
-      const overlap = pDims.filter(d => allDims.includes(d)).length;
-      if (overlap > maxScore) {
-        maxScore = overlap;
-        match = p;
-      }
-    });
-  }
-
-  return { personality: match || PERSONALITIES[0], scores, topDims: { m1, m2, m3, m4, m5 } };
-}
-
-/**
- * 将 15 维原始得分映射为 5 雷达轴百分比（0-100）
- * 映射逻辑：
- *   social  ← E(外向) + F(戏精)的一半 + H(治愈)的三成
- *   danger  ← A(焦虑) + C(控制)的四成 + D(拆迁)的二成
- *   destroy ← D(拆迁) + Z(疯狗)的一半 + B(街溜)的三成
- *   clingy    ← M(黏人) + H(治愈)的七成 + F(戏精)的三成
- *   mental  ← S(稳定) + T(学霸)的八成 + G(摆烂)的三成 - Z(疯狗)的四成 - F(戏精)的二成
- * @param {Object} scores - 15 维得分 {E:0, I:0, A:0, ...}
- * @returns {Object} {social, danger, destroy, clingy, mental} 均为 5-99 的整数
- */
-function calcRadarScores(scores) {
-  var s = scores || {};
-  var raw = {
-    social:  (s.E || 0) * 1.0 + (s.F || 0) * 0.5 + (s.H || 0) * 0.3,
-    danger:  (s.A || 0) * 1.0 + (s.C || 0) * 0.4 + (s.D || 0) * 0.2,
-    destroy: (s.D || 0) * 1.0 + (s.Z || 0) * 0.5 + (s.B || 0) * 0.3,
-    clingy:    (s.M || 0) * 1.0 + (s.H || 0) * 0.7 + (s.F || 0) * 0.3,
-    mental:  (s.S || 0) * 1.0 + (s.T || 0) * 0.8 + (s.G || 0) * 0.3 - (s.Z || 0) * 0.4 - (s.F || 0) * 0.2,
-  };
-
-  // 将原始值映射到 5-99 区间（maxRaw 估计约 25）
-  var maxRaw = 25;
-  var clamp = function(v) { return Math.min(99, Math.max(5, Math.round(v / maxRaw * 100))); };
+  const axisScores = calcAxisScores(answers);
+  const { primary, secondary, fitMap, primaryFit, secondaryFit } = calcPersonalityV2(axisScores);
   return {
-    social:  clamp(raw.social),
-    danger:  clamp(raw.danger),
-    destroy: clamp(raw.destroy),
-    clingy:    clamp(raw.clingy),
-    mental:  clamp(raw.mental),
+    personality: primary,
+    secondary: secondary || null,
+    primaryFit,
+    secondaryFit,
+    fitMap,
+    scores: axisScores,        // 保持 scores 字段名（旧版透传到 result）
+    radar: axisScores,         // 同义别名
+    topDims: axisScores,       // 兼容旧字段
   };
 }
 
-module.exports = { DIMENSIONS, PERSONALITIES, QUESTIONS, calcScores, calcPersonality, calcRadarScores };
+module.exports = {
+  AXES,
+  PERSONALITIES,
+  QUESTIONS,
+  calcAxisScores,
+  calcPersonality,
+  calcPersonalityV2,
+  calcRadarScores,
+};

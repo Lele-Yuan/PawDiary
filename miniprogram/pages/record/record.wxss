@@ -19,12 +19,32 @@
 }
 
 /* ===== 标签筛选栏 ===== */
+.type-tabs-wrap {
+  position: relative;
+  height: 112rpx;
+  z-index: 5;
+}
+
 .type-tabs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   white-space: nowrap;
   padding: 20rpx 28rpx;
   width: auto;
-  height: 72rpx;
+  height: 112rpx;
+  box-sizing: border-box;
+}
+
+.type-tabs.expanded {
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    #cfb5fc 50%,
+    var(--bg-color) 100%
+  )
 }
 
 .tab-item {
@@ -52,14 +72,18 @@
   white-space: normal;
   height: auto;
   row-gap: 16rpx;
+  padding-bottom: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(123, 92, 245, 0.12);
+  border-radius: 0 0 24rpx 24rpx;
+  z-index: 20;
 }
 
 .type-tabs.expanded .tab-item {
-  margin-bottom: 0;
+  margin-bottom: 10rpx;
 }
 
 .tab-item.is-action {
-  background-color: #F4EFFB;
+  background-color: transparent;
   color: var(--primary-color);
   font-weight: 500;
   box-shadow: none;

@@ -257,7 +257,7 @@ async function reportLocation(openid, data) {
   var locationData = {
     latitude: data.latitude,
     longitude: data.longitude,
-    nickName: user.nickName || '未知游客',
+    nickName: user.nickName,
     avatarUrl: user.avatarUrl || '',
     lastActiveTime: now,
     updatedAt: now

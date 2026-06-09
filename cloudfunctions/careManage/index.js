@@ -115,7 +115,7 @@ async function publishPost(openid, data) {
     status: 'active',
     applicants: [],
     publisherInfo: {
-      nickname: user.nickName || '未知用户',
+      nickname: user.nickName || '',
       avatarUrl: user.avatarUrl || ''
     },
     createTime: now,
@@ -271,7 +271,7 @@ async function applyContact(openid, data) {
           postId: postId,
           applicantOpenid: openid,
           applicantInfo: {
-            nickname: user.nickName || '未知用户',
+            nickname: user.nickName || '',
             avatarUrl: user.avatarUrl || ''
           },
           status: 'revealed',

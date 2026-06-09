@@ -2,6 +2,43 @@
   padding-bottom: 60rpx;
 }
 
+/* 添加模式系统提示 */
+.add-tip {
+  display: flex;
+  align-items: flex-start;
+  margin: 24rpx 24rpx 0;
+  padding: 24rpx 28rpx;
+  background: var(--card-soft-bg);
+  border: 1rpx solid rgba(232, 135, 90, 0.2);
+  border-radius: 16rpx;
+}
+
+.add-tip-icon {
+  font-size: 36rpx;
+  line-height: 1;
+  margin-right: 16rpx;
+  margin-top: 4rpx;
+}
+
+.add-tip-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.add-tip-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 6rpx;
+}
+
+.add-tip-desc {
+  font-size: 24rpx;
+  color: #6B5C4D;
+  line-height: 1.6;
+}
+
 /* 头像区域 */
 .avatar-section {
   display: flex;
@@ -46,7 +83,7 @@
   flex-direction: column;
   align-items: center;
   padding: 24rpx 0;
-  background-color: #F5F0E8;
+  background-color: var(--card-soft-bg);
   border-radius: 16rpx;
   border: 2rpx solid transparent;
   transition: all 0.3s ease;
@@ -84,7 +121,7 @@
   align-items: center;
   justify-content: center;
   padding: 20rpx 0;
-  background-color: #F5F0E8;
+  background-color: var(--card-soft-bg);
   border-radius: 16rpx;
   border: 2rpx solid transparent;
   transition: all 0.3s ease;

@@ -1,17 +1,51 @@
 const { PERSONALITIES } = require('../data/dgti-data');
 
-// 雷达图5个维度配置
+// 雷达图5个维度配置（五大人格轴）
 const RADAR_AXES = [
-  { key: 'social',  labelEn: ['Social', 'Ability'],    labelCn: '社交能力', color: '#77321C' },
-  { key: 'danger',  labelEn: ['Danger', 'Index'],      labelCn: '危险指数', color: '#FF8C69' },
-  { key: 'destroy', labelEn: ['Destroy', 'Power'],     labelCn: '拆家指数', color: '#E07B54' },
-  { key: 'clingy',    labelEn: ['Clingy', 'Level'],        labelCn: '粘人精度', color: '#CFE99F' },
-  { key: 'mental',  labelEn: ['Mental', 'Stable'],     labelCn: '精神稳定', color: '#B6D088' },
+  { key: 'social',   labelEn: ['Social', 'Skill'],     labelCn: '社交能力', color: '#77321C' },
+  { key: 'clingy',   labelEn: ['Cling', 'Index'],      labelCn: '依赖指数', color: '#FF8C69' },
+  { key: 'action',   labelEn: ['Action', 'Drive'],     labelCn: '行动力',   color: '#E07B54' },
+  { key: 'strategy', labelEn: ['Strategy', 'Mind'],    labelCn: '策略值',   color: '#CFE99F' },
+  { key: 'freedom',  labelEn: ['Freedom', 'Spirit'],   labelCn: '自由度',   color: '#B6D088' },
 ];
+
+// 旧版历史 radar 字段映射（destroy→action, mental→freedom，danger 丢弃）
+function migrateRadar(r) {
+  if (!r) return null;
+  // 已是新结构
+  if (typeof r.action === 'number' || typeof r.strategy === 'number' || typeof r.freedom === 'number') {
+    return {
+      social: r.social != null ? r.social : 50,
+      clingy: r.clingy != null ? r.clingy : 50,
+      action: r.action != null ? r.action : 50,
+      strategy: r.strategy != null ? r.strategy : 50,
+      freedom: r.freedom != null ? r.freedom : 50,
+    };
+  }
+  // 旧结构：social/danger/destroy/clingy/mental
+  if (r.danger != null || r.destroy != null || r.mental != null) {
+    return {
+      social: r.social != null ? r.social : 50,
+      clingy: r.clingy != null ? r.clingy : 50,
+      action: r.destroy != null ? r.destroy : 50,
+      strategy: 50,
+      freedom: r.mental != null ? r.mental : 50,
+    };
+  }
+  return {
+    social: r.social != null ? r.social : 50,
+    clingy: r.clingy != null ? r.clingy : 50,
+    action: 50, strategy: 50, freedom: 50,
+  };
+}
 
 Page({
   data: {
     personality: null,
+    secondaryPersonality: null,
+    primaryFit: 0,
+    secondaryFit: 0,
+    showSecondary: false,
     scores: null,
     isPreview: false,
     radarData: [],
@@ -25,7 +59,7 @@ Page({
   },
 
   onLoad(options) {
-    let { id, scores, radar, preview, scene, dogName, from } = options;
+    let { id, scores, radar, preview, scene, dogName, from, secondaryId, primaryFit, secondaryFit } = options;
     // 小程序码扫码进入：scene 形如 "p=qi-tian"
     if (!id && scene) {
       try {
@@ -35,6 +69,10 @@ Page({
       } catch (e) {}
     }
     const personality = PERSONALITIES.find(p => p.id === id) || PERSONALITIES[0];
+    const secondaryPersonality = secondaryId ? PERSONALITIES.find(p => p.id === secondaryId) : null;
+    const pFit = primaryFit ? parseInt(primaryFit, 10) : 0;
+    const sFit = secondaryFit ? parseInt(secondaryFit, 10) : 0;
+    const showSecondary = !!(secondaryPersonality && sFit >= 60);
 
     // 从历史记录进入：根据 id 查 storage 获取 radar 与 dogName
     if (from === 'history' && id) {
@@ -54,13 +92,14 @@ Page({
       preview = 'true';
     }
 
-    const dynamicRadar = radar ? JSON.parse(decodeURIComponent(radar)) : {
+    const rawRadar = radar ? JSON.parse(decodeURIComponent(radar)) : {
       social: personality.social,
-      danger: personality.danger,
-      destroy: personality.destroy,
       clingy: personality.clingy,
-      mental: personality.mental,
+      action: 50,
+      strategy: 50,
+      freedom: 50,
     };
+    const dynamicRadar = migrateRadar(rawRadar);
 
     const radarData = RADAR_AXES.map(ax => ({
       key: ax.key,
@@ -84,7 +123,18 @@ Page({
       this.setData({ statusBarHeight: 20 });
     }
 
-    this.setData({ personality, radarData, dynamicRadar, scores: scores ? JSON.parse(decodeURIComponent(scores)) : null, isPreview: preview === 'true', dogName: dogName || '' }, () => {
+    this.setData({
+      personality,
+      secondaryPersonality: showSecondary ? secondaryPersonality : null,
+      primaryFit: pFit,
+      secondaryFit: sFit,
+      showSecondary,
+      radarData,
+      dynamicRadar,
+      scores: scores ? JSON.parse(decodeURIComponent(scores)) : null,
+      isPreview: preview === 'true',
+      dogName: dogName || ''
+    }, () => {
       wx.nextTick(() => this._drawRadar());
     });
   },

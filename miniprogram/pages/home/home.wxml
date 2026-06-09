@@ -34,6 +34,15 @@
     <view class="welcome-cta" hover-class="welcome-cta-hover" bindtap="goAddPet">
       <text class="welcome-cta-text">开启宠爱之旅</text>
     </view>
+    <view class="welcome-quick-links">
+      <view class="welcome-quick-link" hover-class="welcome-quick-link-hover" bindtap="goMap">
+        <text class="welcome-quick-link-text">宠物友好地图</text>
+      </view>
+      <view class="welcome-quick-divider"></view>
+      <view class="welcome-quick-link" hover-class="welcome-quick-link-hover" bindtap="goDgti">
+        <text class="welcome-quick-link-text">DGTI 狗格测试</text>
+      </view>
+    </view>
     <view class="welcome-slogan">PAW DIARY MANAGEMENT • ESTABLISHED 2026</view>
   </view>
 </view>

@@ -19,7 +19,6 @@
     <view class="user-info-wrap">
       <!-- 游客态 -->
       <block wx:if="{{isGuest}}">
-        <text class="user-name">游客</text>
         <view class="login-guide-btn" bindtap="onLogin">点击登录</view>
       </block>
 

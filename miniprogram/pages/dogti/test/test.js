@@ -1,7 +1,7 @@
 const { QUESTIONS, calcPersonality, calcRadarScores } = require('../data/dgti-data');
 
 // 题目对应的场景 emoji
-const QUESTION_EMOJIS = ['📦','🌳','🚪','🛁','🦴','🏠','📚','😔','👂','🦮','🤝','🧸','👗','🎾','🍗','🚗','🧹','😤','💤','🛌','💝','⛈️','🎉','💭'];
+const QUESTION_EMOJIS = ['🦴','🌳','🚪','🛁','📚','🏠','😔','👂','🦮','🛋️','👗','🎾','🍗','🚗','🧹','😤','💤','💝','⛈️','🎉','📸','✨','🍽️','🤗','⏰'];
 
 Page({
   data: {
@@ -60,8 +60,14 @@ Page({
       if (nextIndex >= this.data.questions.length) {
         const result = calcPersonality(newAnswers);
         const radar = calcRadarScores(result.scores);
+        const secondaryId = result.secondary ? result.secondary.id : '';
         wx.navigateTo({
-          url: `/pages/dogti/result/result?id=${result.personality.id}&scores=${encodeURIComponent(JSON.stringify(result.scores))}&radar=${encodeURIComponent(JSON.stringify(radar))}`,
+          url: `/pages/dogti/result/result?id=${result.personality.id}`
+            + `&scores=${encodeURIComponent(JSON.stringify(result.scores))}`
+            + `&radar=${encodeURIComponent(JSON.stringify(radar))}`
+            + `&secondaryId=${secondaryId}`
+            + `&primaryFit=${result.primaryFit}`
+            + `&secondaryFit=${result.secondaryFit}`,
         });
       } else {
         const nextQuestion = this.data.questions[nextIndex];

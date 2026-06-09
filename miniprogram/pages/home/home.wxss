@@ -167,7 +167,7 @@
   height: 120rpx;
   border-radius: 60rpx;
   background-color: var(--primary-color);
-  margin-bottom: 48rpx;
+  margin-bottom: 18rpx;
 }
 
 .welcome-cta-hover {
@@ -188,6 +188,36 @@
   text-align: center;
   letter-spacing: 2rpx;
   text-transform: uppercase;
+}
+
+/* welcome 页面 - 并排文字入口 */
+.welcome-quick-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 32rpx;
+}
+
+.welcome-quick-link {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+}
+
+.welcome-quick-link-text {
+  font-size: 26rpx;
+  color: #5E5F5D;
+  font-weight: 500;
+}
+
+.welcome-quick-link-hover .welcome-quick-link-text {
+  color: var(--primary-color);
+}
+
+.welcome-quick-divider {
+  width: 1rpx;
+  height: 28rpx;
+  background: rgba(94, 95, 93, 0.25);
 }
 
 /* ===== 指南模块 ===== */
