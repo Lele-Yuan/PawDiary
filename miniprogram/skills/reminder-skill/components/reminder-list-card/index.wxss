@@ -1,0 +1,33 @@
+.reminder-card {
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 28rpx 32rpx;
+  margin: 16rpx 0;
+  box-shadow: 0 8rpx 24rpx rgba(123, 92, 245, 0.08);
+}
+.head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 16rpx; padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #EFEAFE;
+}
+.title { font-size: 30rpx; font-weight: 500; color: #1F1A3D; }
+.count { font-size: 24rpx; color: #6B6585; }
+.row {
+  display: flex; align-items: center; gap: 20rpx;
+  padding: 16rpx 0; border-bottom: 1rpx solid #F8F5FF;
+}
+.row:last-child { border-bottom: none; }
+.emoji { font-size: 40rpx; }
+.row-meta { flex: 1; display: flex; flex-direction: column; }
+.row-title { font-size: 28rpx; color: #1F1A3D; }
+.row-date { font-size: 22rpx; color: #B5B0C8; margin-top: 4rpx; }
+.row-diff {
+  font-size: 26rpx;
+  color: #5A3FE0;
+  background: #EFEAFE;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+}
+.row-diff.soon { color: #ffffff; background: #7B5CF5; }
+.row-diff.overdue { color: #ffffff; background: #f97e54; }
+.empty { padding: 40rpx 0; text-align: center; color: #B5B0C8; font-size: 26rpx; }

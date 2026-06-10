@@ -1,0 +1,29 @@
+<view class="record-card">
+  <view wx:if="{{data.deleted}}" class="deleted-tip">
+    <text class="title">{{data.title || '已删除'}}</text>
+  </view>
+  <view wx:else class="card-body">
+    <view class="card-header">
+      <text class="emoji">{{typeEmojiMap[data.type] || '📝'}}</text>
+      <view class="meta">
+        <text class="title">{{data.title}}</text>
+        <text class="sub">{{data.petName}} · {{typeNameMap[data.type] || data.type}}</text>
+      </view>
+    </view>
+    <view class="card-row" wx:if="{{data.weight}}">
+      <text class="label">体重</text>
+      <text class="value">{{data.weight}}{{data.weightUnit || 'kg'}}</text>
+    </view>
+    <view class="card-row" wx:if="{{data.cost}}">
+      <text class="label">花费</text>
+      <text class="value">¥{{data.cost}}</text>
+    </view>
+    <view class="card-row" wx:if="{{data.description}}">
+      <text class="label">备注</text>
+      <text class="value">{{data.description}}</text>
+    </view>
+    <view class="card-footer">
+      <text class="date">{{data.date}}</text>
+    </view>
+  </view>
+</view>

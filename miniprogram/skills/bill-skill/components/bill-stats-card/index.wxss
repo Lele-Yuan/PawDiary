@@ -1,0 +1,36 @@
+.stats-card {
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 28rpx 32rpx;
+  margin: 16rpx 0;
+  box-shadow: 0 8rpx 24rpx rgba(123, 92, 245, 0.08);
+}
+.head { padding-bottom: 16rpx; border-bottom: 1rpx solid #EFEAFE; }
+.title { font-size: 30rpx; font-weight: 500; color: #1F1A3D; }
+.total-row {
+  display: flex; gap: 24rpx; margin-top: 20rpx; margin-bottom: 24rpx;
+  flex-wrap: wrap;
+}
+.total-block { display: flex; flex-direction: column; }
+.label { font-size: 22rpx; color: #6B6585; }
+.total { font-size: 40rpx; color: #7B5CF5; font-weight: 700; margin-top: 4rpx; }
+.last { font-size: 28rpx; color: #1F1A3D; margin-top: 4rpx; }
+.diff { font-size: 26rpx; margin-top: 4rpx; }
+.diff.up { color: #f97e54; }
+.diff.down { color: #5A3FE0; }
+.cat-list { display: flex; flex-direction: column; gap: 12rpx; }
+.cat-row {
+  display: flex; align-items: center; gap: 12rpx;
+}
+.emoji { font-size: 36rpx; }
+.cat-name { width: 100rpx; font-size: 26rpx; color: #1F1A3D; }
+.bar-bg { flex: 1; height: 12rpx; background: #EFEAFE; border-radius: 999rpx; overflow: hidden; }
+.bar-fg { height: 100%; background: #7B5CF5; border-radius: 999rpx; }
+.cat-amount { width: 120rpx; text-align: right; font-size: 26rpx; color: #1F1A3D; }
+.trends {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-top: 24rpx; height: 160rpx;
+}
+.trend-bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
+.trend-bar-fg { width: 40rpx; background: #A48BFA; border-radius: 8rpx 8rpx 0 0; min-height: 4rpx; }
+.trend-label { font-size: 22rpx; color: #B5B0C8; }

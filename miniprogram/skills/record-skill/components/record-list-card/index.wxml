@@ -1,0 +1,22 @@
+<view class="list-card">
+  <view class="head">
+    <text class="title">{{data.petName}} 的记录</text>
+    <text class="count">共 {{data.total}} 条</text>
+  </view>
+  <view class="empty" wx:if="{{!data.records || data.records.length === 0}}">
+    <text>暂无记录</text>
+  </view>
+  <view wx:else>
+    <view class="row" wx:for="{{data.records}}" wx:key="_id">
+      <text class="emoji">{{typeEmojiMap[item.type] || '📝'}}</text>
+      <view class="row-meta">
+        <text class="row-title">{{item.title}}</text>
+        <text class="row-date">{{item.date}}</text>
+      </view>
+      <text class="row-value" wx:if="{{item.weight}}">{{item.weight}}{{item.weightUnit || 'kg'}}</text>
+    </view>
+    <view class="more" wx:if="{{data.total > data.records.length}}">
+      <text>还有 {{data.total - data.records.length}} 条，进入小程序查看更多</text>
+    </view>
+  </view>
+</view>

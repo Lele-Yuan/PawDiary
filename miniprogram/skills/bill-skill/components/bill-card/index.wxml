@@ -1,0 +1,14 @@
+<view class="bill-card">
+  <view class="head">
+    <text class="emoji">{{categoryEmojiMap[data.category] || '💰'}}</text>
+    <view class="meta">
+      <text class="title">{{data.title}}</text>
+      <text class="sub">{{data.petName}} · {{categoryNameMap[data.category]}}</text>
+    </view>
+    <text class="amount">¥{{data.amount}}</text>
+  </view>
+  <view class="footer">
+    <text class="date">{{data.date}}</text>
+    <text class="note" wx:if="{{data.note}}">{{data.note}}</text>
+  </view>
+</view>

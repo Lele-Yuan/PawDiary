@@ -1,0 +1,79 @@
+{
+  "name": "record",
+  "description": "PawDiary 宠物日常记录管理：体重、饮食、饮水、排便、驱虫、疫苗、体检、生病、洗澡、剪指甲、清耳、修毛、挤腺、刷牙、美容、消毒、换砂、玩具、清笼、异常、发情、捅娄子、偷吃 共 23 种类型的新增、查询、删除。",
+  "interfaces": [
+    {
+      "name": "addRecord",
+      "description": "为宠物新增一条记录。当用户说\"记一下\"\"帮我记\"\"添加\"等表述并给出具体内容时调用。仅当返回 isError=false 时才能向用户宣布\"已记录\"。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "petName": {
+            "type": "string",
+            "description": "宠物名字。如果用户在话语中明确提到了宠物的名字（如\"给来福记一下…\"\"豆豆今天体重…\"），必须填写该名字；如果用户没有提到任何宠物名字，则不要填写此字段（缺省时使用当前选中宠物）。禁止编造或猜测宠物名字。"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["weight","poop","diet","water","deworm","vaccine","checkup","illness","bath","nail","ear","paw","gland","teeth","beauty","disinfect","litter","toy","cage","abnormal","heat","trouble","stealfood"],
+            "description": "记录类型。中文映射：weight=体重, poop=排便, diet=饮食, water=饮水, deworm=驱虫, vaccine=疫苗, checkup=体检, illness=生病, bath=洗澡, nail=剪指甲, ear=清耳, paw=修毛, gland=挤腺, teeth=刷牙, beauty=美容, disinfect=消毒, litter=换砂, toy=玩具, cage=清笼, abnormal=异常, heat=发情, trouble=捅娄子, stealfood=偷吃。"
+          },
+          "title": { "type": "string", "description": "记录标题，简短描述，例如\"体重 5.2kg\"\"驱虫拜耳\"。" },
+          "date": { "type": "string", "description": "记录发生日期，ISO 字符串。如果用户没说日期，使用今天。" },
+          "weight": { "type": "string", "description": "体重数值（type=weight 时必填）。" },
+          "weightUnit": { "type": "string", "enum": ["kg","g"], "description": "体重单位，缺省 kg。" },
+          "waterAmount": { "type": "string", "description": "饮水量（type=water 时填写）。" },
+          "waterUnit": { "type": "string", "enum": ["ml","l"], "description": "饮水单位，缺省 ml。" },
+          "foodType": { "type": "string", "description": "食物种类（type=diet 时填写）。" },
+          "foodAmount": { "type": "string", "description": "食物分量（type=diet 时填写）。" },
+          "dewormType": { "type": "string", "description": "驱虫药品名称（type=deworm 时填写）。" },
+          "vaccineType": { "type": "string", "description": "疫苗名称（type=vaccine 时填写）。" },
+          "hospitalName": { "type": "string", "description": "医院名称（就诊/疫苗等场景填写）。" },
+          "cost": { "type": "number", "description": "费用，单位元。" },
+          "description": { "type": "string", "description": "补充描述。" }
+        },
+        "required": ["type", "title"]
+      },
+      "card": "record-card",
+      "relatedPage": "pages/record/record"
+    },
+    {
+      "name": "listRecords",
+      "description": "查询宠物记录列表。用户问\"看看最近的xxx记录\"\"豆豆上次xx是什么时候\"等场景调用。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "petName": {
+            "type": "string",
+            "description": "宠物名字。规则同 addRecord：用户提到才填，否则不填。禁止编造。"
+          },
+          "type": {
+            "type": "string",
+            "description": "可选，记录类型枚举（同 addRecord）。不填则查询全部类型。"
+          },
+          "startDate": { "type": "string", "description": "起始日期 ISO 字符串。" },
+          "endDate": { "type": "string", "description": "结束日期 ISO 字符串。" },
+          "limit": { "type": "number", "description": "返回条数上限，默认 20。" }
+        },
+        "required": []
+      },
+      "card": "record-list-card",
+      "relatedPage": "pages/record/record"
+    },
+    {
+      "name": "deleteRecord",
+      "description": "删除一条记录。仅当用户明确要求删除时调用。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "description": "要删除的记录 _id。该值必须来自 listRecords 接口前序返回的原始 _id，禁止编造或从用户描述推断。如果上下文中没有可用 recordId，应先调用 listRecords 让用户从卡片中点选。"
+          }
+        },
+        "required": ["recordId"]
+      },
+      "card": "record-card",
+      "relatedPage": "pages/record/record"
+    }
+  ]
+}

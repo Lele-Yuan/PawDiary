@@ -1,0 +1,22 @@
+<view class="list-card">
+  <view class="head">
+    <text class="title">{{data.petName}} 账单</text>
+    <text class="count" wx:if="{{data.year && data.month}}">{{data.year}}/{{data.month}}</text>
+  </view>
+  <view class="empty" wx:if="{{!data.bills || data.bills.length === 0}}">
+    <text>暂无账单</text>
+  </view>
+  <view wx:else>
+    <view class="row" wx:for="{{data.bills}}" wx:key="_id">
+      <text class="emoji">{{categoryEmojiMap[item.category] || '💰'}}</text>
+      <view class="row-meta">
+        <text class="row-title">{{item.title}}</text>
+        <text class="row-date">{{item.date}}</text>
+      </view>
+      <text class="row-amount">¥{{item.amount}}</text>
+    </view>
+    <view class="more" wx:if="{{data.total > data.bills.length}}">
+      <text>共 {{data.total}} 条，进入小程序查看更多</text>
+    </view>
+  </view>
+</view>

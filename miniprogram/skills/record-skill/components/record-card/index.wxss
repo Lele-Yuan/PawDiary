@@ -1,0 +1,56 @@
+.record-card {
+  background: #ffffff;
+  border-radius: 32rpx;
+  padding: 28rpx 32rpx;
+  margin: 16rpx 0;
+  box-shadow: 0 8rpx 24rpx rgba(123, 92, 245, 0.08);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 16rpx;
+}
+.emoji {
+  font-size: 48rpx;
+}
+.meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.title {
+  font-size: 30rpx;
+  color: #1F1A3D;
+  font-weight: 500;
+}
+.sub {
+  font-size: 24rpx;
+  color: #6B6585;
+  margin-top: 4rpx;
+}
+.card-row {
+  display: flex;
+  font-size: 26rpx;
+  color: #1F1A3D;
+  margin-top: 8rpx;
+}
+.label {
+  width: 100rpx;
+  color: #6B6585;
+}
+.value { flex: 1; }
+.card-footer {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #EFEAFE;
+}
+.date {
+  font-size: 22rpx;
+  color: #B5B0C8;
+}
+.deleted-tip {
+  padding: 16rpx;
+  text-align: center;
+  color: #6B6585;
+}

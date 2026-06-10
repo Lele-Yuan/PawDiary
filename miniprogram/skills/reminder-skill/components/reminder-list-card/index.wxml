@@ -1,0 +1,19 @@
+<view class="reminder-card">
+  <view class="head">
+    <text class="title">{{data.petName}} 的提醒</text>
+    <text class="count">{{data.total}} 条</text>
+  </view>
+  <view class="empty" wx:if="{{!data.reminders || data.reminders.length === 0}}">
+    <text>暂无提醒</text>
+  </view>
+  <view wx:else>
+    <view class="row" wx:for="{{data.reminders}}" wx:key="_id">
+      <text class="emoji">{{typeEmojiMap[item.type] || '⏰'}}</text>
+      <view class="row-meta">
+        <text class="row-title">{{item.title}}</text>
+        <text class="row-date">{{item.nextDate}}</text>
+      </view>
+      <text class="row-diff {{item.daysDiff < 0 ? 'overdue' : (item.daysDiff <= 3 ? 'soon' : '')}}">{{item.diffLabel}}</text>
+    </view>
+  </view>
+</view>

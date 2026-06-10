@@ -1,0 +1,6 @@
+<!--pages/chatBot/chatBot.wxml-->
+<view class="bot-page">
+  <nav-bar title="宠物小管家" back="{{true}}" />
+  <agent-ui style="flex: 1; overflow: hidden;" agentConfig="{{agentConfig}}" showBotAvatar="{{showBotAvatar}}" chatMode="{{chatMode}}" modelConfig="{{modelConfig}}" envShareConfig="{{envShareConfig}}">
+  </agent-ui>
+</view>

@@ -1,0 +1,63 @@
+{
+  "name": "bill",
+  "description": "PawDiary 宠物账单：新增消费、查询账单列表、查看月度统计（总额、分类占比、环比上月）。",
+  "interfaces": [
+    {
+      "name": "addBill",
+      "description": "为宠物新增一笔消费账单。当用户说\"记一笔\"\"花了多少钱\"\"买了xx多少钱\"等表述并给出明确金额时调用。仅当返回 isError=false 时才能向用户宣布\"已记账\"。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "petName": {
+            "type": "string",
+            "description": "宠物名字。用户在话语中明确提到时必须填写；未提到时不要填写（缺省使用当前选中宠物）。禁止编造或猜测。"
+          },
+          "amount": { "type": "number", "description": "消费金额，单位元，必须为用户明确给出的数值，禁止编造（如\"几十块\"\"差不多\"等模糊表达应反问澄清）。" },
+          "category": {
+            "type": "string",
+            "enum": ["food","medical","toy","grooming","daily","other"],
+            "description": "消费分类。中文映射：food=食物（狗粮/猫粮/零食）, medical=医疗（看病/疫苗/驱虫药）, toy=玩具, grooming=美容（洗澡/造型）, daily=日用（猫砂/牵引绳等）, other=其他。"
+          },
+          "title": { "type": "string", "description": "简短描述，例如\"狗粮\"\"疫苗\"\"剃毛\"。" },
+          "date": { "type": "string", "description": "消费日期 ISO 字符串。未提日期时使用今天。" },
+          "note": { "type": "string", "description": "备注。" }
+        },
+        "required": ["amount", "category", "title"]
+      },
+      "card": "bill-card",
+      "relatedPage": "pages/bill/bill"
+    },
+    {
+      "name": "listBills",
+      "description": "查询账单列表。用户问\"看看最近的账单\"\"3 月份花了哪些\"等场景调用。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "petName": { "type": "string", "description": "宠物名字。规则同 addBill。" },
+          "year": { "type": "number", "description": "年份，例如 2026。" },
+          "month": { "type": "number", "description": "月份 1-12。" },
+          "limit": { "type": "number", "description": "返回条数上限，默认 20。" }
+        },
+        "required": []
+      },
+      "card": "bill-list-card",
+      "relatedPage": "pages/bill/bill"
+    },
+    {
+      "name": "getMonthlyStats",
+      "description": "查询月度账单统计（总额、分类占比、环比上月、可选近 6 个月趋势）。用户问\"这个月花了多少\"\"上月医疗多少钱\"等场景调用。禁止自行从 listBills 求和，必须调用此接口。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "petName": { "type": "string", "description": "宠物名字。规则同 addBill。" },
+          "year": { "type": "number", "description": "年份，缺省当年。" },
+          "month": { "type": "number", "description": "月份，缺省当月。" },
+          "trend": { "type": "boolean", "description": "是否返回近 6 个月趋势数据，默认 false。" }
+        },
+        "required": []
+      },
+      "card": "bill-stats-card",
+      "relatedPage": "pages/bill/bill-stats/bill-stats"
+    }
+  ]
+}

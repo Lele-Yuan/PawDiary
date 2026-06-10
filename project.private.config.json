@@ -1,5 +1,5 @@
 {
-  "libVersion": "3.15.0",
+  "libVersion": "3.16.1",
   "projectname": "PawDiary",
   "setting": {
     "urlCheck": true,
@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
-          "name": "地图",
-          "pathName": "pages/map/map",
+          "name": "chatBot",
+          "pathName": "pages/chatBot/chatBot",
           "query": "",
           "scene": null,
           "launchMode": "default"
+        },
+        {
+          "name": "地图",
+          "pathName": "pages/map/map",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "DGTI",

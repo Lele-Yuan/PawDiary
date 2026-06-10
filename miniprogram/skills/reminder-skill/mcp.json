@@ -1,0 +1,44 @@
+{
+  "name": "reminder",
+  "description": "PawDiary 宠物提醒事项查询：查询近期到期或已到期的提醒（驱虫、疫苗、洗澡、体检等）。仅查询，不创建。",
+  "interfaces": [
+    {
+      "name": "listUpcomingReminders",
+      "description": "查询近期到期或已到期的所有提醒。用户问\"看看我的提醒\"\"近期有啥要做的\"\"豆豆下面要做什么\"等场景调用。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "petName": {
+            "type": "string",
+            "description": "宠物名字。用户在话语中明确提到时必须填写；未提到时不要填写（缺省使用当前选中宠物）。禁止编造。"
+          },
+          "withinDays": { "type": "number", "description": "查询多少天之内的提醒，默认 30。负值表示也包含已过期。" },
+          "type": {
+            "type": "string",
+            "description": "可选，按记录类型过滤，例如 deworm（驱虫）、vaccine（疫苗）、bath（洗澡）、checkup（体检）。不填则查询全部类型。"
+          }
+        },
+        "required": []
+      },
+      "card": "reminder-list-card",
+      "relatedPage": "pages/record/record"
+    },
+    {
+      "name": "getNextReminderByType",
+      "description": "查询某类型下一次提醒。用户问\"下次驱虫是哪天\"\"下次疫苗什么时候\"等场景调用。",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "petName": { "type": "string", "description": "宠物名字。规则同 listUpcomingReminders。" },
+          "type": {
+            "type": "string",
+            "description": "记录类型。常见值：deworm=驱虫, vaccine=疫苗, bath=洗澡, checkup=体检, nail=剪指甲, beauty=美容。"
+          }
+        },
+        "required": ["type"]
+      },
+      "card": "reminder-list-card",
+      "relatedPage": "pages/record/record"
+    }
+  ]
+}

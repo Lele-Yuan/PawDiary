@@ -1,0 +1,35 @@
+<view class="stats-card">
+  <view class="head">
+    <text class="title">{{data.petName}} · {{data.year}}/{{data.month}} 统计</text>
+  </view>
+  <view class="total-row">
+    <view class="total-block">
+      <text class="label">本月总额</text>
+      <text class="total">¥{{data.monthTotal}}</text>
+    </view>
+    <view class="total-block">
+      <text class="label">上月</text>
+      <text class="last">¥{{data.lastMonthTotal}}</text>
+    </view>
+    <view class="total-block" wx:if="{{showDiff}}">
+      <text class="label">环比</text>
+      <text class="diff {{diffUp ? 'up' : 'down'}}">{{diffText}}</text>
+    </view>
+  </view>
+  <view class="cat-list" wx:if="{{data.categoryStats && data.categoryStats.length}}">
+    <view class="cat-row" wx:for="{{data.categoryStats}}" wx:key="category">
+      <text class="emoji">{{categoryEmojiMap[item.category] || '💰'}}</text>
+      <text class="cat-name">{{categoryNameMap[item.category] || item.category}}</text>
+      <view class="bar-bg">
+        <view class="bar-fg" style="width:{{item.percent}}%"></view>
+      </view>
+      <text class="cat-amount">¥{{item.amount}}</text>
+    </view>
+  </view>
+  <view class="trends" wx:if="{{trendBars && trendBars.length}}">
+    <view class="trend-bar" wx:for="{{trendBars}}" wx:key="label">
+      <view class="trend-bar-fg" style="height:{{item.height}}rpx"></view>
+      <text class="trend-label">{{item.label}}</text>
+    </view>
+  </view>
+</view>
