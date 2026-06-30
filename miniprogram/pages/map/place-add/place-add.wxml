@@ -1,6 +1,11 @@
 <nav-bar title="{{mode === 'edit' ? '编辑地点' : '添加宠物友好地点'}}" back="{{true}}" />
 
-<view class="page-container">
+<view wx:if="{{forbidden}}" class="forbidden-page">
+  <text class="forbidden-icon">🏗️</text>
+  <text class="forbidden-text">功能建设中～</text>
+</view>
+
+<view class="page-container" wx:else>
   <!-- 选择位置 -->
   <view class="form-section card">
     <view class="form-label">地点位置 <text class="required">*</text></view>

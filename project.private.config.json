@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/map/place-add/place-add",
+          "pathName": "pages/map/place-add/place-add",
+          "query": "lat=23.129163&lng=113.264435",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "chatBot",
           "pathName": "pages/chatBot/chatBot",
           "query": "",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "地图",

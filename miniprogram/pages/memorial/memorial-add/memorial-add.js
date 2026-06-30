@@ -122,6 +122,12 @@ Page({
         setTimeout(() => {
           wx.navigateBack();
         }, 1200);
+      } else if (res.result && res.result.code === -1001) {
+        // 内容违规，删除已上传头像
+        if (petAvatar && typeof petAvatar === 'string' && petAvatar.indexOf('cloud://') === 0) {
+          try { await wx.cloud.deleteFile({ fileList: [petAvatar] }); } catch (e) {}
+        }
+        showError('内容包含违规信息，请修改后重试');
       } else {
         showError(res.result ? res.result.message : '操作失败');
       }

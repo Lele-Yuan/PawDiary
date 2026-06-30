@@ -2,6 +2,7 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
+const security = require('./contentSecurity');
 
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
@@ -27,6 +28,20 @@ exports.main = async (event, context) => {
 async function addPet(openid, data) {
   if (!data || !data.name || !data.species) {
     return { code: -1, message: '宠物名称和物种为必填项' };
+  }
+
+  // 内容安全校验：文本聚合 + 头像
+  const composedText = [data.name, data.breed, data.description].filter(Boolean).join('\n');
+  if (composedText) {
+    const r = await security.checkText(cloud, openid, composedText);
+    if (!r.pass) return security.violationResult();
+  }
+  if (data.avatar) {
+    const r = await security.checkImageByFileId(cloud, data.avatar);
+    if (!r.pass) {
+      await security.deleteFiles(cloud, [data.avatar]);
+      return security.violationResult();
+    }
   }
 
   const petData = {
@@ -85,6 +100,20 @@ async function addPet(openid, data) {
 async function updatePet(openid, data) {
   if (!data || !data._id) {
     return { code: -1, message: '缺少宠物ID' };
+  }
+
+  // 内容安全校验
+  const composedText = [data.name, data.breed, data.description].filter(Boolean).join('\n');
+  if (composedText) {
+    const r = await security.checkText(cloud, openid, composedText);
+    if (!r.pass) return security.violationResult();
+  }
+  if (data.avatar) {
+    const r = await security.checkImageByFileId(cloud, data.avatar);
+    if (!r.pass) {
+      await security.deleteFiles(cloud, [data.avatar]);
+      return security.violationResult();
+    }
   }
 
   const petId = data._id;

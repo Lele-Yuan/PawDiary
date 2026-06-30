@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "nav-bar": "/components/nav-bar/nav-bar",
+    "loading-view": "/components/loading/loading"
+  },
+  "navigationBarTitleText": "家庭成员",
+  "navigationStyle": "custom"
+}

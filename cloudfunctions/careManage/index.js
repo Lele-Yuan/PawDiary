@@ -2,6 +2,7 @@ var cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 var db = cloud.database();
 var _ = db.command;
+var security = require('./contentSecurity');
 
 exports.main = async function (event, context) {
   var OPENID = cloud.getWXContext().OPENID;
@@ -75,6 +76,17 @@ async function publishPost(openid, data) {
   }
   if (!data.contactInfo || (!data.contactInfo.phone && !data.contactInfo.wechat)) {
     return { code: -1, message: '请至少填写一种联系方式' };
+  }
+
+  // 内容安全校验
+  var textParts = [data.title, data.description, data.contactInfo && data.contactInfo.wechat];
+  if (data.petInfo) {
+    textParts.push(data.petInfo.name, data.petInfo.breed, data.petInfo.weight);
+  }
+  var composedText = textParts.filter(Boolean).join('\n');
+  if (composedText) {
+    var textRes = await security.checkText(cloud, openid, composedText);
+    if (!textRes.pass) return security.violationResult();
   }
 
   // 获取发布人信息快照
@@ -312,6 +324,17 @@ async function updatePost(openid, data) {
 
   if (!post) return { code: -1, message: '帖子不存在' };
   if (post._openid !== openid) return { code: -1, message: '仅本人可编辑' };
+
+  // 内容安全校验
+  var textParts = [data.title, data.description, data.contactInfo && data.contactInfo.wechat];
+  if (data.petInfo) {
+    textParts.push(data.petInfo.name, data.petInfo.breed, data.petInfo.weight);
+  }
+  var composedText = textParts.filter(Boolean).join('\n');
+  if (composedText) {
+    var textRes = await security.checkText(cloud, openid, composedText);
+    if (!textRes.pass) return security.violationResult();
+  }
 
   var updateData = { updateTime: new Date() };
   var fields = ['role', 'serviceType', 'exoticPetType', 'title', 'description', 'location', 'radius', 'availableTime', 'contactInfo', 'petInfo', 'status'];

@@ -119,7 +119,7 @@
     </view>
 
     <!-- 创建者操作按钮 -->
-    <view class="action-section" wx:if="{{isOwner}}">
+    <view class="action-section" wx:if="{{isAdmin}}">
       <button class="action-btn edit-btn" bindtap="onEdit" hover-class="btn-hover">编辑地点</button>
       <button class="action-btn delete-btn" bindtap="onDelete" loading="{{deleting}}" hover-class="btn-hover">删除地点</button>
     </view>

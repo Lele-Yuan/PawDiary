@@ -1,6 +1,0 @@
-/* chatBot 页面级样式：保证页面背景与全局紫色主题一致 */
-.bot-page {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}

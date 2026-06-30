@@ -2,6 +2,7 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
+const security = require('./contentSecurity');
 
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
@@ -49,6 +50,13 @@ async function addBill(openid, data) {
   const validCategories = ['food', 'medical', 'toy', 'grooming', 'daily', 'other'];
   if (!validCategories.includes(data.category)) {
     return { code: -1, message: '无效的消费分类' };
+  }
+
+  // 内容安全校验
+  const composedText = [data.title, data.note].filter(Boolean).join('\n');
+  if (composedText) {
+    const textRes = await security.checkText(cloud, openid, composedText);
+    if (!textRes.pass) return security.violationResult();
   }
 
   const billData = {
@@ -114,6 +122,13 @@ async function updateBill(openid, data) {
   const role = memberRes.data[0].role || 'member';
   if (role !== 'creator' && role !== 'admin') {
     return { code: -1, message: '无权限请联系宠物主' };
+  }
+
+  // 内容安全校验
+  const composedText = [data.title, data.note].filter(Boolean).join('\n');
+  if (composedText) {
+    const textRes = await security.checkText(cloud, openid, composedText);
+    if (!textRes.pass) return security.violationResult();
   }
 
   const updateData = {};

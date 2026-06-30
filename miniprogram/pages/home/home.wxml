@@ -64,11 +64,12 @@
     <view class="family-section card" wx:if="{{currentPet}}">
       <view class="section-header">
         <text class="section-title">家庭成员</text>
+        <text class="section-more" bindtap="goFamilyMembers">进入家庭 ›</text>
       </view>
       <view class="family-row">
         <view
-          class="family-member {{item.role === 'creator' || item.role === 'admin' ? 'family-member-active' : ''}}"
-          wx:for="{{familyMembers}}"
+          class="family-member family-member-active"
+          wx:for="{{adminMembers}}"
           wx:key="_id"
           data-openid="{{item._openid}}"
           data-role="{{item.role}}"
@@ -85,11 +86,38 @@
           </view>
           <text class="family-member-name {{item.role === 'creator' ? 'name-active' : ''}}">{{item.nickName}}</text>
         </view>
-        <!-- 邀请按钮，当成员不足5个且有编辑权限时显示 -->
-        <button class="family-member family-member-add" open-type="share" wx:if="{{familyMembers.length < 5 && canEdit}}">
+        <!-- 共养人未满：弹出邀请类型选择 -->
+        <view class="family-member family-member-add" wx:if="{{canEdit && canInviteAdmin}}" bindtap="onShowInvitePicker">
           <view class="family-member-avatar-wrap avatar-border-dashed">+</view>
           <text class="family-member-name name-muted">邀请成员</text>
+        </view>
+        <!-- 共养人已满：直接邀请亲友团 -->
+        <button class="family-member family-member-add" wx:if="{{canEdit && !canInviteAdmin}}" open-type="share" bindtap="onDirectInviteMember">
+          <view class="family-member-avatar-wrap avatar-border-dashed">+</view>
+          <text class="family-member-name name-muted">邀请亲友团</text>
         </button>
+      </view>
+    </view>
+
+    <!-- 邀请类型选择浮层 -->
+    <view class="invite-picker-mask" wx:if="{{showInvitePicker}}" bindtap="onHideInvitePicker" catchtouchmove="noop">
+      <view class="invite-picker" catchtap="noop">
+        <view class="invite-picker-title">邀请加入「{{currentPet.name}}」家庭</view>
+        <button class="invite-picker-item" open-type="share" data-role="admin" bindtap="onPickInviteRole">
+          <view class="invite-picker-item-main">
+            <text class="invite-picker-item-title">邀请共养人</text>
+            <text class="invite-picker-item-desc">可与你一同管理宠物记录</text>
+          </view>
+          <text class="invite-picker-item-arrow">›</text>
+        </button>
+        <button class="invite-picker-item" open-type="share" data-role="member" bindtap="onPickInviteRole">
+          <view class="invite-picker-item-main">
+            <text class="invite-picker-item-title">邀请亲友团</text>
+            <text class="invite-picker-item-desc">可查看宠物的日常</text>
+          </view>
+          <text class="invite-picker-item-arrow">›</text>
+        </button>
+        <view class="invite-picker-cancel" bindtap="onHideInvitePicker">取消</view>
       </view>
     </view>
 

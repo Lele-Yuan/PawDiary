@@ -3,11 +3,14 @@ const { calcAge } = require('../../utils/util');
 Page({
   data: {
     invitePetId: '',
+    inviteRole: 'member', // 邀请角色：admin（共养人）/ member（亲友团）
+    inviteRoleLabel: '亲友团',
     pet: null,
     age: '',
     loading: true,
     loaded: false,
     isJoined: false,
+    currentRole: '',
     isCurrentPet: false,
     userReady: false,
     isGuest: true,
@@ -17,7 +20,9 @@ Page({
   onLoad(options) {
     const that = this;
     const invitePetId = options.id || '';
-    that.setData({ invitePetId: invitePetId });
+    const inviteRole = options.role === 'admin' ? 'admin' : 'member';
+    const inviteRoleLabel = inviteRole === 'admin' ? '共养人' : '亲友团';
+    that.setData({ invitePetId: invitePetId, inviteRole: inviteRole, inviteRoleLabel: inviteRoleLabel });
 
     // 等待用户信息就绪
     const app = getApp();
@@ -83,6 +88,7 @@ Page({
         .get();
 
       const isJoined = memberRes.data && memberRes.data.length > 0;
+      const currentRole = isJoined ? (memberRes.data[0].role || '') : '';
 
       // 检查是否是当前选中的宠物
       const isCurrentPet = app.globalData.currentPetId === petId;
@@ -93,6 +99,7 @@ Page({
         loading: false,
         loaded: true,
         isJoined: isJoined,
+        currentRole: currentRole,
         isCurrentPet: isCurrentPet
       });
     } catch (err) {
@@ -115,7 +122,7 @@ Page({
 
   // 加入宠物家庭
   onJoin() {
-    const { isGuest, isJoined, isCurrentPet } = this.data;
+    const { isGuest, isJoined, isCurrentPet, currentRole, inviteRole } = this.data;
 
     // 未加入，如果是游客则显示登录弹窗
     if (isGuest) {
@@ -123,13 +130,14 @@ Page({
       return;
     }
 
-    // 已加入且是当前宠物，无需操作
-    if (isJoined && isCurrentPet) {
-      return;
-    }
-
-    // 已加入但非当前宠物，直接切换
-    if (isJoined && !isCurrentPet) {
+    // 已加入：member 收到共养人邀请需升级；其他情况无需调用云函数
+    if (isJoined) {
+      const needUpgrade = currentRole === 'member' && inviteRole === 'admin';
+      if (needUpgrade) {
+        this.doJoin();
+        return;
+      }
+      if (isCurrentPet) return;
       this.onSwitchPet();
       return;
     }
@@ -143,7 +151,7 @@ Page({
     const app = getApp();
     app.globalData.currentPetId = this.data.invitePetId;
     app.globalData.currentPet = this.data.pet;
-    app.globalData.currentPetRole = 'member';
+    app.globalData.currentPetRole = this.data.currentRole || 'member';
 
     wx.showToast({ title: '切换成功', icon: 'success' });
     setTimeout(function () {
@@ -158,15 +166,17 @@ Page({
     const that = this;
     wx.cloud.callFunction({
       name: 'familyManage',
-      data: { action: 'join', data: { petId: this.data.invitePetId } }
+      data: { action: 'join', data: { petId: this.data.invitePetId, role: this.data.inviteRole } }
     }).then(function(res) {
       if (res.result && res.result.code === 0) {
-        wx.showToast({ title: '加入成功', icon: 'success' });
+        const actualRole = res.result.role || that.data.inviteRole;
+        const tip = res.result.upgraded ? '已升级为共养人' : '加入成功';
+        wx.showToast({ title: tip, icon: 'success' });
 
         const app = getApp();
         app.globalData.currentPetId = that.data.invitePetId;
         app.globalData.currentPet = that.data.pet;
-        app.globalData.currentPetRole = 'member';
+        app.globalData.currentPetRole = actualRole;
 
         setTimeout(function () {
           wx.reLaunch({

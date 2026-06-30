@@ -90,6 +90,7 @@ Component({
 
         // 上传头像到云存储
         let avatarUrl = tempAvatarUrl;
+        let newAvatarUploaded = false;
         if (tempAvatarUrl && (tempAvatarUrl.startsWith('http://tmp') || tempAvatarUrl.startsWith('wxfile://'))) {
           // 大小校验
           const fileStat = await new Promise((resolve) => {
@@ -107,44 +108,64 @@ Component({
             filePath: tempAvatarUrl
           });
           avatarUrl = uploadRes.fileID;
+          newAvatarUploaded = true;
         }
 
-        // 更新数据库
+        // 读取原有用户
         const { data: users } = await db.collection('users')
           .where({ _openid: app.globalData.openid })
           .limit(1)
           .get();
 
-        const updateData = {
-          nickName: tempNickName.trim(),
-          updatedAt: new Date()
-        };
-        // 只在上传新头像时更新 avatarUrl
-        if (tempAvatarUrl && (tempAvatarUrl.startsWith('http://tmp') || tempAvatarUrl.startsWith('wxfile://'))) {
-          updateData.avatarUrl = avatarUrl;
+        // 决定本次提交的 avatarUrl
+        let finalAvatarUrl;
+        if (newAvatarUploaded) {
+          finalAvatarUrl = avatarUrl;
         } else if (users.length > 0 && users[0].avatarUrl) {
-          // 保持原有头像不变
-          updateData.avatarUrl = users[0].avatarUrl;
+          finalAvatarUrl = users[0].avatarUrl;
         } else {
-          updateData.avatarUrl = '';
+          finalAvatarUrl = '';
         }
-        if (tempPhone) updateData.phone = tempPhone;
 
-        if (users.length > 0) {
-          await db.collection('users').doc(users[0]._id).update({ data: updateData });
+        // 通过 userManage 云函数更新（内置内容安全校验）
+        const updatePayload = {
+          nickName: tempNickName.trim(),
+          avatarUrl: finalAvatarUrl
+        };
+        if (tempPhone) updatePayload.phone = tempPhone;
+
+        const callRes = await wx.cloud.callFunction({
+          name: 'userManage',
+          data: { action: 'update', data: updatePayload }
+        });
+
+        if (callRes && callRes.result && callRes.result.code === -1001) {
+          // 内容违规：清理本次新上传的头像
+          if (newAvatarUploaded && finalAvatarUrl) {
+            try { await wx.cloud.deleteFile({ fileList: [finalAvatarUrl] }); } catch (_) {}
+          }
+          hideLoading();
+          wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
+          return;
+        }
+
+        if (!callRes || !callRes.result || callRes.result.code !== 0) {
+          hideLoading();
+          showError((callRes && callRes.result && callRes.result.message) || '登录失败');
+          return;
         }
 
         // 更新全局状态
-        const userInfo = { ...app.globalData.userInfo, ...updateData };
+        const userInfo = { ...app.globalData.userInfo, ...updatePayload };
         app.globalData.userInfo = userInfo;
 
         hideLoading();
 
         // 向父页面发送登录成功事件
         this.triggerEvent('success', {
-          avatarUrl: updateData.avatarUrl,
-          nickName: updateData.nickName,
-          phone: updateData.phone || ''
+          avatarUrl: updatePayload.avatarUrl,
+          nickName: updatePayload.nickName,
+          phone: updatePayload.phone || ''
         });
 
         // 关闭弹窗

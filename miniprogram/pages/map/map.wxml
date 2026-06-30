@@ -56,8 +56,9 @@
         wx:if="{{!nearbyPlaces.length}}"
         icon="📍"
         title="附近 10km 内暂无地点"
-        description="成为第一个标记宠物友好地点的人吧"
+        description="{{isAdmin ? '点击下方按钮添加宠物友好地点' : '暂无附近的宠物友好地点'}}"
         btnText="添加地点"
+        canEdit="{{isAdmin}}"
         bind:action="goAddPlace"
       />
 
@@ -84,6 +85,6 @@
     </view>
   </view>
 
-  <!-- 添加地点 FAB -->
-  <view class="fab-btn" bindtap="goAddPlace">+</view>
+  <!-- 添加地点 FAB（仅管理员） -->
+  <view class="fab-btn" wx:if="{{isAdmin}}" bindtap="goAddPlace">+</view>
 </view>

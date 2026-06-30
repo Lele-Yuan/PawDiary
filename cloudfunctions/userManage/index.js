@@ -1,6 +1,7 @@
 const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
+const security = require('./contentSecurity');
 
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
@@ -32,11 +33,27 @@ async function loginOrRegister(openid, data) {
     return { code: 0, message: '登录成功', data: users[0] };
   }
 
+  const nickName = (data && data.nickName) || '';
+  const avatarUrl = (data && data.avatarUrl) || '';
+
+  // 内容安全校验
+  if (nickName) {
+    const r = await security.checkText(cloud, openid, nickName);
+    if (!r.pass) return security.violationResult();
+  }
+  if (avatarUrl) {
+    const r = await security.checkImageByFileId(cloud, avatarUrl);
+    if (!r.pass) {
+      await security.deleteFiles(cloud, [avatarUrl]);
+      return security.violationResult();
+    }
+  }
+
   // 新用户注册
   const newUser = {
     _openid: openid,
-    nickName: (data && data.nickName),
-    avatarUrl: (data && data.avatarUrl) || '',
+    nickName: nickName,
+    avatarUrl: avatarUrl,
     phone: '',
     currentPetId: '',
     createdAt: new Date(),
@@ -62,6 +79,19 @@ async function updateUser(openid, data) {
 
   if (users.length === 0) {
     return { code: -1, message: '用户不存在' };
+  }
+
+  // 内容安全校验
+  if (data.nickName !== undefined && data.nickName) {
+    const r = await security.checkText(cloud, openid, data.nickName);
+    if (!r.pass) return security.violationResult();
+  }
+  if (data.avatarUrl !== undefined && data.avatarUrl) {
+    const r = await security.checkImageByFileId(cloud, data.avatarUrl);
+    if (!r.pass) {
+      await security.deleteFiles(cloud, [data.avatarUrl]);
+      return security.violationResult();
+    }
   }
 
   const updateData = { updatedAt: new Date() };

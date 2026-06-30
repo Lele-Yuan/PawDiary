@@ -44,21 +44,27 @@
     <!-- 操作按钮区 -->
     <view class="action-buttons">
       <!-- 已加入当前宠物 -->
-      <button class="action-btn joined-btn" disabled wx:if="{{isJoined && isCurrentPet}}">
+      <button class="action-btn joined-btn" disabled wx:if="{{isJoined && isCurrentPet && !(currentRole === 'member' && inviteRole === 'admin')}}">
         <text class="btn-icon">🤝</text>
         <text class="btn-text">已加入</text>
       </button>
 
       <!-- 已加入但非当前宠物 -->
-      <button class="action-btn switch-btn" wx:if="{{isJoined && !isCurrentPet}}" hover-class="btn-hover" bindtap="onJoin">
+      <button class="action-btn switch-btn" wx:if="{{isJoined && !isCurrentPet && !(currentRole === 'member' && inviteRole === 'admin')}}" hover-class="btn-hover" bindtap="onJoin">
         <text class="btn-icon">🔄</text>
         <text class="btn-text">切换到该宠物</text>
+      </button>
+
+      <!-- 亲友团 -> 共养人升级 -->
+      <button class="action-btn join-btn" wx:if="{{isJoined && currentRole === 'member' && inviteRole === 'admin'}}" hover-class="btn-hover" bindtap="onJoin">
+        <text class="btn-icon">⭐</text>
+        <text class="btn-text">升级为共养人</text>
       </button>
 
       <!-- 未加入 -->
       <button class="action-btn join-btn" wx:if="{{!isJoined}}" hover-class="btn-hover" bindtap="onJoin" loading="{{false}}">
         <text class="btn-icon">🤝</text>
-        <text class="btn-text">加入宠物家庭</text>
+        <text class="btn-text">{{inviteRole === 'admin' ? '加入并成为共养人' : '加入亲友团'}}</text>
       </button>
 
       <button class="action-btn cancel-btn" hover-class="btn-hover" bindtap="onCancel">
@@ -69,7 +75,7 @@
 
     <!-- 提示文案 -->
     <view class="invite-tip">
-      <text class="tip-text">加入后您可以查看该宠物的所有数据，包括喂食、健康、记录和账单信息。</text>
+      <text class="tip-text">{{inviteRole === 'admin' ? '加入后您将成为共养人，可与创建者一同管理该宠物的所有数据。' : '加入后您可以查看该宠物的所有数据，包括喂食、健康、记录和账单信息。'}}</text>
     </view>
   </view>
 

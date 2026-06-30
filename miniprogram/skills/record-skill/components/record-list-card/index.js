@@ -1,7 +1,4 @@
 Component({
-  properties: {
-    data: { type: Object, value: {} }
-  },
   data: {
     typeEmojiMap: {
       weight: '⚖️', poop: '💩', diet: '🍖', water: '💧',
@@ -9,6 +6,17 @@ Component({
       bath: '🛁', nail: '✂️', ear: '👂', paw: '🐾', gland: '🍑', teeth: '🪥', beauty: '💇',
       disinfect: '🧴', litter: '🪣', toy: '🧸', cage: '🏠',
       abnormal: '⚠️', heat: '🌡️', trouble: '💥', stealfood: '🍗'
+    },
+    data: {}
+  },
+  lifetimes: {
+    created() {
+      const modelCtx = wx.modelContext.getContext(this);
+      const { NotificationType } = wx.modelContext;
+      modelCtx.on(NotificationType.Result, (data) => {
+        const sc = (data && data.structuredContent) || {};
+        this.setData({ data: sc });
+      });
     }
   }
 });

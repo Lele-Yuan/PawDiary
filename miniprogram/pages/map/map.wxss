@@ -114,7 +114,7 @@
 
 /* ===== 地点卡片 ===== */
 .place-card {
-  margin-bottom: 20rpx;
+  margin: 0 0 20rpx 0;
   padding: 28rpx;
   border-radius: 24rpx;
   background-color: #FFFFFF;

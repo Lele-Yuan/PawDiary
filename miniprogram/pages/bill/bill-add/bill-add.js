@@ -156,12 +156,22 @@ Page({
         note: form.note.trim()
       };
 
-      await wx.cloud.callFunction({
+      const res = await wx.cloud.callFunction({
         name: 'billManage',
         data: { action, data }
       });
 
       hideLoading();
+      if (res.result && res.result.code === -1001) {
+        showError('内容包含违规信息，请修改后重试');
+        this.setData({ submitting: false });
+        return;
+      }
+      if (res.result && res.result.code !== 0) {
+        showError(res.result.message || '保存失败');
+        this.setData({ submitting: false });
+        return;
+      }
       showSuccess(isEdit ? '修改成功' : '记录成功');
       setTimeout(() => wx.navigateBack(), 1500);
     } catch (err) {

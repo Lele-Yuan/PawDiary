@@ -2,6 +2,7 @@ var cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 var db = cloud.database();
 var _ = db.command;
+var security = require('./contentSecurity');
 
 exports.main = async function (event, context) {
   var OPENID = cloud.getWXContext().OPENID;
@@ -25,6 +26,18 @@ exports.main = async function (event, context) {
       return { code: -1, message: '未知操作类型' };
   }
 };
+
+/**
+ * 平台管理员校验：users.role === 'admin'
+ */
+async function requireAdmin(openid) {
+  try {
+    var r = await db.collection('users').where({ _openid: openid }).limit(1).get();
+    return r.data.length > 0 && r.data[0].role === 'admin';
+  } catch (e) {
+    return false;
+  }
+}
 
 /**
  * Haversine 公式计算两点间球面距离（米）
@@ -52,14 +65,31 @@ async function getActiveUsers() {
   return res.data;
 }
 
-// 添加宠物友好地点
+// 添加宠物友好地点（仅平台管理员）
 async function addPlace(openid, data) {
+  if (!(await requireAdmin(openid))) {
+    return { code: -403, message: '仅管理员可操作' };
+  }
   var name = (data.name || '').trim();
   if (!name) {
     return { code: -1, message: '地点名称不能为空' };
   }
   if (!data.latitude || !data.longitude) {
     return { code: -1, message: '请选择地点位置' };
+  }
+
+  // 内容安全
+  var composedText = [name, data.description, data.address].filter(Boolean).join('\n');
+  if (composedText) {
+    var rt = await security.checkText(cloud, openid, composedText);
+    if (!rt.pass) return security.violationResult();
+  }
+  if (Array.isArray(data.images) && data.images.length > 0) {
+    var ri = await security.checkImagesByFileIds(cloud, data.images);
+    if (!ri.pass) {
+      await security.deleteFiles(cloud, data.images);
+      return security.violationResult();
+    }
   }
 
   var userRes = await db.collection('users').where({ _openid: openid }).limit(1).get();
@@ -180,11 +210,14 @@ async function getPlace(openid, data) {
   }
 }
 
-// 更新地点（仅创建者可操作）
+// 更新地点（仅平台管理员）
 async function updatePlace(openid, data) {
   var placeId = data.placeId;
   if (!placeId) {
     return { code: -1, message: '缺少地点ID' };
+  }
+  if (!(await requireAdmin(openid))) {
+    return { code: -403, message: '仅管理员可操作' };
   }
 
   try {
@@ -193,8 +226,23 @@ async function updatePlace(openid, data) {
     if (!place || place.status !== 'active') {
       return { code: -1, message: '地点不存在' };
     }
-    if (place._openid !== openid) {
-      return { code: -1, message: '仅创建者可编辑地点' };
+
+    // 内容安全
+    var composedText = [data.name, data.description].filter(Boolean).join('\n');
+    if (composedText) {
+      var rt = await security.checkText(cloud, openid, composedText);
+      if (!rt.pass) return security.violationResult();
+    }
+    if (Array.isArray(data.images) && data.images.length > 0) {
+      var oldImages = Array.isArray(place.images) ? place.images : [];
+      var newImages = data.images.filter(function (id) { return oldImages.indexOf(id) === -1; });
+      if (newImages.length > 0) {
+        var ri = await security.checkImagesByFileIds(cloud, newImages);
+        if (!ri.pass) {
+          await security.deleteFiles(cloud, newImages);
+          return security.violationResult();
+        }
+      }
     }
 
     var updateData = { updatedAt: new Date() };
@@ -217,11 +265,14 @@ async function updatePlace(openid, data) {
   }
 }
 
-// 删除自己创建的地点
+// 删除地点（仅平台管理员）
 async function deletePlace(openid, data) {
   var placeId = data.placeId;
   if (!placeId) {
     return { code: -1, message: '缺少地点ID' };
+  }
+  if (!(await requireAdmin(openid))) {
+    return { code: -403, message: '仅管理员可操作' };
   }
 
   try {
@@ -229,9 +280,6 @@ async function deletePlace(openid, data) {
     var place = placeRes.data;
     if (!place) {
       return { code: -1, message: '地点不存在' };
-    }
-    if (place._openid !== openid) {
-      return { code: -1, message: '只能删除自己创建的地点' };
     }
 
     await db.collection('pet_places').doc(placeId).update({

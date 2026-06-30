@@ -2,6 +2,7 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
+const security = require('./contentSecurity');
 
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
@@ -27,6 +28,20 @@ exports.main = async (event, context) => {
 async function addMemorial(openid, data) {
   if (!data || !data.petName || !data.passDate) {
     return { code: -1, message: '宠物名字和离开日期为必填项' };
+  }
+
+  // 内容安全校验
+  var composedText = [data.petName, data.description].filter(Boolean).join('\n');
+  if (composedText) {
+    var textRes = await security.checkText(cloud, openid, composedText);
+    if (!textRes.pass) return security.violationResult();
+  }
+  if (data.petAvatar) {
+    var imgRes = await security.checkImageByFileId(cloud, data.petAvatar);
+    if (!imgRes.pass) {
+      await security.deleteFiles(cloud, [data.petAvatar]);
+      return security.violationResult();
+    }
   }
 
   // 查询用户信息（冗余存储）
@@ -128,6 +143,10 @@ async function addBlessing(openid, data) {
   if (data.content.length > 100) {
     return { code: -1, message: '祝福语最多100个字' };
   }
+
+  // 内容安全校验
+  var textRes = await security.checkText(cloud, openid, data.content);
+  if (!textRes.pass) return security.violationResult();
 
   // 查询当前用户信息
   var nickName = '匿名用户';

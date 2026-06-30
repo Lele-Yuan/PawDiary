@@ -17,6 +17,7 @@ Page({
     onlineUsers: [],
     loaded: false,
     isOwner: false,
+    isAdmin: false,
     isOnline: false,
     deleting: false
   },
@@ -40,6 +41,9 @@ Page({
   },
 
   onShow() {
+    var app = getApp();
+    var role = app && app.globalData && app.globalData.userInfo && app.globalData.userInfo.role;
+    this.setData({ isAdmin: role === 'admin' });
     // 从编辑页返回时刷新数据
     if (this.data.place) {
       this.loadPlaceDetail(this.data.place._id);

@@ -25,6 +25,8 @@ exports.main = async function (event, context) {
 // 加入宠物家庭
 async function joinFamily(openid, data) {
   var petId = data.petId;
+  // 邀请角色：admin（共养人）/ member（亲友团），默认 member
+  var inviteRole = data.role === 'admin' ? 'admin' : 'member';
   if (!petId) {
     return { code: -1, message: '缺少宠物ID' };
   }
@@ -39,12 +41,21 @@ async function joinFamily(openid, data) {
     return { code: -1, message: '宠物不存在' };
   }
 
-  // 检查是否已是成员
+  // 检查是否已是成员（按规则可能升级 member -> admin，creator/admin 不变）
   var existRes = await db.collection('pet_members')
     .where({ petId: petId, _openid: openid })
-    .count();
-  if (existRes.total > 0) {
-    return { code: 0, message: '已是家庭成员' };
+    .limit(1)
+    .get();
+
+  if (existRes.data.length > 0) {
+    var current = existRes.data[0];
+    if (current.role === 'member' && inviteRole === 'admin') {
+      await db.collection('pet_members').doc(current._id).update({
+        data: { role: 'admin' }
+      });
+      return { code: 0, message: '已升级为共养人', role: 'admin', upgraded: true };
+    }
+    return { code: 0, message: '已是家庭成员', role: current.role };
   }
 
   // 获取用户信息
@@ -56,14 +67,14 @@ async function joinFamily(openid, data) {
     data: {
       _openid: openid,
       petId: petId,
-      role: 'member',
+      role: inviteRole,
       nickName: user.nickName || '',
       avatarUrl: user.avatarUrl || '',
       createdAt: new Date()
     }
   });
 
-  return { code: 0, message: '加入成功' };
+  return { code: 0, message: '加入成功', role: inviteRole };
 }
 
 // 获取宠物的所有家庭成员（从 users 集合获取最新头像昵称）

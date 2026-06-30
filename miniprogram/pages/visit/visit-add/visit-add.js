@@ -329,6 +329,12 @@ Page({
           });
           return;
         }
+        if (res.result && res.result.code === -1001) {
+          wx.hideLoading();
+          this.setData({ submitting: false });
+          wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
+          return;
+        }
       } else {
         payload.recordId = d.recordId;
         res = await wx.cloud.callFunction({
@@ -340,6 +346,8 @@ Page({
       wx.hideLoading();
       if (res.result && res.result.code === 0) {
         wx.showToast({ title: '保存成功', icon: 'success' });
+      } else if (res.result && res.result.code === -1001) {
+        wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
       } else {
         wx.showToast({ title: (res.result && res.result.message) || '保存失败', icon: 'none' });
       }

@@ -299,6 +299,92 @@
 .family-section .section-header {
   padding: 0;
   margin-bottom: 24rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 邀请类型选择浮层 */
+.invite-picker-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.invite-picker {
+  width: 100%;
+  background: #fff;
+  border-top-left-radius: 32rpx;
+  border-top-right-radius: 32rpx;
+  padding: 32rpx 24rpx 32rpx;
+  box-sizing: border-box;
+}
+
+.invite-picker-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+wx-button:not([size=mini]).invite-picker-item {
+  width: 100%;
+  background: #f7f7f8;
+  border: none;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.invite-picker-item::after {
+  border: none;
+}
+
+.invite-picker-item-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.invite-picker-item-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6rpx;
+}
+
+.invite-picker-item-desc {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.invite-picker-item-arrow {
+  color: #bbb;
+  font-size: 32rpx;
+  margin-left: 16rpx;
+}
+
+.invite-picker-cancel {
+  margin-top: 8rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: #666;
+  padding: 24rpx 0;
 }
 
 /* 家庭成员横向排列 */

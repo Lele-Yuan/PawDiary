@@ -8,6 +8,7 @@ Page({
     submitting: false,
     mode: 'add', // 'add' or 'edit'
     placeId: null,
+    forbidden: false,
     form: {
       name: '',
       description: '',
@@ -21,6 +22,14 @@ Page({
   },
 
   onLoad(options) {
+    // 平台管理员鉴权（兜底）
+    var app = getApp();
+    var role = app && app.globalData && app.globalData.userInfo && app.globalData.userInfo.role;
+    if (role !== 'admin') {
+      this.setData({ forbidden: true });
+      return;
+    }
+
     // 编辑模式
     if (options.mode === 'edit' && options.id) {
       this.setData({ mode: 'edit', placeId: options.id });
@@ -244,6 +253,12 @@ Page({
         setTimeout(function () {
           wx.navigateBack();
         }, 1500);
+      } else if (res.result && res.result.code === -1001) {
+        // 内容违规：清理本次新上传的图片
+        if (Array.isArray(imageFileIDs) && imageFileIDs.length > 0) {
+          try { await wx.cloud.deleteFile({ fileList: imageFileIDs }); } catch (_) {}
+        }
+        wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
       } else {
         wx.showToast({
           title: (res.result && res.result.message) || '提交失败',

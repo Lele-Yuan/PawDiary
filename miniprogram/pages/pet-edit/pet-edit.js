@@ -180,18 +180,32 @@ Page({
       };
 
       if (mode === 'add') {
-        await wx.cloud.callFunction({
+        const addRes = await wx.cloud.callFunction({
           name: 'petManage',
           data: { action: 'add', data: petData }
         });
+        if (addRes && addRes.result && addRes.result.code === -1001) {
+          if (petData.avatar) { try { await wx.cloud.deleteFile({ fileList: [petData.avatar] }); } catch (_) {} }
+          hideLoading();
+          this.setData({ submitting: false });
+          wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
+          return;
+        }
         incrementPetCount();
         showSuccess('添加成功');
       } else {
         petData._id = petId;
-        await wx.cloud.callFunction({
+        const upRes = await wx.cloud.callFunction({
           name: 'petManage',
           data: { action: 'update', data: petData }
         });
+        if (upRes && upRes.result && upRes.result.code === -1001) {
+          if (petData.avatar) { try { await wx.cloud.deleteFile({ fileList: [petData.avatar] }); } catch (_) {} }
+          hideLoading();
+          this.setData({ submitting: false });
+          wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
+          return;
+        }
         showSuccess('保存成功');
       }
 

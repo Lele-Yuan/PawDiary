@@ -16,7 +16,8 @@ Page({
     myLongitude: 0,
     markers: [],
     loading: false,
-    loaded: false
+    loaded: false,
+    isAdmin: false
   },
 
   _reportTimer: null,
@@ -27,6 +28,9 @@ Page({
   },
 
   onShow() {
+    var app = getApp();
+    var role = app && app.globalData && app.globalData.userInfo && app.globalData.userInfo.role;
+    this.setData({ isAdmin: role === 'admin' });
     this.startLocationReport();
   },
 

@@ -140,6 +140,8 @@ Page({
         this.setData({ blessingInput: '', blessingLength: 0 });
         // 刷新祝福列表和计数
         await this.refreshBlessings(randomPet._id, res.result.isNew);
+      } else if (res.result && res.result.code === -1001) {
+        showError('内容包含违规信息，请修改后重试');
       } else {
         showError(res.result ? res.result.message : '操作失败');
       }

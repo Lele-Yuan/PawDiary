@@ -1,0 +1,35 @@
+<nav-bar title="家庭成员" back="{{true}}" />
+
+<view class="page">
+  <loading-view wx:if="{{loading}}" />
+
+  <view class="tabs" wx:if="{{!loading}}">
+    <view class="tab {{tab === 'admin' ? 'active' : ''}}" bindtap="switchTab" data-tab="admin">
+      共养人 <text class="tab-count">{{adminCount}}</text>
+    </view>
+    <view class="tab {{tab === 'member' ? 'active' : ''}}" bindtap="switchTab" data-tab="member">
+      亲友团 <text class="tab-count">{{memberCount}}</text>
+    </view>
+  </view>
+
+  <view class="list" wx:if="{{!loading}}">
+    <block wx:for="{{filteredMembers}}" wx:key="_id">
+      <view class="row">
+        <image class="avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="info">
+          <text class="name">{{item.nickName || '未命名'}}</text>
+          <text class="role-tag tag-creator" wx:if="{{item.role === 'creator'}}">创建者</text>
+          <text class="role-tag tag-admin" wx:elif="{{item.role === 'admin'}}">共养人</text>
+          <text class="role-tag tag-member" wx:else>亲友团</text>
+        </view>
+        <view class="actions" wx:if="{{isCreator && item.role !== 'creator'}}">
+          <view class="btn" wx:if="{{tab === 'admin'}}" bindtap="onChangeRole" data-openid="{{item._openid}}" data-role="member">改为亲友团</view>
+          <view class="btn primary" wx:if="{{tab === 'member'}}" bindtap="onChangeRole" data-openid="{{item._openid}}" data-role="admin">变成共养人</view>
+        </view>
+      </view>
+    </block>
+    <view class="empty" wx:if="{{filteredMembers.length === 0}}">
+      <text class="empty-text">{{tab === 'admin' ? '暂无共养人' : '暂无亲友团成员'}}</text>
+    </view>
+  </view>
+</view>

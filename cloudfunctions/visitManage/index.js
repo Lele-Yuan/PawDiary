@@ -2,6 +2,7 @@ var cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 var db = cloud.database();
 var _ = db.command;
+var security = require('./contentSecurity');
 
 exports.main = async function (event, context) {
   var OPENID = cloud.getWXContext().OPENID;
@@ -38,6 +39,13 @@ async function addRecord(OPENID, data) {
     var creatorRole = data.creatorRole; // 'owner' | 'helper'
     if (!creatorRole) {
       return { code: -1, message: '请选择您的角色' };
+    }
+
+    // 内容安全校验
+    var composedText = [data.ownerNickname, data.helperNickname, data.serviceName, data.message, data.ownerNote, data.helperNote].filter(Boolean).join('\n');
+    if (composedText) {
+      var textRes = await security.checkText(cloud, OPENID, composedText);
+      if (!textRes.pass) return security.violationResult();
     }
 
     var now = db.serverDate();
@@ -173,6 +181,13 @@ async function updateRecord(OPENID, data) {
   }
   if (record.status !== 'pending' && record.status !== 'preparing') {
     return { code: -1, message: '当前状态不可编辑' };
+  }
+
+  // 内容安全校验
+  var composedText = [data.ownerNickname, data.helperNickname, data.serviceName, data.message, data.ownerNote, data.helperNote].filter(Boolean).join('\n');
+  if (composedText) {
+    var textRes = await security.checkText(cloud, OPENID, composedText);
+    if (!textRes.pass) return security.violationResult();
   }
 
   try {

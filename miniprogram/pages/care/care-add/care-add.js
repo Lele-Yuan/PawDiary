@@ -466,6 +466,9 @@ Page({
         setTimeout(function () {
           wx.navigateBack();
         }, 1200);
+      } else if (res.result && res.result.code === -1001) {
+        wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
+        this.setData({ submitting: false });
       } else {
         wx.showToast({ title: (res.result && res.result.message) || (isEdit ? '保存失败' : '发布失败'), icon: 'none' });
         this.setData({ submitting: false });

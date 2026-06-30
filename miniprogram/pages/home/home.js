@@ -34,7 +34,11 @@ Page({
     showLoginModal: false,
     afterLoginCallback: null,
     isGuest: false,
-    appConfig: null
+    appConfig: null,
+    showInvitePicker: false,
+    inviteRole: 'member',
+    adminMembers: [],
+    canInviteAdmin: true
   },
 
   onLoad(options) {
@@ -452,8 +456,17 @@ Page({
         members[i].roleLabel = roleLabels[members[i].role] || '成员';
         members[i].avatarUrl = members[i].avatarUrl || '';
       }
+      // 首页仅展示共养人（创建者 + 管理员）
+      var adminMembers = members.filter(function (m) {
+        return m.role === 'creator' || m.role === 'admin';
+      });
+      var canInviteAdmin = adminMembers.length < 5;
       console.log('loadFamilyMembers setData 前:', members);
-      this.setData({ familyMembers: members });
+      this.setData({
+        familyMembers: members,
+        adminMembers: adminMembers,
+        canInviteAdmin: canInviteAdmin
+      });
     } catch (err) {
       console.error('加载家庭成员失败', err);
     }
@@ -463,13 +476,18 @@ Page({
   onShareAppMessage: function (options) {
     var pet = this.data.currentPet;
     var petName = pet ? pet.name : '宠物';
-    
+
     // 有宠物时，邀请成员
     if (pet && options.from === 'button') {
-      // 来自页面内转发按钮（邀请成员按钮）
+      // 优先读取实例属性（同步），回退到 data
+      var pendingRole = this._inviteRole || this.data.inviteRole;
+      var role = pendingRole === 'admin' ? 'admin' : 'member';
+      var title = role === 'admin'
+        ? '邀请你成为「' + petName + '」的共养人'
+        : '邀请你加入「' + petName + '」的亲友团';
       return {
-        title: '邀请你加入「' + petName + '」的照顾家庭',
-        path: '/pages/invite/invite?id=' + this.data.currentPetId,
+        title: title,
+        path: '/pages/invite/invite?id=' + this.data.currentPetId + '&role=' + role,
         imageUrl: pet.avatar || ''
       };
     } else {
@@ -482,6 +500,41 @@ Page({
       };
     }
   },
+
+  // 显示邀请类型选择浮层
+  onShowInvitePicker: function () {
+    if (!this.data.canEdit) return;
+    this.setData({ showInvitePicker: true });
+  },
+
+  // 关闭邀请类型选择浮层
+  onHideInvitePicker: function () {
+    this.setData({ showInvitePicker: false });
+  },
+
+  // 选择邀请类型，仅设置 inviteRole；分享由按钮 open-type=share 自身触发
+  onPickInviteRole: function (e) {
+    var role = e.currentTarget.dataset.role === 'admin' ? 'admin' : 'member';
+    // 同步写入实例属性，避免 setData 异步导致 onShareAppMessage 读到旧值
+    this._inviteRole = role;
+    this.setData({ inviteRole: role, showInvitePicker: false });
+  },
+
+  // 进入家庭成员管理页
+  goFamilyMembers: function () {
+    if (!this.data.currentPetId) return;
+    wx.navigateTo({ url: '/pages/family-members/family-members?petId=' + this.data.currentPetId });
+  },
+
+  // 共养人已满时直接邀请亲友团（按钮自带 open-type=share）
+  onDirectInviteMember: function () {
+    if (!this.data.canEdit) return;
+    this._inviteRole = 'member';
+    this.setData({ inviteRole: 'member' });
+  },
+
+  noop: function () {},
+
 
   // 长按成员弹出管理菜单（创建者）
   onMemberLongPress: function(e) {

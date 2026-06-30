@@ -799,10 +799,11 @@ Page({
         fields.title = form.stealItem.trim();
       }
 
+      let saveRes;
       if (this.data.editId) {
         // 编辑模式：通过云函数更新
         fields._id = this.data.editId;
-        await wx.cloud.callFunction({
+        saveRes = await wx.cloud.callFunction({
           name: 'recordManage',
           data: { action: 'update', data: fields }
         });
@@ -810,24 +811,35 @@ Page({
         // 新增模式：通过云函数添加
         fields.petId = petId;
         fields.createdAt = new Date();
-        await wx.cloud.callFunction({
+        saveRes = await wx.cloud.callFunction({
           name: 'recordManage',
           data: { action: 'add', data: fields }
         });
+      }
 
-        // 如果来自"立即完成"，关闭原记录的提醒
-        if (this._sourceRecordId) {
-          try {
-            await wx.cloud.callFunction({
-              name: 'recordManage',
-              data: {
-                action: 'update',
-                data: { _id: this._sourceRecordId, enableRemind: false, nextDate: null }
-              }
-            });
-          } catch (e) {
-            console.error('关闭原记录提醒失败', e);
-          }
+      if (saveRes && saveRes.result && saveRes.result.code === -1001) {
+        // 内容违规：清理本次上传的图片
+        if (Array.isArray(fields.images) && fields.images.length > 0) {
+          try { await wx.cloud.deleteFile({ fileList: fields.images }); } catch (_) {}
+        }
+        hideLoading();
+        this.setData({ submitting: false });
+        wx.showToast({ title: '内容包含违规信息，请修改后重试', icon: 'none' });
+        return;
+      }
+
+      // 如果来自"立即完成"，关闭原记录的提醒
+      if (!this.data.editId && this._sourceRecordId) {
+        try {
+          await wx.cloud.callFunction({
+            name: 'recordManage',
+            data: {
+              action: 'update',
+              data: { _id: this._sourceRecordId, enableRemind: false, nextDate: null }
+            }
+          });
+        } catch (e) {
+          console.error('关闭原记录提醒失败', e);
         }
       }
 

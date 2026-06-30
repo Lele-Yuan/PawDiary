@@ -2,6 +2,7 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
+const security = require('./contentSecurity');
 
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
@@ -52,6 +53,25 @@ async function addRecord(openid, data) {
   ];
   if (!validTypes.includes(data.type)) {
     return { code: -1, message: '无效的记录类型' };
+  }
+
+  // 内容安全校验：文本聚合 + 图片
+  const composedText = [
+    data.title, data.description, data.location, data.notes,
+    data.abnormalDesc, data.troubleName, data.stealItem,
+    data.foodType, data.foodAmount, data.dewormType, data.vaccineType,
+    data.medicationType, data.hospitalName
+  ].filter(Boolean).join('\n');
+  if (composedText) {
+    const r = await security.checkText(cloud, openid, composedText);
+    if (!r.pass) return security.violationResult();
+  }
+  if (Array.isArray(data.images) && data.images.length > 0) {
+    const r = await security.checkImagesByFileIds(cloud, data.images);
+    if (!r.pass) {
+      await security.deleteFiles(cloud, data.images);
+      return security.violationResult();
+    }
   }
 
   // 查询宠物名称（冗余存储，供通知消息使用）
@@ -160,6 +180,30 @@ async function updateRecord(openid, data) {
   const role = memberRes.data[0].role || 'member';
   if (role !== 'creator' && role !== 'admin') {
     return { code: -1, message: '无权限请联系宠物主' };
+  }
+
+  // 内容安全校验（更新）
+  const composedText = [
+    data.title, data.description, data.location, data.notes,
+    data.abnormalDesc, data.troubleName, data.stealItem,
+    data.foodType, data.foodAmount, data.dewormType, data.vaccineType,
+    data.medicationType, data.hospitalName
+  ].filter(Boolean).join('\n');
+  if (composedText) {
+    const r = await security.checkText(cloud, openid, composedText);
+    if (!r.pass) return security.violationResult();
+  }
+  if (Array.isArray(data.images) && data.images.length > 0) {
+    // 仅校验本次新增的图片（与旧 images 的差集）
+    const oldImages = Array.isArray(record.images) ? record.images : [];
+    const newImages = data.images.filter(id => oldImages.indexOf(id) === -1);
+    if (newImages.length > 0) {
+      const r = await security.checkImagesByFileIds(cloud, newImages);
+      if (!r.pass) {
+        await security.deleteFiles(cloud, newImages);
+        return security.violationResult();
+      }
+    }
   }
 
   const updateData = {};

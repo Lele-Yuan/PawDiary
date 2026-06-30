@@ -230,3 +230,64 @@ db.collection('records')
 - 编辑（updateRecord/updateBill）：先观察用户是否有此需求
 - 检查清单 / 地图 / 互助 / 上门 / 纪念馆 SKILL：后续迭代
 - 复杂记录类型（heat/trouble/stealfood）的卡片精修：先用通用记录卡片
+
+## 10. 规范修订（2026-06-09）：迁移到「小程序 AI 开发模式」官方规范
+
+经核对 https://developers.weixin.qq.com/miniprogram/dev/ai/integration.html ，原实现是 CloudBase Agent 风格，需统一迁移到官方"小程序 AI 开发模式"规范。
+
+### 10.1 修订内容
+
+- **API 注册**：`require('skill').use` → `wx.modelContext.createSkill(skillAbsPath).registerAPI`
+- **返回值结构**：
+  - 旧：`{ isError, card, data, message }`
+  - 新：
+    ```js
+    {
+      isError: false,
+      content: [{ type: 'text', text: '已为来福记录今天体重 5.2kg' }],
+      structuredContent: { /* 给 LLM + 原子组件渲染 */ },
+      _meta: { /* 对 LLM 不可见，传给原子组件 */ }
+    }
+    ```
+- **mcp.json 顶层结构**：
+  ```json
+  {
+    "apis": [
+      {
+        "name": "addRecord",
+        "description": "...",
+        "inputSchema": { "type": "object", "properties": {...}, "required": [...] },
+        "outputSchema": { "type": "object", "properties": {...} },
+        "_meta": { "ui": { "componentPath": "components/record-card" } }
+      }
+    ],
+    "components": [
+      { "path": "components/record-card" }
+    ]
+  }
+  ```
+- **目录调整**：业务实现移入 `apis/` 子目录，每个原子接口一个文件；`index.js` 仅做注册
+- **原子组件**：改用 `wx.modelContext.getContext(this).on(NotificationType.Input | Result, cb)` 接收数据，不再用 `properties.data`
+- **组件二次交互**：通过 `wx.modelContext.getViewContext(this).sendFollowUpMessage(...)` 触发 follow-up；进入小程序详情页用 `openDetailPage({ url })`（替代之前 mcp 里的 `relatedPage` 字段）
+- **`lazyCodeLoading: 'requiredComponents'`**：必须在 `app.json` 顶层声明（已存在，复核保留）
+- **可选全局提示词**：暂不引入 `AGENTS.md`，待回归后再加
+
+### 10.2 迁移后目录结构
+
+```
+miniprogram/skills/
+├── record-skill/
+│   ├── SKILL.md
+│   ├── mcp.json
+│   ├── index.js              # createSkill + registerAPI 三个接口
+│   ├── apis/
+│   │   ├── _resolvePet.js    # 公共：宠物名解析（按官方中间件机制可扩展）
+│   │   ├── addRecord.js
+│   │   ├── listRecords.js
+│   │   └── deleteRecord.js
+│   └── components/
+│       ├── record-card/
+│       └── record-list-card/
+├── bill-skill/ (apis: addBill / listBills / getMonthlyStats，components: bill-card / bill-list-card / bill-stats-card)
+└── reminder-skill/ (apis: listUpcomingReminders / getNextReminderByType，components: reminder-list-card)
+```
