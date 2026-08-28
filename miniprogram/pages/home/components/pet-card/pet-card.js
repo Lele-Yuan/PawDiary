@@ -1,4 +1,9 @@
 const { calcAge } = require('../../../../utils/util');
+const { PET_REMARK_TYPES } = require('../../../../utils/constants');
+
+// 构建备注类型 map，用于快速查找 icon 和 label
+const REMARK_TYPE_MAP = {};
+PET_REMARK_TYPES.forEach(t => { REMARK_TYPE_MAP[t.key] = t; });
 
 Component({
   properties: {
@@ -20,7 +25,10 @@ Component({
     age: '',
     companionDays: 0,
     showDrawer: false,
-    petList: []
+    petList: [],
+    showRemarksSheet: false,
+    hasRemarks: false,
+    remarkList: []
   },
 
   observers: {
@@ -44,7 +52,17 @@ Component({
           const diffMs = todayMidnight.getTime() - adoptD.getTime();
           companionDays = diffMs > 0 ? Math.floor(diffMs / (1000 * 60 * 60 * 24)) : 0;
         }
-        this.setData({ age, companionDays });
+
+        // 备注数据
+        const rawRemarks = pet.remarks || [];
+        const hasRemarks = rawRemarks.length > 0;
+        const remarkList = rawRemarks.map(r => {
+          const typeInfo = REMARK_TYPE_MAP[r.type] || REMARK_TYPE_MAP['other'];
+          const label = r.type === 'custom' ? (r.customType || '自定义') : typeInfo.label;
+          return { icon: typeInfo.icon, label, content: r.content };
+        });
+
+        this.setData({ age, companionDays, hasRemarks, remarkList });
       }
     },
     'pets': function (pets) {
@@ -77,6 +95,14 @@ Component({
       if (petId && petId !== (this.properties.pet && this.properties.pet._id)) {
         this.triggerEvent('switch', { petId });
       }
+    },
+
+    openRemarksSheet() {
+      this.setData({ showRemarksSheet: true });
+    },
+
+    closeRemarksSheet() {
+      this.setData({ showRemarksSheet: false });
     },
 
     noop() {}

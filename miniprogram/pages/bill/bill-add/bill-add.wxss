@@ -98,3 +98,65 @@
   height: 88rpx;
   font-size: 32rpx;
 }
+
+/* 付款人选择器 */
+.payer-scroll {
+  width: 100%;
+  margin-top: 16rpx;
+}
+
+.payer-list {
+  display: flex;
+  gap: 20rpx;
+  white-space: nowrap;
+  padding-bottom: 4rpx;
+}
+
+.payer-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 20rpx;
+  border: 2rpx solid transparent;
+  background: var(--card-soft-bg);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.payer-item.active {
+  border-color: var(--primary-color);
+  background: rgba(107, 45, 26, 0.08);
+}
+
+.payer-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.payer-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-color);
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.payer-name {
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  max-width: 80rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.payer-name.active {
+  color: var(--primary-color);
+  font-weight: 500;
+}

@@ -9,6 +9,7 @@
       <view class="hero-name-row" catchtap="openDrawer">
         <view class="hero-name">{{pet.name}}</view>
         <view class="hero-name-arrow {{showDrawer ? 'is-open' : ''}}">▾</view>
+        <view wx:if="{{hasRemarks}}" class="hero-remarks-btn" catchtap="openRemarksSheet">备注信息</view>
       </view>
 
       <view class="hero-meta">
@@ -68,4 +69,28 @@
       </view>
     </scroll-view>
   </view>
+</view>
+
+<!-- 备注浮层遮罩 -->
+<view class="remarks-sheet-mask {{showRemarksSheet ? 'is-show' : ''}}" catchtap="closeRemarksSheet" catchtouchmove="noop"></view>
+
+<!-- 备注 bottom sheet -->
+<view class="remarks-sheet {{showRemarksSheet ? 'is-show' : ''}}" catchtouchmove="noop">
+  <view class="remarks-sheet-drag-bar"></view>
+  <view class="remarks-sheet-header">
+    <text class="remarks-sheet-title">宠物备注</text>
+    <view class="remarks-sheet-close" catchtap="closeRemarksSheet">×</view>
+  </view>
+  <scroll-view class="remarks-sheet-body" scroll-y enhanced show-scrollbar="{{false}}">
+    <view wx:if="{{remarkList.length > 0}}">
+      <view class="remark-sheet-item" wx:for="{{remarkList}}" wx:key="index">
+        <view class="remark-sheet-type">
+          <text class="remark-sheet-icon">{{item.icon}}</text>
+          <text class="remark-sheet-label">{{item.label}}</text>
+        </view>
+        <view class="remark-sheet-content">{{item.content}}</view>
+      </view>
+    </view>
+    <view wx:else class="remarks-sheet-empty">暂无备注信息</view>
+  </scroll-view>
 </view>

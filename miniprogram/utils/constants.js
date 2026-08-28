@@ -89,6 +89,17 @@ const PET_GENDERS = [
 ];
 
 /**
+ * 宠物备注类型
+ */
+const PET_REMARK_TYPES = [
+  { key: 'preference', label: '喜好', icon: '💛' },
+  { key: 'taboo', label: '禁忌', icon: '🚫' },
+  { key: 'caution', label: '注意事项', icon: '⚠️' },
+  { key: 'other', label: '其他', icon: '📝' },
+  { key: 'custom', label: '自定义', icon: '✏️' }
+];
+
+/**
  * 系统预设清单模板
  */
 const DEFAULT_CHECKLIST_TEMPLATES = [
@@ -253,6 +264,7 @@ module.exports = {
   BILL_CATEGORY_COLORS,
   PET_SPECIES,
   PET_GENDERS,
+  PET_REMARK_TYPES,
   DEFAULT_CHECKLIST_TEMPLATES,
   COLLECTIONS,
   MEMBER_ROLES,

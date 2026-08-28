@@ -12,7 +12,9 @@ Page({
     trends: [],
     loaded: false,
     maxYear: 2026,
-    maxMonth: 3
+    maxMonth: 3,
+    members: [],
+    selectedPayer: 'all'
   },
 
   onLoad(options) {
@@ -30,6 +32,38 @@ Page({
       maxYear,
       maxMonth
     });
+    this.loadMembers();
+    this.loadStats();
+  },
+
+  // 加载共养人列表
+  async loadMembers() {
+    const app = getApp();
+    const petId = app.globalData.currentPetId;
+    if (!petId) return;
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'familyManage',
+        data: { action: 'list', data: { petId } }
+      });
+      if (res.result && res.result.code === 0) {
+        const members = (res.result.data || [])
+          .filter(m => m.role === 'creator' || m.role === 'admin')
+          .map(m => ({
+            openid: m._openid,
+            nickName: m.nickName || '未知'
+          }));
+        this.setData({ members });
+      }
+    } catch (e) {
+      console.error('加载付款人筛选列表失败:', e);
+    }
+  },
+
+  // 选择付款人筛选
+  onSelectPayer(e) {
+    const payer = e.currentTarget.dataset.payer;
+    this.setData({ selectedPayer: payer, loaded: false });
     this.loadStats();
   },
 
@@ -79,27 +113,34 @@ Page({
     }
 
     try {
-      const db = wx.cloud.database();
-      const _ = db.command;
-      const { currentYear, currentMonth, period } = this.data;
+      const { currentYear, currentMonth, period, selectedPayer } = this.data;
+      const payerOpenid = selectedPayer === 'all' ? '' : selectedPayer;
 
-      let startDate, endDate;
+      // 通过云函数查询账单（与 bill.js 保持一致，避免客户端权限限制）
+      let bills = [];
       if (period === 'month') {
-        startDate = new Date(currentYear, currentMonth - 1, 1);
-        endDate = new Date(currentYear, currentMonth, 1);
+        const queryData = { petId, year: currentYear, month: currentMonth };
+        if (payerOpenid) queryData.payerOpenid = payerOpenid;
+        const res = await wx.cloud.callFunction({
+          name: 'billManage',
+          data: { action: 'list', data: queryData }
+        });
+        bills = res.result && res.result.code === 0 ? res.result.data : [];
       } else {
-        startDate = new Date(currentYear, 0, 1);
-        endDate = new Date(currentYear + 1, 0, 1);
+        // 年度：逐月拉取并合并
+        const allBills = [];
+        for (let m = 1; m <= 12; m++) {
+          const queryData = { petId, year: currentYear, month: m };
+          if (payerOpenid) queryData.payerOpenid = payerOpenid;
+          const res = await wx.cloud.callFunction({
+            name: 'billManage',
+            data: { action: 'list', data: queryData }
+          });
+          const monthBills = res.result && res.result.code === 0 ? res.result.data : [];
+          allBills.push(...monthBills);
+        }
+        bills = allBills;
       }
-
-      // 查询时段内所有账单
-      const { data: bills } = await db.collection('bills')
-        .where({
-          petId,
-          date: _.gte(startDate).and(_.lt(endDate))
-        })
-        .limit(1000)
-        .get();
 
       const total = bills.reduce((sum, b) => sum + b.amount, 0);
 
@@ -149,9 +190,8 @@ Page({
   // 加载近6个月趋势
   async loadTrends(petId) {
     try {
-      const db = wx.cloud.database();
-      const _ = db.command;
-      const { currentYear, currentMonth } = this.data;
+      const { currentYear, currentMonth, selectedPayer } = this.data;
+      const payerOpenid = selectedPayer === 'all' ? '' : selectedPayer;
       const trends = [];
       let maxTotal = 0;
 
@@ -161,15 +201,13 @@ Page({
         let y = currentYear;
         if (m <= 0) { m += 12; y--; }
 
-        const mStart = new Date(y, m - 1, 1);
-        const mEnd = new Date(y, m, 1);
-
-        const { data: mBills } = await db.collection('bills')
-          .where({
-            petId,
-            date: _.gte(mStart).and(_.lt(mEnd))
-          })
-          .get();
+        const queryData = { petId, year: y, month: m };
+        if (payerOpenid) queryData.payerOpenid = payerOpenid;
+        const res = await wx.cloud.callFunction({
+          name: 'billManage',
+          data: { action: 'list', data: queryData }
+        });
+        const mBills = res.result && res.result.code === 0 ? res.result.data : [];
 
         const mTotal = mBills.reduce((sum, b) => sum + b.amount, 0);
         if (mTotal > maxTotal) maxTotal = mTotal;

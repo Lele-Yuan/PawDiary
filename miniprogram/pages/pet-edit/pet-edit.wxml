@@ -119,6 +119,72 @@
     </view>
   </view>
 
+  <!-- 备注模块 -->
+  <view class="form-section card remark-section">
+    <view class="remark-header">
+      <view class="form-label remark-title">备注</view>
+      <view class="remark-count" wx:if="{{form.remarks.length > 0}}">{{form.remarks.length}}/10</view>
+    </view>
+
+    <!-- 备注列表 -->
+    <view class="remark-list" wx:if="{{form.remarks.length > 0}}">
+      <view
+        class="remark-item"
+        wx:for="{{form.remarks}}"
+        wx:key="index"
+        wx:for-index="idx"
+      >
+        <!-- 类型标签选择器 -->
+        <scroll-view class="remark-type-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+          <view class="remark-type-row">
+            <view
+              class="remark-type-tag {{item.type === t.key ? 'active' : ''}}"
+              wx:for="{{remarkTypes}}"
+              wx:for-item="t"
+              wx:key="key"
+              data-index="{{idx}}"
+              data-type="{{t.key}}"
+              bindtap="onRemarkTypeChange"
+            >{{t.icon}} {{t.label}}</view>
+          </view>
+        </scroll-view>
+
+        <!-- 自定义类型名输入框 -->
+        <input
+          wx:if="{{item.type === 'custom'}}"
+          class="form-input remark-custom-type-input"
+          placeholder="请输入自定义类型名（最多10字）"
+          value="{{item.customType}}"
+          maxlength="10"
+          bindinput="onRemarkCustomTypeInput"
+          data-index="{{idx}}"
+        />
+
+        <!-- 内容输入框 + 删除按钮 -->
+        <view class="remark-content-row">
+          <textarea
+            class="remark-textarea"
+            placeholder="请填写备注内容（最多100字）"
+            value="{{item.content}}"
+            maxlength="100"
+            auto-height
+            bindinput="onRemarkContentInput"
+            data-index="{{idx}}"
+          />
+          <view class="remark-delete" data-index="{{idx}}" bindtap="onRemoveRemark">×</view>
+        </view>
+
+        <view class="remark-divider" wx:if="{{idx < form.remarks.length - 1}}"></view>
+      </view>
+    </view>
+
+    <!-- 添加按钮 -->
+    <view class="remark-add-btn {{form.remarks.length >= 10 ? 'disabled' : ''}}" bindtap="onAddRemark">
+      <text class="remark-add-icon">+</text>
+      <text>添加备注</text>
+    </view>
+  </view>
+
   <!-- 提交按钮 -->
   <view class="btn-section">
     <button class="btn-primary submit-btn" hover-class="btn-primary-hover" bindtap="onSubmit" loading="{{submitting}}">

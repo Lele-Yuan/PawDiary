@@ -8,12 +8,15 @@ Page({
     submitting: false,
     editId: '',
     pageTitle: '记一笔',
+    members: [],   // 共养人列表
     form: {
       amount: '',
       category: '',
       title: '',
       date: '',
-      note: ''
+      note: '',
+      payerOpenid: '',
+      payerName: ''
     }
   },
 
@@ -34,11 +37,60 @@ Page({
       return;
     }
 
+    // 初始化付款人为当前用户
+    const userInfo = app.globalData.userInfo || {};
+    this.setData({
+      'form.payerOpenid': app.globalData.openid || '',
+      'form.payerName': userInfo.nickName || '我'
+    });
+
+    // 加载共养人列表
+    this.loadMembers();
+
     // 编辑模式
     if (options.id) {
       this.setData({ editId: options.id, pageTitle: '编辑账单' });
       this.loadBill(options.id);
     }
+  },
+
+  // 加载共养人列表
+  async loadMembers() {
+    const app = getApp();
+    const petId = app.globalData.currentPetId;
+    if (!petId) return;
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'familyManage',
+        data: { action: 'list', data: { petId } }
+      });
+      if (res.result && res.result.code === 0) {
+        const members = (res.result.data || [])
+          .filter(m => m.role === 'creator' || m.role === 'admin')
+          .map(m => ({
+            openid: m._openid,
+            nickName: m.nickName || '未知',
+            avatarUrl: m.avatarUrl || ''
+          }));
+        this.setData({ members });
+        // 若当前付款人 openid 还未匹配到昵称，尝试从列表补全
+        const currentOpenid = this.data.form.payerOpenid;
+        if (currentOpenid) {
+          const matched = members.find(m => m.openid === currentOpenid);
+          if (matched && matched.nickName) {
+            this.setData({ 'form.payerName': matched.nickName });
+          }
+        }
+      }
+    } catch (e) {
+      console.error('加载共养人列表失败:', e);
+    }
+  },
+
+  // 选择付款人
+  onSelectPayer(e) {
+    const { openid, name } = e.currentTarget.dataset;
+    this.setData({ 'form.payerOpenid': openid, 'form.payerName': name });
   },
 
   // 金额输入
@@ -89,7 +141,9 @@ Page({
           'form.category': bill.category || '',
           'form.title': bill.title || '',
           'form.date': dateStr || this.data.today,
-          'form.note': bill.note || ''
+          'form.note': bill.note || '',
+          'form.payerOpenid': bill.payerOpenid || '',
+          'form.payerName': bill.payerName || ''
         });
       } else {
         showError('获取账单数据失败');
@@ -146,14 +200,18 @@ Page({
         category: form.category,
         title: form.title.trim(),
         date: form.date,
-        note: form.note.trim()
+        note: form.note.trim(),
+        payerOpenid: form.payerOpenid,
+        payerName: form.payerName
       } : {
         petId,
         amount: Number(form.amount),
         category: form.category,
         title: form.title.trim(),
         date: form.date,
-        note: form.note.trim()
+        note: form.note.trim(),
+        payerOpenid: form.payerOpenid,
+        payerName: form.payerName
       };
 
       const res = await wx.cloud.callFunction({

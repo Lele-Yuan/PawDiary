@@ -1,4 +1,4 @@
-const { PET_SPECIES, PET_GENDERS } = require('../../utils/constants');
+const { PET_SPECIES, PET_GENDERS, PET_REMARK_TYPES } = require('../../utils/constants');
 const { showLoading, hideLoading, showSuccess, showError } = require('../../utils/util');
 const { uploadFile } = require('../../utils/cloud');
 const { checkPetLimit, incrementPetCount, checkImageSize } = require('../../utils/limit');
@@ -9,6 +9,7 @@ Page({
     petId: '',
     speciesList: PET_SPECIES,
     genderList: PET_GENDERS,
+    remarkTypes: PET_REMARK_TYPES,
     today: '',
     submitting: false,
     form: {
@@ -19,7 +20,8 @@ Page({
       gender: 'male',
       birthday: '',
       adoptDate: '',
-      weight: ''
+      weight: '',
+      remarks: []
     }
   },
 
@@ -70,7 +72,8 @@ Page({
             gender: pet.gender || 'male',
             birthday: formatDate(pet.birthday),
             adoptDate: formatDate(pet.adoptDate),
-            weight: pet.weight ? String(pet.weight) : ''
+            weight: pet.weight ? String(pet.weight) : '',
+            remarks: pet.remarks || []
           }
         });
       } else {
@@ -127,9 +130,53 @@ Page({
     this.setData({ [`form.${field}`]: e.detail.value });
   },
 
+  // 添加备注
+  onAddRemark() {
+    const remarks = this.data.form.remarks || [];
+    if (remarks.length >= 10) {
+      wx.showToast({ title: '最多添加10条备注', icon: 'none' });
+      return;
+    }
+    const newRemarks = remarks.concat([{ type: 'preference', customType: '', content: '' }]);
+    this.setData({ 'form.remarks': newRemarks });
+  },
+
+  // 删除备注
+  onRemoveRemark(e) {
+    const index = e.currentTarget.dataset.index;
+    const remarks = (this.data.form.remarks || []).slice();
+    remarks.splice(index, 1);
+    this.setData({ 'form.remarks': remarks });
+  },
+
+  // 选择备注类型
+  onRemarkTypeChange(e) {
+    const index = e.currentTarget.dataset.index;
+    const type = e.currentTarget.dataset.type;
+    const remarks = (this.data.form.remarks || []).slice();
+    remarks[index] = Object.assign({}, remarks[index], { type, customType: type === 'custom' ? (remarks[index].customType || '') : '' });
+    this.setData({ 'form.remarks': remarks });
+  },
+
+  // 备注内容输入
+  onRemarkContentInput(e) {
+    const index = e.currentTarget.dataset.index;
+    const remarks = (this.data.form.remarks || []).slice();
+    remarks[index] = Object.assign({}, remarks[index], { content: e.detail.value });
+    this.setData({ 'form.remarks': remarks });
+  },
+
+  // 自定义类型名输入
+  onRemarkCustomTypeInput(e) {
+    const index = e.currentTarget.dataset.index;
+    const remarks = (this.data.form.remarks || []).slice();
+    remarks[index] = Object.assign({}, remarks[index], { customType: e.detail.value });
+    this.setData({ 'form.remarks': remarks });
+  },
+
   // 表单校验
   validateForm() {
-    const { name, species } = this.data.form;
+    const { name, species, remarks } = this.data.form;
     if (!name || !name.trim()) {
       showError('请输入宠物名称');
       return false;
@@ -137,6 +184,17 @@ Page({
     if (!species) {
       showError('请选择宠物物种');
       return false;
+    }
+    for (let i = 0; i < (remarks || []).length; i++) {
+      const r = remarks[i];
+      if (!r.content || !r.content.trim()) {
+        showError(`第${i + 1}条备注内容不能为空`);
+        return false;
+      }
+      if (r.type === 'custom' && (!r.customType || !r.customType.trim())) {
+        showError(`第${i + 1}条备注的自定义类型名不能为空`);
+        return false;
+      }
     }
     return true;
   },
@@ -176,7 +234,12 @@ Page({
         gender: form.gender,
         birthday: form.birthday || null,
         adoptDate: form.adoptDate || null,
-        weight: form.weight || null
+        weight: form.weight || null,
+        remarks: (form.remarks || []).map(r => ({
+          type: r.type,
+          customType: r.type === 'custom' ? (r.customType || '').trim() : '',
+          content: (r.content || '').trim()
+        }))
       };
 
       if (mode === 'add') {

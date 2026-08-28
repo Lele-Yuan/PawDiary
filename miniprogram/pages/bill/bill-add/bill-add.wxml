@@ -72,6 +72,32 @@
         maxlength="100"
       />
     </view>
+
+    <!-- 付款人 -->
+    <view class="form-group">
+      <view class="form-label">付款人</view>
+      <scroll-view class="payer-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="payer-list">
+          <view
+            class="payer-item {{form.payerOpenid === item.openid ? 'active' : ''}}"
+            wx:for="{{members}}"
+            wx:key="openid"
+            data-openid="{{item.openid}}"
+            data-name="{{item.nickName}}"
+            bindtap="onSelectPayer"
+          >
+            <image
+              wx:if="{{item.avatarUrl}}"
+              class="payer-avatar"
+              src="{{item.avatarUrl}}"
+              mode="aspectFill"
+            />
+            <view wx:else class="payer-avatar payer-avatar-placeholder">{{item.nickName.slice(0,1)}}</view>
+            <text class="payer-name {{form.payerOpenid === item.openid ? 'active' : ''}}">{{item.nickName}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
   </view>
 
   <!-- 提交按钮 -->

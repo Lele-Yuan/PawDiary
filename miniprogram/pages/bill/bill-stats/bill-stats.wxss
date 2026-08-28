@@ -58,6 +58,51 @@
   box-shadow: 0 2rpx 8rpx rgba(123, 92, 245, 0.16);
 }
 
+/* 付款人筛选 */
+.payer-filter-card {
+  margin-top: 16rpx;
+  padding: 24rpx 28rpx;
+}
+
+.payer-filter-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 16rpx;
+}
+
+.payer-filter-scroll {
+  width: 100%;
+}
+
+.payer-filter-list {
+  display: flex;
+  gap: 16rpx;
+  white-space: nowrap;
+  padding-bottom: 4rpx;
+}
+
+.payer-filter-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 24rpx;
+  border-radius: 28rpx;
+  background: var(--primary-bg);
+  color: var(--text-secondary);
+  font-size: 24rpx;
+  border: 2rpx solid transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.payer-filter-item.active {
+  background: #FFFFFF;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  font-weight: 600;
+}
+
 /* 总额 */
 .total-card {
   text-align: center;

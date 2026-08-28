@@ -19,8 +19,6 @@
 
   <!-- 月度概览卡 -->
   <view class="hero-purple card">
-    <!-- 右上角装饰圆 -->
-    <view class="overview-deco-circle"></view>
     <!-- 标题行 + 右上角图标 -->
     <view class="overview-header">
       <text class="overview-label">本月总支出</text>
@@ -90,7 +88,7 @@
 
           <!-- 账单项 -->
           <view
-            class="bill-item {{billIdx % 2 === 0 ? '' : 'bill-item-alt'}} {{bill._id === currentSwipedId ? 'swiped' : ''}}"
+            class="bill-item {{bill._id === currentSwipedId ? 'swiped' : ''}}"
             style="transform: translateX({{bill._id === currentSwipedId ? -220 : 0}}rpx);"
             data-id="{{bill._id}}"
             bindtouchstart="onTouchStart"
@@ -113,6 +111,7 @@
               <view class="bill-category-tag" style="background-color: {{bill.categoryColor}}22; color: {{bill.categoryColor}};">
                 {{bill.categoryLabel}}
               </view>
+              <text class="bill-payer-name" wx:if="{{bill.payerName}}">{{bill.payerName}}</text>
             </view>
           </view>
         </view>

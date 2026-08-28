@@ -67,6 +67,8 @@ async function addBill(openid, data) {
     title: data.title,
     date: new Date(data.date),
     note: data.note || '',
+    payerOpenid: data.payerOpenid || openid,
+    payerName: data.payerName || '',
     createdAt: new Date()
   };
 
@@ -137,6 +139,8 @@ async function updateBill(openid, data) {
   if (data.title !== undefined) updateData.title = data.title;
   if (data.date !== undefined) updateData.date = new Date(data.date);
   if (data.note !== undefined) updateData.note = data.note;
+  if (data.payerOpenid !== undefined) updateData.payerOpenid = data.payerOpenid;
+  if (data.payerName !== undefined) updateData.payerName = data.payerName;
 
   await db.collection('bills').doc(data._id).update({ data: updateData });
   return { code: 0, message: '更新成功' };
@@ -166,6 +170,11 @@ async function listBills(openid, data) {
     const startDate = new Date(data.year, data.month - 1, 1);
     const endDate = new Date(data.year, data.month, 1);
     where.date = _.gte(startDate).and(_.lt(endDate));
+  }
+
+  // 按付款人筛选
+  if (data.payerOpenid) {
+    where.payerOpenid = data.payerOpenid;
   }
 
   const limit = data.limit || 100;

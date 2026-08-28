@@ -169,3 +169,137 @@
 .archive-btn::after {
   border: none;
 }
+
+/* 备注模块 */
+.remark-section {
+  margin-top: 12rpx;
+}
+
+.remark-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4rpx;
+}
+
+.remark-title {
+  margin-bottom: 0;
+}
+
+.remark-count {
+  font-size: 24rpx;
+  color: var(--text-secondary, #6E6790);
+}
+
+.remark-list {
+  margin-bottom: 16rpx;
+}
+
+.remark-item {
+  padding: 16rpx 0 4rpx;
+}
+
+.remark-divider {
+  height: 1rpx;
+  background: rgba(0, 0, 0, 0.06);
+  margin: 16rpx 0 0;
+}
+
+/* 类型标签横向滚动 */
+.remark-type-scroll {
+  width: 100%;
+  margin-bottom: 16rpx;
+}
+
+.remark-type-row {
+  display: flex;
+  gap: 12rpx;
+  white-space: nowrap;
+  padding-bottom: 4rpx;
+}
+
+.remark-type-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  color: var(--text-secondary, #6E6790);
+  background: var(--card-soft-bg, #F5F0FF);
+  border: 2rpx solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.remark-type-tag.active {
+  color: var(--primary-color);
+  background: rgba(107, 45, 26, 0.08);
+  border-color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* 自定义类型输入框 */
+.remark-custom-type-input {
+  margin-bottom: 12rpx;
+  background: var(--card-soft-bg, #F5F0FF);
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+}
+
+/* 内容区域（textarea + 删除） */
+.remark-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.remark-textarea {
+  flex: 1;
+  min-height: 80rpx;
+  padding: 16rpx 20rpx;
+  background: var(--card-soft-bg, #F5F0FF);
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  color: var(--text-primary, #2A1F5C);
+  line-height: 1.6;
+}
+
+.remark-delete {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(244, 67, 54, 0.1);
+  color: #F44336;
+  font-size: 40rpx;
+  line-height: 52rpx;
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 8rpx;
+}
+
+/* 添加备注按钮 */
+.remark-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 24rpx 0;
+  border-radius: 16rpx;
+  border: 2rpx dashed var(--primary-color);
+  color: var(--primary-color);
+  font-size: 28rpx;
+  background: rgba(107, 45, 26, 0.04);
+}
+
+.remark-add-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.remark-add-icon {
+  font-size: 36rpx;
+  line-height: 1;
+  font-weight: 300;
+}

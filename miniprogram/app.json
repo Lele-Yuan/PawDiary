@@ -20,6 +20,7 @@
     "pages/visit/visit",
     "pages/visit/visit-add/visit-add",
     "pages/invite/invite",
+    "pages/family-members/family-members",
     "pages/loading/loading",
     "pages/memorial/memorial",
     "pages/memorial/memorial-add/memorial-add",
@@ -77,18 +78,6 @@
     ]
   },
   "sitemapLocation": "sitemap.json",
-  "subPackages": [
-    { "root": "skills/record-skill",   "independent": true, "pages": [] },
-    { "root": "skills/bill-skill",     "independent": true, "pages": [] },
-    { "root": "skills/reminder-skill", "independent": true, "pages": [] }
-  ],
-  "agent": {
-    "skills": [
-      { "name": "record",   "description": "宠物日常记录管理：新增、查询、删除体重/饮食/驱虫/疫苗/就诊等记录", "path": "skills/record-skill" },
-      { "name": "bill",     "description": "宠物账单：新增消费、查询账单、查看月度统计", "path": "skills/bill-skill" },
-      { "name": "reminder", "description": "查询宠物提醒事项：下次驱虫、下次疫苗、即将到期的所有提醒", "path": "skills/reminder-skill" }
-    ]
-  },
   "permission": {
     "scope.userLocation": {
       "desc": "你的位置信息将用于展示附近的宠物友好地点和在线用户"

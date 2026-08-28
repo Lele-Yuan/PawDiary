@@ -31,7 +31,10 @@ async function addPet(openid, data) {
   }
 
   // 内容安全校验：文本聚合 + 头像
-  const composedText = [data.name, data.breed, data.description].filter(Boolean).join('\n');
+  const remarksText = Array.isArray(data.remarks)
+    ? data.remarks.map(r => [r.customType, r.content].filter(Boolean).join(' ')).join('\n')
+    : '';
+  const composedText = [data.name, data.breed, data.description, remarksText].filter(Boolean).join('\n');
   if (composedText) {
     const r = await security.checkText(cloud, openid, composedText);
     if (!r.pass) return security.violationResult();
@@ -57,7 +60,8 @@ async function addPet(openid, data) {
     weightHistory: data.weight ? [{ date: new Date(), weight: Number(data.weight) }] : [],
     status: 'active',
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
+    remarks: Array.isArray(data.remarks) ? data.remarks : []
   };
 
   const res = await db.collection('pets').add({ data: petData });
@@ -103,7 +107,10 @@ async function updatePet(openid, data) {
   }
 
   // 内容安全校验
-  const composedText = [data.name, data.breed, data.description].filter(Boolean).join('\n');
+  const remarksText = Array.isArray(data.remarks)
+    ? data.remarks.map(r => [r.customType, r.content].filter(Boolean).join(' ')).join('\n')
+    : '';
+  const composedText = [data.name, data.breed, data.description, remarksText].filter(Boolean).join('\n');
   if (composedText) {
     const r = await security.checkText(cloud, openid, composedText);
     if (!r.pass) return security.violationResult();
@@ -126,6 +133,9 @@ async function updatePet(openid, data) {
   if (data.gender !== undefined) updateData.gender = data.gender;
   if (data.birthday !== undefined) updateData.birthday = data.birthday ? new Date(data.birthday) : null;
   if (data.adoptDate !== undefined) updateData.adoptDate = data.adoptDate ? new Date(data.adoptDate) : null;
+
+  // remarks 整体替换
+  if (data.remarks !== undefined) updateData.remarks = Array.isArray(data.remarks) ? data.remarks : [];
 
   // 体重更新时追加历史记录
   if (data.weight !== undefined) {

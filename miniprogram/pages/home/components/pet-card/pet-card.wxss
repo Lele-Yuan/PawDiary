@@ -304,3 +304,141 @@
   text-align: center;
   flex-shrink: 0;
 }
+
+/* 叹号备注按钮 */
+.hero-remarks-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.28);
+  color: #FFFFFF;
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 1;
+  margin-left: 10rpx;
+  flex-shrink: 0;
+}
+
+/* 备注浮层遮罩 */
+.remarks-sheet-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(20, 12, 50, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 998;
+}
+
+.remarks-sheet-mask.is-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 备注 bottom sheet */
+.remarks-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 70vh;
+  background: #FFFFFF;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 0 0 calc(env(safe-area-inset-bottom) + 62rpx);
+  box-shadow: 0 -12rpx 48rpx rgba(91, 63, 224, 0.16);
+  transform: translateY(110%);
+  transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.32, 1);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+}
+
+.remarks-sheet.is-show {
+  transform: translateY(0);
+}
+
+.remarks-sheet-drag-bar {
+  width: 72rpx;
+  height: 8rpx;
+  border-radius: 8rpx;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 20rpx auto 8rpx;
+  flex-shrink: 0;
+}
+
+.remarks-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8rpx 40rpx 20rpx;
+  flex-shrink: 0;
+}
+
+.remarks-sheet-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--text-primary, #2A1F5C);
+}
+
+.remarks-sheet-close {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(123, 92, 245, 0.1);
+  color: var(--primary-color, #7B5CF5);
+  font-size: 40rpx;
+  line-height: 52rpx;
+  text-align: center;
+}
+
+.remarks-sheet-body {
+  flex: 1;
+  min-height: 0;
+  padding: 0 32rpx 32rpx;
+}
+
+.remark-sheet-item {
+  padding: 24rpx 28rpx;
+  margin-bottom: 16rpx;
+  border-radius: 20rpx;
+  background: rgba(123, 92, 245, 0.05);
+  border: 1rpx solid rgba(123, 92, 245, 0.1);
+}
+
+.remark-sheet-type {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 12rpx;
+}
+
+.remark-sheet-icon {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.remark-sheet-label {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--primary-color, #7B5CF5);
+}
+
+.remark-sheet-content {
+  font-size: 28rpx;
+  color: var(--text-primary, #2A1F5C);
+  line-height: 1.6;
+}
+
+.remarks-sheet-empty {
+  text-align: center;
+  padding: 60rpx 0;
+  font-size: 28rpx;
+  color: var(--text-secondary, #6E6790);
+}
