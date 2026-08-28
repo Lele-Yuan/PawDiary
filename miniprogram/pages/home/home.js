@@ -38,7 +38,8 @@ Page({
     showInvitePicker: false,
     inviteRole: 'member',
     adminMembers: [],
-    canInviteAdmin: true
+    canInviteAdmin: true,
+    showFabMenu: false
   },
 
   onLoad(options) {
@@ -534,6 +535,29 @@ Page({
   },
 
   noop: function () {},
+
+  onFabTap() {
+    if (!this.data.pets.length) {
+      wx.showToast({ title: '请先添加宠物', icon: 'none' });
+      return;
+    }
+    this.setData({ showFabMenu: !this.data.showFabMenu });
+  },
+
+  closeFabMenu() {
+    this.setData({ showFabMenu: false });
+  },
+
+  onFabGoRecord() {
+    this.setData({ showFabMenu: false });
+    wx.navigateTo({ url: '/pages/record/record-type-select/record-type-select' });
+  },
+
+  onFabGoBill() {
+    this.setData({ showFabMenu: false });
+    wx.navigateTo({ url: '/pages/bill/bill-add/bill-add' });
+  },
+
 
 
   // 长按成员弹出管理菜单（创建者）

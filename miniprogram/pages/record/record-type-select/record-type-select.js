@@ -32,14 +32,51 @@ Page({
       RECORD_TYPE_MAP.abnormal,
       RECORD_TYPE_MAP.trouble,
       RECORD_TYPE_MAP.stealfood,
-    ]
+    ],
+    currentPet: null,
+    allPets: []
   },
 
-  // 选择记录类型
+  onLoad() {
+    this.loadPets();
+  },
+
+  // 加载宠物列表（仅本页使用，不改写 globalData）
+  async loadPets() {
+    const app = getApp();
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'list' }
+      });
+      if (res.result && res.result.code === 0) {
+        const allPets = (res.result.data || []).filter(p => {
+          const role = p.role || 'member';
+          return role === 'creator' || role === 'admin';
+        });
+        const globalPetId = app.globalData.currentPetId;
+        const currentPet = allPets.find(p => p._id === globalPetId) || allPets[0] || null;
+        this.setData({ allPets, currentPet });
+      }
+    } catch (e) {
+      console.error('加载宠物列表失败:', e);
+    }
+  },
+
+  // 本页切换宠物（不写 globalData）
+  onSwitchPet(e) {
+    const { petId } = e.detail;
+    const pet = this.data.allPets.find(p => p._id === petId);
+    if (pet) this.setData({ currentPet: pet });
+  },
+
+  // 选择记录类型，携带当前选中的 petId
   selectType(e) {
     const type = e.currentTarget.dataset.key;
-    wx.navigateTo({
-      url: `/pages/record/record-add/record-add?type=${type}`
-    });
+    const petId = this.data.currentPet && this.data.currentPet._id;
+    const url = petId
+      ? `/pages/record/record-add/record-add?type=${type}&petId=${petId}`
+      : `/pages/record/record-add/record-add?type=${type}`;
+    wx.navigateTo({ url });
   }
 });

@@ -8,7 +8,9 @@ Page({
     submitting: false,
     editId: '',
     pageTitle: '记一笔',
-    members: [],   // 共养人列表
+    members: [],   // 付款人共养人列表
+    currentPet: null,
+    allPets: [],
     form: {
       amount: '',
       category: '',
@@ -44,7 +46,10 @@ Page({
       'form.payerName': userInfo.nickName || '我'
     });
 
-    // 加载共养人列表
+    // 加载宠物列表（仅为本页面使用，不改写 globalData）
+    this.loadPets();
+
+    // 加载付款人共养人列表
     this.loadMembers();
 
     // 编辑模式
@@ -54,10 +59,47 @@ Page({
     }
   },
 
-  // 加载共养人列表
-  async loadMembers() {
+  // 加载宠物列表（仅本页使用，不改写 globalData）
+  async loadPets() {
     const app = getApp();
-    const petId = app.globalData.currentPetId;
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'list' }
+      });
+      if (res.result && res.result.code === 0) {
+        const allPets = (res.result.data || []).filter(p => {
+          const role = p.role || 'member';
+          return role === 'creator' || role === 'admin';
+        });
+        const globalPetId = app.globalData.currentPetId;
+        const currentPet = allPets.find(p => p._id === globalPetId) || allPets[0] || null;
+        this.setData({ allPets, currentPet });
+        // 同步更新付款人中的共养人 petId
+        if (currentPet) {
+          this.loadMembers(currentPet._id);
+        }
+      }
+    } catch (e) {
+      console.error('加载宠物列表失败:', e);
+    }
+  },
+
+  // 本页切换宠物（不写 globalData）
+  onSwitchPet(e) {
+    const { petId } = e.detail;
+    const allPets = this.data.allPets;
+    const pet = allPets.find(p => p._id === petId);
+    if (pet) {
+      this.setData({ currentPet: pet });
+      this.loadMembers(pet._id);
+    }
+  },
+
+  // 加载共养人列表（付款人候选）
+  async loadMembers(petIdOverride) {
+    const app = getApp();
+    const petId = petIdOverride || (this.data.currentPet && this.data.currentPet._id) || app.globalData.currentPetId;
     if (!petId) return;
     try {
       const res = await wx.cloud.callFunction({
@@ -179,7 +221,7 @@ Page({
     if (this.data.submitting) return;
 
     const app = getApp();
-    const petId = app.globalData.currentPetId;
+    const petId = (this.data.currentPet && this.data.currentPet._id) || app.globalData.currentPetId;
     if (!petId) {
       showError('请先添加宠物');
       return;

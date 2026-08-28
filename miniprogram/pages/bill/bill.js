@@ -2,6 +2,8 @@ const { formatDate, formatMoney } = require('../../utils/util');
 const { BILL_CATEGORY_MAP, BILL_CATEGORY_COLORS } = require('../../utils/constants');
 
 Page({
+  _loadSeq: 0,
+
   data: {
     currentPetName: '',
     navTitleOpacity: 1,
@@ -18,6 +20,7 @@ Page({
     categoryStats: [],
     groupedBills: [],
     loaded: false,
+    billLoading: false,
     // 左滑相关
     currentSwipedId: null,
     touchStartX: 0,
@@ -79,8 +82,24 @@ Page({
     this.loadMonthData();
   },
 
+  onUnload() {
+    this._loadSeq++;
+  },
+
   // 加载月度数据
   async loadMonthData() {
+    const seq = ++this._loadSeq;
+
+    // 先清空上次数据，再置遮罩
+    this.setData({
+      billLoading: true,
+      monthTotalMain: '0',
+      monthTotalCents: '.00',
+      monthTotalStr: '0.00',
+      categoryStats: [],
+      groupedBills: []
+    });
+
     const app = getApp();
     const petId = app.globalData.currentPetId;
 
@@ -108,7 +127,17 @@ Page({
     }
 
     if (!petId) {
-      this.setData({ groupedBills: [], categoryStats: [], monthTotal: 0, monthTotalStr: '0.00', loaded: true });
+      if (seq !== this._loadSeq) return;
+      this.setData({
+        groupedBills: [],
+        categoryStats: [],
+        monthTotal: 0,
+        monthTotalStr: '0.00',
+        monthTotalMain: '0',
+        monthTotalCents: '.00',
+        loaded: true,
+        billLoading: false
+      });
       return;
     }
 
@@ -123,6 +152,7 @@ Page({
           data: { petId, year: currentYear, month: currentMonth }
         }
       });
+      if (seq !== this._loadSeq) return;
       const bills = res.result && res.result.code === 0 ? res.result.data : [];
 
       const monthTotal = bills.reduce((sum, b) => sum + b.amount, 0);
@@ -138,6 +168,7 @@ Page({
           data: { petId, year: prevYear, month: prevMonth }
         }
       });
+      if (seq !== this._loadSeq) return;
       const prevBills = prevRes.result && prevRes.result.code === 0 ? prevRes.result.data : [];
 
       const lastMonthTotal = prevBills.reduce((sum, b) => sum + b.amount, 0);
@@ -191,11 +222,13 @@ Page({
         monthComparePercent,
         categoryStats,
         groupedBills: grouped,
-        loaded: true
+        loaded: true,
+        billLoading: false
       });
     } catch (err) {
       console.error('加载账单失败：', err);
-      this.setData({ loaded: true });
+      if (seq !== this._loadSeq) return;
+      this.setData({ loaded: true, billLoading: false });
     }
   },
 
@@ -334,6 +367,9 @@ Page({
       this.setData({ currentSwipedId: null });
     }
   },
+
+  // 遮罩阻止滚动穿透
+  noop() {},
 
   // 点击编辑
   onEditBill(e) {

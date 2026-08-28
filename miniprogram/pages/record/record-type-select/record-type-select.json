@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "nav-bar": "/components/nav-bar/nav-bar"
+    "nav-bar": "/components/nav-bar/nav-bar",
+    "pet-header": "/components/pet-header/pet-header"
   },
   "navigationStyle": "custom"
 }

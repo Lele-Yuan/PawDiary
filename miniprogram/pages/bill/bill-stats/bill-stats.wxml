@@ -62,8 +62,9 @@
     </view>
   </view>
 
-  <!-- 饼图 -->
-  <view class="chart-card card" wx:if="{{categoryStats.length}}">
+  <!-- 饼图。用 hidden 而非 wx:if：旧版 canvas 是原生组件，节点卸载重挂后
+       就绪时机与 setData 回调不同步，常驻节点可避免切换后饼图空白 -->
+  <view class="chart-card card" hidden="{{!categoryStats.length}}">
     <view class="chart-title">分类占比</view>
     <canvas canvas-id="pieChart" class="pie-chart" id="pieChart"></canvas>
     <!-- 图例 -->
@@ -97,8 +98,20 @@
     </view>
   </view>
 
+  <!-- 加载失败 -->
+  <view class="empty-hint" wx:if="{{loadFailed && !statsLoading}}">
+    <text class="empty-text">数据加载失败</text>
+    <view class="retry-btn" bindtap="loadStats">重试</view>
+  </view>
+
   <!-- 空状态 -->
-  <view class="empty-hint" wx:if="{{!categoryStats.length && loaded}}">
+  <view class="empty-hint" wx:if="{{!categoryStats.length && loaded && !statsLoading && !loadFailed}}">
     <text class="empty-text">该时段暂无消费数据</text>
   </view>
+</view>
+
+<!-- 加载遮罩：刷新期间半透明覆盖整页，可透出下方内容，层级低于导航栏保证返回可点 -->
+<!-- 容器常驻以保留 opacity 过渡，内部动效按需挂载避免动画常驻运行 -->
+<view class="stats-loading-mask {{statsLoading && loaded ? 'is-show' : ''}}" catchtouchmove="noop">
+  <loading-view wx:if="{{statsLoading && loaded}}" />
 </view>

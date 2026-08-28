@@ -1,5 +1,11 @@
 <nav-bar title="{{pageTitle}}" back="{{true}}" />
 
+<pet-header
+  current-pet="{{currentPet}}"
+  pets="{{allPets}}"
+  bind:switch="onSwitchPet"
+/>
+
 <view class="page-container">
   <!-- 金额输入 -->
   <view class="amount-section card">

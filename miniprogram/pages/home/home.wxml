@@ -199,6 +199,27 @@
   </view>
 </view>
 
+<!-- FAB 悬浮按钮 + 抽屉 -->
+<!-- 遮罩 -->
+<view class="fab-mask {{showFabMenu ? 'is-show' : ''}}" catchtap="closeFabMenu" catchtouchmove="noop"></view>
+
+<!-- 子按钮 -->
+<view class="fab-sub-wrap">
+  <view class="fab-sub-item {{showFabMenu ? 'is-show-1' : ''}}" catchtap="onFabGoRecord">
+    <view class="fab-sub-label">日常记录</view>
+    <view class="fab-sub-btn">📋</view>
+  </view>
+  <view class="fab-sub-item {{showFabMenu ? 'is-show-2' : ''}}" catchtap="onFabGoBill">
+    <view class="fab-sub-label">记一笔</view>
+    <view class="fab-sub-btn">💰</view>
+  </view>
+</view>
+
+<!-- 主按钮 -->
+<view class="fab-btn fab-home {{showFabMenu ? 'is-open' : ''}}" catchtap="onFabTap">
+  <text class="fab-home-icon">{{showFabMenu ? '×' : '+'}}</text>
+</view>
+
 <!-- 登录弹窗组件 -->
 <login-modal
   show="{{showLoginModal}}"

@@ -1,0 +1,52 @@
+<!-- 当前宠物选择器：显示当前宠物名，点击展开宠物列表 -->
+<view class="pet-header" wx:if="{{currentPet}}">
+  <view class="pet-header-trigger" catchtap="openPicker">
+    <image
+      wx:if="{{currentPet.avatar}}"
+      class="pet-header-avatar"
+      src="{{currentPet.avatar}}"
+      mode="aspectFill"
+    />
+    <view wx:else class="pet-header-avatar pet-header-avatar-placeholder">🐾</view>
+    <view class="pet-header-info">
+      <view class="pet-header-label">当前宠物</view>
+      <view class="pet-header-name">{{currentPet.name}}</view>
+    </view>
+    <view class="pet-header-arrow {{showPicker ? 'is-open' : ''}}">▾</view>
+  </view>
+</view>
+
+<!-- 宠物选择浮层 -->
+<view class="pet-picker-mask {{showPicker ? 'is-show' : ''}}" catchtap="closePicker" catchtouchmove="noop"></view>
+<view class="pet-picker-sheet {{showPicker ? 'is-show' : ''}}" catchtouchmove="noop">
+  <view class="pet-picker-drag-bar"></view>
+  <view class="pet-picker-header">
+    <text class="pet-picker-title">选择宠物</text>
+    <view class="pet-picker-close" catchtap="closePicker">×</view>
+  </view>
+  <scroll-view class="pet-picker-list" scroll-y enhanced show-scrollbar="{{false}}">
+    <view
+      class="pet-picker-item {{item._id === currentPet._id ? 'is-active' : ''}}"
+      wx:for="{{pets}}"
+      wx:key="_id"
+      data-pet-id="{{item._id}}"
+      catchtap="onPickPet"
+    >
+      <image
+        wx:if="{{item.avatar}}"
+        class="pet-picker-item-avatar"
+        src="{{item.avatar}}"
+        mode="aspectFill"
+      />
+      <view wx:else class="pet-picker-item-avatar pet-picker-item-avatar-placeholder">🐾</view>
+      <view class="pet-picker-item-info">
+        <view class="pet-picker-item-name-row">
+          <text class="pet-picker-item-name">{{item.name}}</text>
+          <text class="pet-picker-item-global-tag" wx:if="{{item._id === globalPetId}}">当前</text>
+        </view>
+        <text class="pet-picker-item-role">{{item.role === 'creator' ? '铲屎官' : '共养人'}}</text>
+      </view>
+      <view class="pet-picker-item-check" wx:if="{{item._id === currentPet._id}}">✓</view>
+    </view>
+  </scroll-view>
+</view>

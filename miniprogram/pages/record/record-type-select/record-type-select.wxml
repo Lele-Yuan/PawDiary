@@ -1,5 +1,11 @@
 <nav-bar title="选择记录类型" back="{{true}}" />
 
+<pet-header
+  current-pet="{{currentPet}}"
+  pets="{{allPets}}"
+  bind:switch="onSwitchPet"
+/>
+
 <view class="type-select-page">
   <!-- 健康记录 -->
   <view class="category-section">

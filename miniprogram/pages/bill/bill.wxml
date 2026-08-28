@@ -21,15 +21,16 @@
   <view class="hero-purple card">
     <!-- 标题行 + 右上角图标 -->
     <view class="overview-header">
-      <text class="overview-label">本月总支出</text>
+      <view class="overview-label">
+        本月总支出
+        <!-- 金额：整数大号 + 小数小号 -->
+        <view class="overview-amount">
+          <text class="currency">¥</text>
+          <text class="amount-main">{{monthTotalMain}}</text>
+          <text class="amount-cents">{{monthTotalCents}}</text>
+        </view>
+      </view>
       <view class="overview-icon">💳</view>
-    </view>
-
-    <!-- 金额：整数大号 + 小数小号 -->
-    <view class="overview-amount">
-      <text class="currency">¥</text>
-      <text class="amount-main">{{monthTotalMain}}</text>
-      <text class="amount-cents">{{monthTotalCents}}</text>
     </view>
 
     <!-- 分段式横向色块 bar -->
@@ -108,9 +109,6 @@
             <!-- 金额 + 分类 tag -->
             <view class="bill-right">
               <text class="bill-amount">¥{{bill.amountStr}}</text>
-              <view class="bill-category-tag" style="background-color: {{bill.categoryColor}}22; color: {{bill.categoryColor}};">
-                {{bill.categoryLabel}}
-              </view>
               <text class="bill-payer-name" wx:if="{{bill.payerName}}">{{bill.payerName}}</text>
             </view>
           </view>
@@ -121,7 +119,7 @@
 
   <!-- 空状态 -->
   <empty-state
-    wx:if="{{!groupedBills.length && loaded}}"
+    wx:if="{{!groupedBills.length && loaded && !billLoading}}"
     icon="💰"
     title="本月还没有账单"
     description="记录每一笔宠物消费，掌握花销情况"
@@ -132,4 +130,9 @@
 
   <!-- 悬浮添加按钮 -->
   <view class="fab-btn" hover-class="fab-btn-hover" bindtap="goAdd" wx:if="{{canEdit}}">+</view>
+</view>
+
+<!-- 切换月份/刷新时的半透明遮罩 -->
+<view class="bill-loading-mask {{billLoading && loaded ? 'is-show' : ''}}" catchtouchmove="noop">
+  <loading-view wx:if="{{billLoading && loaded}}" />
 </view>

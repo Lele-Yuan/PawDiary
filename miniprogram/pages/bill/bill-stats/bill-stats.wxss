@@ -332,3 +332,32 @@
   font-size: 28rpx;
   color: #B8B8C8;
 }
+
+.retry-btn {
+  margin-top: 24rpx;
+  padding: 12rpx 48rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid var(--primary-color);
+  color: var(--primary-color);
+  font-size: 26rpx;
+}
+
+/* 加载遮罩 */
+.stats-loading-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* 与 --card-bg 同值，但语义独立：卡片底色调整不应影响遮罩的透出效果 */
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 99;
+}
+
+.stats-loading-mask.is-show {
+  opacity: 1;
+  pointer-events: auto;
+}

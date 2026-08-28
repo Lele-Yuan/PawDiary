@@ -13,6 +13,8 @@ Page({
     editId: '',
     pageTitle: '添加记录',
     titlePlaceholder: '标题',
+    currentPet: null,
+    allPets: [],
     // 体重单位
     weightUnits: [
       { key: 'kg', label: 'kg' },
@@ -114,6 +116,9 @@ Page({
       setTimeout(function () { wx.navigateBack(); }, 1500);
       return;
     }
+
+    // 加载宠物列表，优先用 URL 传入的 petId
+    this.loadPets(options.petId);
 
     if (options.id) {
       this.setData({ editId: options.id, pageTitle: '编辑记录' });
@@ -223,9 +228,37 @@ Page({
     }
   },
 
+  // 加载宠物列表（仅本页使用，不改写 globalData）
+  async loadPets(preferPetId) {
+    const app = getApp();
+    try {
+      const res = await wx.cloud.callFunction({
+        name: 'petManage',
+        data: { action: 'list' }
+      });
+      if (res.result && res.result.code === 0) {
+        const allPets = (res.result.data || []).filter(p => {
+          const role = p.role || 'member';
+          return role === 'creator' || role === 'admin';
+        });
+        const targetId = preferPetId || app.globalData.currentPetId;
+        const currentPet = allPets.find(p => p._id === targetId) || allPets[0] || null;
+        this.setData({ allPets, currentPet });
+      }
+    } catch (e) {
+      console.error('加载宠物列表失败:', e);
+    }
+  },
+
+  // 本页切换宠物（不写 globalData）
+  onSwitchPet(e) {
+    const { petId } = e.detail;
+    const pet = this.data.allPets.find(p => p._id === petId);
+    if (pet) this.setData({ currentPet: pet });
+  },
+
   // 加载来源记录数据（用于立即完成）
-  async loadSourceRecord(sourceId) {
-    showLoading('加载中...');
+  async loadSourceRecord(sourceId) {    showLoading('加载中...');
     try {
       const res = await wx.cloud.callFunction({
         name: 'recordManage',
@@ -689,7 +722,7 @@ Page({
     if (this.data.submitting) return;
 
     var app = getApp();
-    var petId = app.globalData.currentPetId;
+    var petId = (this.data.currentPet && this.data.currentPet._id) || app.globalData.currentPetId;
     if (!petId) {
       showError('请先添加宠物');
       return;

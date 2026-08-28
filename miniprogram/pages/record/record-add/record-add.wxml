@@ -1,5 +1,11 @@
 <nav-bar title="{{pageTitle}}" back="{{true}}" />
 
+<pet-header
+  current-pet="{{currentPet}}"
+  pets="{{allPets}}"
+  bind:switch="onSwitchPet"
+/>
+
 <view class="page-container">
   <!-- 记录类型选择 -->
   <view class="form-section card">
