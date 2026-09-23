@@ -30,20 +30,40 @@ exports.main = async (event, context) => {
     case 'calcSettlement':  return await calcSettlement(OPENID, data);
     case 'listSettlements': return await listSettlements(OPENID, data);
     case 'markPaid':        return await markPaid(OPENID, data);
+    case 'updateMemberRole':return await updateMemberRole(OPENID, data);
+    case 'getMemberBills':  return await getMemberBills(OPENID, data);
+    case 'removeMember':    return await removeMember(OPENID, data);
     default:                return { code: -1, message: '未知操作类型' };
   }
 };
 
 // ============ 工具函数 ============
 
-// 校验用户是否为活动成员，返回成员记录或 null
-async function getMember(activityId, openid) {
+// 查询成员原始记录（含已移除）
+async function getMemberRaw(activityId, openid) {
   if (!activityId) return null;
   const res = await db.collection(C_MEM)
     .where({ activityId, openid })
     .limit(1)
     .get();
   return res.data.length ? res.data[0] : null;
+}
+
+// 校验用户是否为活动成员（已移除的视为非成员），返回成员记录或 null
+async function getMember(activityId, openid) {
+  const m = await getMemberRaw(activityId, openid);
+  if (m && m.removed) return null;
+  return m;
+}
+
+// 管理权限：创建者可管理所有非创建者成员；管理员仅可管理普通成员；不能操作自己
+function canManage(actor, target) {
+  if (!actor || !target) return false;
+  if (target.role === 'creator') return false;
+  if (actor.openid === target.openid) return false;
+  if (actor.role === 'creator') return true;
+  if (actor.role === 'admin') return target.role === 'member';
+  return false;
 }
 
 // 读取当前用户资料（昵称/头像）
@@ -187,6 +207,7 @@ async function getActivity(openid, data) {
     users.forEach(u => { uMap[u._openid] = u; });
     const writes = [];
     members.forEach(m => {
+      if (m.removed) return; // 已移除成员冻结当时的昵称/头像快照
       const u = uMap[m.openid];
       if (!u) return;
       const newNick = u.nickName || m.nickName;
@@ -212,10 +233,18 @@ async function joinActivity(openid, data) {
   if (!act) return { code: -1, message: '活动不存在或已删除' };
   if (act.inviteCode !== data.inviteCode) return { code: -1, message: '邀请码无效' };
 
-  const existing = await getMember(data.activityId, openid);
-  if (existing) return { code: 0, message: '已加入', data: { _id: data.activityId } };
+  const existing = await getMemberRaw(data.activityId, openid);
+  if (existing && !existing.removed) return { code: 0, message: '已加入', data: { _id: data.activityId } };
 
   const profile = await getUserProfile(openid);
+  if (existing && existing.removed) {
+    // 曾被移除，重新激活
+    await db.collection(C_MEM).doc(existing._id).update({
+      data: { removed: false, removedAt: null, role: 'member', nickName: profile.nickName, avatarUrl: profile.avatarUrl, joinedAt: new Date() }
+    });
+    await db.collection(C_ACT).doc(data.activityId).update({ data: { memberCount: _.inc(1), updatedAt: new Date() } });
+    return { code: 0, message: '加入成功', data: { _id: data.activityId } };
+  }
   await db.collection(C_MEM).add({
     data: {
       activityId: data.activityId,
@@ -223,6 +252,7 @@ async function joinActivity(openid, data) {
       nickName: profile.nickName,
       avatarUrl: profile.avatarUrl,
       role: 'member',
+      removed: false,
       joinedAt: new Date()
     }
   });
@@ -240,10 +270,17 @@ async function joinByCode(openid, data) {
   if (!acts.length) return { code: -1, message: '邀请码无效，请核对后重试' };
   const act = acts[0];
 
-  const existing = await getMember(act._id, openid);
-  if (existing) return { code: 0, message: '已加入', data: { _id: act._id } };
+  const existing = await getMemberRaw(act._id, openid);
+  if (existing && !existing.removed) return { code: 0, message: '已加入', data: { _id: act._id } };
 
   const profile = await getUserProfile(openid);
+  if (existing && existing.removed) {
+    await db.collection(C_MEM).doc(existing._id).update({
+      data: { removed: false, removedAt: null, role: 'member', nickName: profile.nickName, avatarUrl: profile.avatarUrl, joinedAt: new Date() }
+    });
+    await db.collection(C_ACT).doc(act._id).update({ data: { memberCount: _.inc(1), updatedAt: new Date() } });
+    return { code: 0, message: '加入成功', data: { _id: act._id } };
+  }
   await db.collection(C_MEM).add({
     data: {
       activityId: act._id,
@@ -251,12 +288,61 @@ async function joinByCode(openid, data) {
       nickName: profile.nickName,
       avatarUrl: profile.avatarUrl,
       role: 'member',
+      removed: false,
       joinedAt: new Date()
     }
   });
   await db.collection(C_ACT).doc(act._id).update({ data: { memberCount: _.inc(1), updatedAt: new Date() } });
 
   return { code: 0, message: '加入成功', data: { _id: act._id } };
+}
+
+// ============ 成员管理 ============
+
+// 修改成员角色（admin / member）
+async function updateMemberRole(openid, data) {
+  if (!data || !data.memberId || !data.role) return { code: -1, message: '参数不完整' };
+  if (['admin', 'member'].indexOf(data.role) < 0) return { code: -1, message: '无效角色' };
+  const { data: target } = await db.collection(C_MEM).doc(data.memberId).get().catch(() => ({ data: null }));
+  if (!target || target.removed) return { code: -1, message: '成员不存在' };
+  const actor = await getMember(target.activityId, openid);
+  if (!actor) return { code: -1, message: '无权操作' };
+  if (!canManage(actor, target)) return { code: -1, message: '无权修改该成员角色' };
+  await db.collection(C_MEM).doc(data.memberId).update({ data: { role: data.role } });
+  return { code: 0, message: '已更新' };
+}
+
+// 查询成员相关账单（删除前提示：其分摊与付款的账单）
+async function getMemberBills(openid, data) {
+  if (!data || !data.activityId || !data.targetOpenid) return { code: -1, message: '参数不完整' };
+  const actor = await getMember(data.activityId, openid);
+  if (!actor) return { code: -1, message: '无权访问' };
+  const { data: bills } = await db.collection(C_BILL).where({ activityId: data.activityId }).get();
+  const t = data.targetOpenid;
+  const asPayer = bills.filter(b => b.payerId === t).map(b => ({ _id: b._id, title: b.title, amount: b.amount }));
+  const asParticipant = bills.filter(b => (b.participants || []).indexOf(t) >= 0).map(b => ({ _id: b._id, title: b.title, amount: b.amount }));
+  return { code: 0, data: { asPayer, asParticipant } };
+}
+
+// 删除成员：有账单关联则软删除保留昵称/头像快照，否则物理删除
+async function removeMember(openid, data) {
+  if (!data || !data.memberId) return { code: -1, message: '缺少成员ID' };
+  const { data: target } = await db.collection(C_MEM).doc(data.memberId).get().catch(() => ({ data: null }));
+  if (!target || target.removed) return { code: -1, message: '成员不存在' };
+  const actor = await getMember(target.activityId, openid);
+  if (!actor) return { code: -1, message: '无权操作' };
+  if (!canManage(actor, target)) return { code: -1, message: '无权删除该成员' };
+
+  const { data: bills } = await db.collection(C_BILL).where({ activityId: target.activityId }).get();
+  const involved = bills.some(b => b.payerId === target.openid || (b.participants || []).indexOf(target.openid) >= 0);
+
+  if (involved) {
+    await db.collection(C_MEM).doc(data.memberId).update({ data: { removed: true, removedAt: new Date() } });
+  } else {
+    await db.collection(C_MEM).doc(data.memberId).remove();
+  }
+  await db.collection(C_ACT).doc(target.activityId).update({ data: { memberCount: _.inc(-1), updatedAt: new Date() } });
+  return { code: 0, message: '已删除', data: { softDeleted: involved } };
 }
 
 // ============ 账单相关 ============
@@ -549,20 +635,24 @@ async function getStats(openid, data) {
   bills.forEach(b => {
     (b.splits || []).forEach(s => { oweMap[s.memberId] = (oweMap[s.memberId] || 0) + s.amount; });
   });
-  const memberStats = members.map(m => ({
-    openid: m.openid,
-    nickName: m.nickName,
-    avatarUrl: m.avatarUrl,
-    owe: oweMap[m.openid] || 0
-  })).sort((a, b) => b.owe - a.owe);
+  const activeMembers = members.filter(m => !m.removed);
+  const memberStats = members
+    .filter(m => !m.removed || (oweMap[m.openid] || 0) > 0)
+    .map(m => ({
+      openid: m.openid,
+      nickName: m.nickName,
+      avatarUrl: m.avatarUrl,
+      owe: oweMap[m.openid] || 0,
+      removed: !!m.removed
+    })).sort((a, b) => b.owe - a.owe);
 
   return {
     code: 0,
     data: {
       total,
-      avg: members.length ? Math.round(total / members.length) : 0,
+      avg: activeMembers.length ? Math.round(total / activeMembers.length) : 0,
       billCount: bills.length,
-      memberCount: members.length,
+      memberCount: activeMembers.length,
       categoryStats,
       memberStats
     }

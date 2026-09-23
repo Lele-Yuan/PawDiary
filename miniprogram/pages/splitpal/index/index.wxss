@@ -72,7 +72,7 @@
   box-shadow: 0 4px 16px rgba(124, 111, 205, 0.2);
 }
 .sp-act-card.done {
-  background: linear-gradient(135deg, #D3FF90 0%, #FFFA9A 100%);
+  background: linear-gradient(135deg, #94c944 0%, #f8f05b 100%);
   opacity: 0.85;
   color: #040A18;
 }
@@ -103,6 +103,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  color: #fff;
 }
 .sp-act-amount {
   font-size: 40rpx;

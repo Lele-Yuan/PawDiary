@@ -95,13 +95,22 @@
   font-size: 36rpx;
   flex-shrink: 0;
 }
+.ad-member-manage {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 24rpx;
+  color: #7C6FCD;
+  background: #F0EEFF;
+  padding: 10rpx 22rpx;
+  border-radius: 24rpx;
+}
 
 /* Tab */
 .ad-tabs {
   display: flex;
   /* background: #fff; */
   padding: 8rpx;
-  border-bottom: 1rpx solid #EDE9FF;
+  /* border-bottom: 1rpx solid #EDE9FF; */
 }
 .ad-tab {
   flex: 1;
@@ -487,4 +496,65 @@
   font-size: 30rpx;
   font-weight: 600;
   padding: 20rpx 80rpx;
+}
+
+/* 成员管理弹层 */
+.ad-manage-tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: #7A74A0;
+  padding: 16rpx 40rpx 8rpx;
+}
+.ad-manage-list {
+  max-height: 60vh;
+}
+.ad-manage-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 32rpx;
+  border-bottom: 1rpx solid #EDE9FF;
+}
+.ad-manage-av {
+  flex-shrink: 0;
+}
+.ad-manage-av-img {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #7C6FCD;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+.ad-manage-info {
+  flex: 1;
+  min-width: 0;
+}
+.ad-manage-nm {
+  font-size: 28rpx;
+  color: #2D2755;
+  font-weight: 600;
+}
+.ad-manage-role {
+  font-size: 20rpx;
+  margin-top: 6rpx;
+  display: inline-block;
+  padding: 2rpx 12rpx;
+  border-radius: 12rpx;
+  color: #7A74A0;
+  background: #F5F3FF;
+}
+.ad-manage-role.role-creator { color: #7C6FCD; background: #D4CEFF; }
+.ad-manage-role.role-admin { color: #FF8C42; background: #FFF0E4; }
+.ad-manage-del {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: #FA5151;
+  padding: 10rpx 24rpx;
+  border: 2rpx solid #FA5151;
+  border-radius: 24rpx;
 }

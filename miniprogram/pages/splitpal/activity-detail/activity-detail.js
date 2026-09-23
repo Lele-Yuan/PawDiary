@@ -15,6 +15,16 @@ function buildPartMap(ids) {
   (ids || []).forEach(id => { map[id] = true; });
   return map;
 }
+// 角色文案
+const ROLE_LABELS = { creator: '创建者', admin: '管理员', member: '成员' };
+// 当前用户能否管理某成员：创建者可管理所有非创建者；管理员仅可管理普通成员；不能操作自己
+function canManageTarget(myRole, myOpenid, target) {
+  if (!target || target.role === 'creator') return false;
+  if (target.openid === myOpenid) return false;
+  if (myRole === 'creator') return true;
+  if (myRole === 'admin') return target.role === 'member';
+  return false;
+}
 
 Page({
   data: {
@@ -62,7 +72,11 @@ Page({
     },
 
     // 邀请弹层
-    showInvite: false
+    showInvite: false,
+
+    // 成员管理
+    canManageMembers: false,
+    showManage: false
   },
 
   onLoad(options) {
@@ -143,6 +157,81 @@ Page({
     this.setData({ showLoginModal: true });
   },
 
+  // ===== 成员管理 =====
+  openManage() {
+    this.setData({ showManage: true });
+  },
+  closeManage() {
+    this.setData({ showManage: false });
+  },
+
+  // 点击头像切换角色（管理员/成员）
+  onToggleRole(e) {
+    const m = e.currentTarget.dataset.member;
+    if (!m || !m.manageable) return;
+    const nextRole = m.role === 'admin' ? 'member' : 'admin';
+    wx.showModal({
+      title: '修改角色',
+      content: `确定将「${m.nickName}」${nextRole === 'admin' ? '设为管理员' : '设为普通成员'}？`,
+      success: (r) => {
+        if (!r.confirm) return;
+        wx.cloud.callFunction({
+          name: 'splitManage',
+          data: { action: 'updateMemberRole', data: { memberId: m._id, role: nextRole } }
+        }).then(res => {
+          const rr = res.result || {};
+          if (rr.code === 0) { wx.showToast({ title: '已更新', icon: 'success' }); this.loadActivity(); }
+          else wx.showToast({ title: rr.message || '操作失败', icon: 'none' });
+        }).catch(() => wx.showToast({ title: '网络异常', icon: 'none' }));
+      }
+    });
+  },
+
+  // 删除成员：先查其相关账单再确认
+  onRemoveMember(e) {
+    const m = e.currentTarget.dataset.member;
+    if (!m || !m.manageable) return;
+    wx.showLoading({ title: '检查中...', mask: true });
+    wx.cloud.callFunction({
+      name: 'splitManage',
+      data: { action: 'getMemberBills', data: { activityId: this.data.activityId, targetOpenid: m.openid } }
+    }).then(res => {
+      wx.hideLoading();
+      const rr = res.result || {};
+      if (rr.code !== 0) { wx.showToast({ title: rr.message || '操作失败', icon: 'none' }); return; }
+      const asPayer = rr.data.asPayer || [];
+      const asPart = rr.data.asParticipant || [];
+      let content;
+      if (asPayer.length || asPart.length) {
+        const lines = [];
+        if (asPayer.length) lines.push('付款：' + asPayer.map(b => b.title + ' ¥' + fen2yuan(b.amount)).join('、'));
+        if (asPart.length) lines.push('分摊：' + asPart.map(b => b.title + ' ¥' + fen2yuan(b.amount)).join('、'));
+        content = '该成员已参与以下账单：\n' + lines.join('\n') + '\n\n删除后账单仍保留其分摊与付款记录，结算和统计仍显示当时的头像昵称。是否确认删除？';
+      } else {
+        content = `确定删除成员「${m.nickName}」？`;
+      }
+      wx.showModal({
+        title: '删除成员',
+        content,
+        confirmColor: '#FA5151',
+        success: (r) => { if (r.confirm) this.doRemoveMember(m._id); }
+      });
+    }).catch(() => { wx.hideLoading(); wx.showToast({ title: '网络异常', icon: 'none' }); });
+  },
+
+  doRemoveMember(memberId) {
+    wx.showLoading({ title: '删除中...', mask: true });
+    wx.cloud.callFunction({
+      name: 'splitManage',
+      data: { action: 'removeMember', data: { memberId } }
+    }).then(res => {
+      wx.hideLoading();
+      const rr = res.result || {};
+      if (rr.code === 0) { wx.showToast({ title: '已删除', icon: 'success' }); this.loadActivity(); }
+      else wx.showToast({ title: rr.message || '删除失败', icon: 'none' });
+    }).catch(() => { wx.hideLoading(); wx.showToast({ title: '网络异常', icon: 'none' }); });
+  },
+
   onShow() {
     if (this.data.activity) this.refreshCurrentTab();
   },
@@ -164,17 +253,23 @@ Page({
         wx.showToast({ title: r.message || '加载失败', icon: 'none' });
         return;
       }
+      const myOpenid = this.data.myOpenid;
+      const myRole = r.data.myRole;
+      const all = r.data.members || [];
       const memberMap = {};
-      r.data.members.forEach(m => { memberMap[m.openid] = m; });
-      const membersDecorated = r.data.members.map(m => ({
+      all.forEach(m => { memberMap[m.openid] = m; });
+      const active = all.filter(m => !m.removed).map(m => ({
         ...m,
-        initial: (m.nickName || '?').charAt(0)
+        initial: (m.nickName || '?').charAt(0),
+        roleLabel: ROLE_LABELS[m.role] || '成员',
+        manageable: canManageTarget(myRole, myOpenid, m)
       }));
       this.setData({
         activity: r.data.activity,
-        members: membersDecorated,
+        members: active,
         memberMap,
-        myRole: r.data.myRole
+        myRole,
+        canManageMembers: myRole === 'creator' || myRole === 'admin'
       });
       this.refreshCurrentTab();
     }).catch(() => wx.showToast({ title: '网络异常', icon: 'none' }));
