@@ -1,0 +1,239 @@
+<view class="ad-page" wx:if="{{activity}}">
+  <nav-bar title="{{activity.name}}" titleOpacity="{{navTitleOpacity}}" back="{{true}}" />
+
+  <!-- 封面 -->
+  <view class="ad-cover">
+    <view class="ad-cover-emoji">{{activity.coverEmoji}}</view>
+    <view class="ad-cover-actions">
+      <view class="ad-cover-btn" bindtap="openInvite">🏠</view>
+      <view class="ad-cover-btn" wx:if="{{myRole === 'creator'}}" bindtap="goEditActivity">⚙️</view>
+    </view>
+    <view class="ad-cover-info">
+      <view class="ad-cover-name">{{activity.name}}</view>
+      <view class="ad-cover-meta">{{members.length}}人参与 · 共{{activity.billCount}}笔账单</view>
+    </view>
+  </view>
+
+  <!-- 成员行 -->
+  <view class="ad-members">
+    <text class="ad-members-lbl">成员</text>
+    <view class="ad-member" wx:for="{{members}}" wx:key="openid">
+      <image wx:if="{{item.avatarUrl}}" class="ad-member-av" src="{{item.avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="ad-member-av">{{item.initial}}</view>
+      <text class="ad-member-nm">{{item.nickName}}</text>
+    </view>
+    <view class="ad-member-add" bindtap="openInvite">+</view>
+  </view>
+
+  <!-- Tab -->
+  <view class="ad-tabs">
+    <view class="ad-tab {{currentTab === 'bills' ? 'active' : ''}}" data-tab="bills" bindtap="switchTab">账单</view>
+    <view class="ad-tab {{currentTab === 'settle' ? 'active' : ''}}" data-tab="settle" bindtap="switchTab">结算</view>
+    <view class="ad-tab {{currentTab === 'stats' ? 'active' : ''}}" data-tab="stats" bindtap="switchTab">统计</view>
+  </view>
+
+  <!-- 账单 Tab -->
+  <view wx:if="{{currentTab === 'bills'}}" class="ad-body">
+    <block wx:for="{{groupedBills}}" wx:key="date">
+      <view class="ad-date-sep">{{item.date}}</view>
+      <view
+        wx:for="{{item.items}}"
+        wx:for-item="bill"
+        wx:key="_id"
+        class="ad-bill-cell"
+        data-bill="{{bill}}"
+        bindtap="editBill"
+        data-id="{{bill._id}}"
+        bindlongpress="onDeleteBill"
+      >
+        <view class="ad-bill-icon">{{bill.catIcon}}</view>
+        <view class="ad-bill-info">
+          <view class="ad-bill-name">{{bill.title}}</view>
+          <view class="ad-bill-sub">{{bill.payerName}}支付 · {{bill.splitDesc}}</view>
+        </view>
+        <view class="ad-bill-right">
+          <view class="ad-bill-amt">¥{{bill.amountStr}}</view>
+          <view class="ad-bill-per" wx:if="{{bill.perStr}}">{{bill.perStr}}</view>
+        </view>
+      </view>
+    </block>
+    <view class="ad-empty" wx:if="{{!groupedBills.length}}">还没有账单，点击下方添加</view>
+    <view style="height:140rpx"></view>
+    <view class="ad-add-btn" bindtap="openBillSheet">＋ 添加账单</view>
+  </view>
+
+  <!-- 结算 Tab -->
+  <view wx:if="{{currentTab === 'settle'}}" class="ad-body">
+    <view class="ad-balance">
+      <view class="ad-balance-hd">💜 我的账单概览</view>
+      <view class="ad-bal-row"><text>我支付了</text><text>¥{{myBalance.paid}}</text></view>
+      <view class="ad-bal-row"><text>我应承担</text><text>¥{{myBalance.owe}}</text></view>
+      <view class="ad-bal-net">
+        <text>净余额</text>
+        <text class="{{myBalance.netPositive ? 'pos' : 'neg'}}">{{myBalance.netPositive ? '+' : '-'}}¥{{myBalance.net}}{{myBalance.netPositive ? '（被欠）' : '（需付）'}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{allSettled}}" class="ad-settled">
+      <view class="ad-settled-ico">✅</view>
+      <view class="ad-settled-t">所有账单已结清！</view>
+    </view>
+
+    <view class="ad-settle-head" wx:if="{{settlements.length}}">
+      <text class="ad-sec-title">转账清单（最优{{settleProgress.total}}笔）</text>
+      <text class="ad-recalc-btn" bindtap="recalcSettlement">↻ 重新结算</text>
+    </view>
+    <view class="ad-settle-cell" wx:for="{{settlements}}" wx:key="_id">
+      <view class="ad-settle-info">
+        <view class="ad-settle-nm">{{item.fromName}} → {{item.toName}}</view>
+        <view class="ad-settle-amt">¥{{item.amountStr}}</view>
+      </view>
+      <view class="ad-check {{item.status === 'paid' ? 'done' : ''}}" data-item="{{item}}" bindtap="onMarkPaid">
+        {{item.status === 'paid' ? '✓' : '○'}}
+      </view>
+    </view>
+
+    <view class="ad-progress" wx:if="{{settlements.length}}">
+      <view class="ad-prog-hd">
+        <text>结算进度</text>
+        <text class="c">{{settleProgress.paid}} / {{settleProgress.total}} 已完成</text>
+      </view>
+      <view class="ad-prog-track"><view class="ad-prog-fill" style="width:{{settleProgress.percent}}%"></view></view>
+    </view>
+
+    <view class="ad-empty" wx:if="{{!settlements.length}}">暂无需结算的转账</view>
+  </view>
+
+  <!-- 统计 Tab -->
+  <view wx:if="{{currentTab === 'stats' && stats}}" class="ad-body">
+    <view class="ad-stat-head">
+      <view class="ad-stat-item"><view class="v">¥{{stats.totalStr}}</view><view class="l">总花费</view></view>
+      <view class="ad-stat-item"><view class="v">¥{{stats.avgStr}}</view><view class="l">人均消费</view></view>
+      <view class="ad-stat-item"><view class="v">{{stats.billCount}}</view><view class="l">笔账单</view></view>
+    </view>
+
+    <view class="ad-chart-box">
+      <view class="ad-chart-hd">消费分类分布</view>
+      <view class="ad-bar-row" wx:for="{{stats.categoryStats}}" wx:key="category">
+        <text class="ad-bar-nm">{{item.icon}}{{item.label}}</text>
+        <view class="ad-bar-track"><view class="ad-bar-fill" style="width:{{item.barWidth}}%">¥{{item.amountStr}}</view></view>
+        <text class="ad-bar-pct">{{item.percent}}%</text>
+      </view>
+    </view>
+
+    <view class="ad-chart-box">
+      <view class="ad-chart-hd">各成员应付金额</view>
+      <view class="ad-bar-row" wx:for="{{stats.memberStats}}" wx:key="openid">
+        <text class="ad-bar-nm">{{item.nickName}}</text>
+        <view class="ad-bar-track"><view class="ad-bar-fill" style="width:{{item.barWidth}}%">¥{{item.oweStr}}</view></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 记一笔弹层 -->
+  <view wx:if="{{showBillSheet}}" class="ad-mask" bindtap="closeBillSheet">
+    <view class="ad-sheet" catchtap="noop">
+      <view class="ad-sheet-bar"></view>
+      <view class="ad-sheet-hd">{{editingBillId ? '编辑账单' : '添加账单'}}</view>
+      <scroll-view scroll-y class="ad-sheet-scroll">
+        <view class="ad-cat-grid">
+          <view
+            wx:for="{{categories}}"
+            wx:key="key"
+            class="ad-cat-cell {{billForm.category === item.key ? 'sel' : ''}}"
+            data-key="{{item.key}}"
+            bindtap="selectCategory"
+          >
+            <view class="ad-cat-ic">{{item.icon}}</view>
+            <text class="ad-cat-lb">{{item.label}}</text>
+          </view>
+        </view>
+
+        <view class="ad-amt-area">
+          <text class="ad-amt-prefix">¥</text>
+          <input class="ad-amt-input" type="digit" placeholder="0.00" value="{{billForm.amountStr}}" bindinput="inputAmount" />
+        </view>
+
+        <view class="ad-form-row">
+          <text class="ad-form-lbl">明细描述</text>
+          <input class="ad-form-input" placeholder="如：火锅晚餐" value="{{billForm.title}}" bindinput="inputTitle" />
+        </view>
+
+        <view class="ad-form-row">
+          <text class="ad-form-lbl">付款人</text>
+          <scroll-view scroll-x class="ad-payer-scroll">
+            <view
+              wx:for="{{members}}"
+              wx:key="openid"
+              class="ad-payer {{billForm.payerId === item.openid ? 'sel' : ''}}"
+              data-openid="{{item.openid}}"
+              bindtap="selectPayer"
+            >{{item.nickName}}</view>
+          </scroll-view>
+        </view>
+
+        <view class="ad-form-row">
+          <text class="ad-form-lbl">AA均摊</text>
+          <switch checked="{{billForm.isAA}}" bindchange="toggleAA" color="#7C6FCD" />
+        </view>
+
+        <view class="ad-msel">
+          <text class="ad-form-lbl">参与成员</text>
+          <view class="ad-mchips">
+            <view
+              wx:for="{{members}}"
+              wx:key="openid"
+              class="ad-mchip {{billForm.partMap[item.openid] ? 'sel' : ''}}"
+              data-openid="{{item.openid}}"
+              bindtap="toggleParticipant"
+            >
+              <text>{{item.nickName}}</text>
+              <input
+                wx:if="{{!billForm.isAA && billForm.partMap[item.openid]}}"
+                class="ad-split-input"
+                type="digit"
+                placeholder="¥"
+                value="{{billForm.splitStrs[item.openid]}}"
+                data-openid="{{item.openid}}"
+                bindinput="inputSplit"
+                catchtap="noop"
+              />
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+      <button class="ad-save-btn" bindtap="submitBill">保 存 账 单</button>
+    </view>
+  </view>
+
+  <!-- 邀请弹层 -->
+  <view wx:if="{{showInvite}}" class="ad-mask" bindtap="closeInvite">
+    <view class="ad-sheet" catchtap="noop">
+      <view class="ad-sheet-bar"></view>
+      <view class="ad-sheet-hd">邀请成员加入</view>
+      <view class="ad-invite-tip">分享给微信好友，对方打开即可加入「{{activity.name}}」</view>
+      <view class="ad-invite-code">邀请码：{{activity.inviteCode}}</view>
+      <button class="ad-share-btn" open-type="share">💚 分享给微信好友</button>
+      <button class="ad-copy-btn" bindtap="copyInvite">复制邀请信息</button>
+      <view style="height:40rpx"></view>
+    </view>
+  </view>
+</view>
+
+<!-- 邀请加入但未登录的阻断态 -->
+<view class="ad-login-guard" wx:if="{{!activity && needLogin}}">
+  <view class="ad-guard-icon">🧾</view>
+  <view class="ad-guard-title">登录后加入分账</view>
+  <view class="ad-guard-sub">你被邀请加入分账活动，请先登录并完善昵称头像</view>
+  <button class="ad-guard-btn" bindtap="reopenLogin">登录并加入</button>
+</view>
+
+<!-- 通用登录弹窗 -->
+<login-modal
+  show="{{showLoginModal}}"
+  avatarUrl="{{userInfo.avatarUrl}}"
+  nickName="{{userInfo.nickName}}"
+  phone="{{userInfo.phone}}"
+  bind:success="onLoginSuccess"
+  bind:close="onLoginClose"
+/>

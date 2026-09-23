@@ -23,11 +23,25 @@
     "miniprogram": {
       "list": [
         {
+          "name": "邀请加入分账活动",
+          "pathName": "pages/splitpal/activity-detail/activity-detail",
+          "query": "id=d83520e26aaf4f17028d47023452162b&inviteCode=PWX27GQDGZ",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
+          "name": "分账账单",
+          "pathName": "pages/splitpal/index/index",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
           "name": "pages/map/place-add/place-add",
           "pathName": "pages/map/place-add/place-add",
           "query": "lat=23.129163&lng=113.264435",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "chatBot",

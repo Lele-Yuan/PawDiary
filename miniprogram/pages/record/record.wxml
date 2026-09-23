@@ -41,7 +41,7 @@
       <view class="timeline-left">
         <view class="timeline-date">
           <text class="date-text">{{item.shortDateStr}}</text>
-          <text class="hour-text" wx:if="{{item.hour}}">{{item.hourStr}}</text>
+          <text class="hour-text" wx:if="{{item.timeStr}}">{{item.timeStr}}</text>
         </view>
         <!-- upcoming 标签 -->
         <view class="upcoming-tag" wx:if="{{item.nextDateStr}}">到期提醒</view>

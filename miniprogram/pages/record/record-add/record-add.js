@@ -62,6 +62,7 @@ Page({
     form: {
       type: '',
       date: '',
+      time: '',
       displayDateTime: '',
       title: '',
       description: '',
@@ -106,7 +107,8 @@ Page({
   onLoad(options) {
     var today = new Date();
     var todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-    this.setData({ today: todayStr });
+    var nowTimeStr = String(today.getHours()).padStart(2, '0') + ':' + String(today.getMinutes()).padStart(2, '0');
+    this.setData({ today: todayStr, 'form.time': nowTimeStr });
 
     // 权限校验
     var app = getApp();
@@ -395,12 +397,19 @@ Page({
         var dt = new Date(d);
         return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
       };
+      var formatT = function(d) {
+        if (!d) return '12:00';
+        var dt = new Date(d);
+        if (isNaN(dt.getTime())) return '12:00';
+        return String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
+      };
       var typeIndex = this.data.typeList.findIndex(function(t) { return t.key === r.type; });
       var typeInfo = this.data.typeList[typeIndex];
       this.setData({
         form: {
           type: r.type || '',
           date: formatD(r.date),
+          time: formatT(r.date),
           title: r.title || '',
           description: r.description || '',
           nextDate: formatD(r.nextDate),
@@ -554,6 +563,11 @@ Page({
     if (field === 'date' && this.data.form.enableRemind && this.data.form.remindInterval > 0) {
       this.calcNextDate(this.data.form.remindInterval);
     }
+  },
+
+  // 时间选择（记录时间）
+  onTimeChange(e) {
+    this.setData({ 'form.time': e.detail.value });
   },
 
   // 提醒开关切换
@@ -772,8 +786,12 @@ Page({
         }
       }
 
-      // 构建日期
-      var fullDateStr = form.date;
+      // 构建日期（合并日期与时间）
+      var timeStr = form.time || '00:00';
+      var recordDate = new Date(form.date + 'T' + timeStr + ':00');
+      if (isNaN(recordDate.getTime())) {
+        recordDate = new Date(form.date);
+      }
 
       // 获取类型标签用于默认标题
       var typeLabel = '';
@@ -784,7 +802,7 @@ Page({
 
       var fields = {
         type: form.type,
-        date: new Date(fullDateStr),
+        date: recordDate,
         title: form.title ? form.title.trim() : typeLabel,
         description: (form.description || '').trim(),
         nextDate: form.nextDate ? new Date(form.nextDate + 'T12:00:00') : null,

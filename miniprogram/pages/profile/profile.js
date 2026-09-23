@@ -300,6 +300,11 @@ Page({
     wx.navigateTo({ url: '/pages/dogti/index/index' });
   },
 
+  // 记账分账
+  goSplitpal() {
+    wx.navigateTo({ url: '/pages/splitpal/index/index' });
+  },
+
   // 纪念馆
   goMemorial() {
     wx.navigateTo({ url: '/pages/memorial/memorial' });

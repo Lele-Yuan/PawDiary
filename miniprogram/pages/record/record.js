@@ -128,6 +128,11 @@ Page({
       var records = data.map(function (r) {
         var typeInfo = RECORD_TYPE_MAP[r.type] || {};
         var hour = r.hour !== undefined ? r.hour : 12;
+        // 记录时间：优先按 date 中保存的实际时分展示
+        var recDate = r.date ? new Date(r.date) : null;
+        var timeStr = (recDate && !isNaN(recDate.getTime()))
+          ? String(recDate.getHours()).padStart(2, '0') + ':' + String(recDate.getMinutes()).padStart(2, '0')
+          : '';
 
         // 根据类型生成详情文本
         var detailText = '';
@@ -187,6 +192,7 @@ Page({
             return ds ? ds.substring(2).replace(/-/g, '.') : '';
           })(),
           hourStr: hour + ':00',
+          timeStr: timeStr,
           nextDateStr: r.nextDate ? formatDate(r.nextDate, 'YYYY-MM-DD') : '',
           hasRemind: !!r.enableRemind,
           remainDays: null,

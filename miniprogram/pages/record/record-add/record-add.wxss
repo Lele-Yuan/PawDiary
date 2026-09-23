@@ -2,6 +2,18 @@
   padding-bottom: 60rpx;
 }
 
+/* 日期与时间同一行 */
+.datetime-row {
+  display: flex;
+  gap: 10rpx;
+  margin-bottom: 32rpx;
+}
+.datetime-row .form-group {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
 /* 带单位的输入框 */
 .input-with-unit {
   display: flex;

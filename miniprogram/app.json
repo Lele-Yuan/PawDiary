@@ -29,7 +29,10 @@
     "pages/dogti/index/index",
     "pages/dogti/test/test",
     "pages/dogti/result/result",
-    "pages/dogti/atlas/atlas"
+    "pages/dogti/atlas/atlas",
+    "pages/splitpal/index/index",
+    "pages/splitpal/activity-edit/activity-edit",
+    "pages/splitpal/activity-detail/activity-detail"
   ],
   "window": {
     "backgroundTextStyle": "light",

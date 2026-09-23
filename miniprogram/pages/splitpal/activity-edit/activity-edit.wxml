@@ -1,0 +1,27 @@
+<view class="ae-page">
+  <view class="ae-card">
+    <view class="ae-label">活动名称</view>
+    <input
+      class="ae-input"
+      placeholder="例如：成都旅行、Q3团建"
+      value="{{name}}"
+      maxlength="20"
+      bindinput="onNameInput"
+    />
+  </view>
+
+  <view class="ae-card">
+    <view class="ae-label">选择封面</view>
+    <view class="ae-emoji-grid">
+      <view
+        wx:for="{{emojis}}"
+        wx:key="*this"
+        class="ae-emoji {{coverEmoji === item ? 'sel' : ''}}"
+        data-emoji="{{item}}"
+        bindtap="onPickEmoji"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <button class="ae-save-btn" bindtap="onSave" disabled="{{saving}}">保 存</button>
+</view>

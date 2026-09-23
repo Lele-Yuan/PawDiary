@@ -20,15 +20,27 @@
 
   <!-- 表单区域 -->
   <view class="form-section card">
-    <!-- 日期 -->
-    <view class="form-group">
-      <view class="form-label">日期 <text class="required">*</text></view>
-      <picker mode="date" value="{{form.date}}" end="{{today}}" bindchange="onDateChange" data-field="date">
-        <view class="form-picker">
-          <text class="{{form.date ? '' : 'placeholder'}}">{{form.date || '请选择日期'}}</text>
-          <text class="arrow">›</text>
-        </view>
-      </picker>
+    <!-- 日期与时间（同一行） -->
+    <view class="datetime-row">
+      <view class="form-group">
+        <view class="form-label">日期 <text class="required">*</text></view>
+        <picker mode="date" value="{{form.date}}" end="{{today}}" bindchange="onDateChange" data-field="date">
+          <view class="form-picker">
+            <text class="{{form.date ? '' : 'placeholder'}}">{{form.date || '请选择日期'}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">时间 <text class="required">*</text></view>
+        <picker mode="time" value="{{form.time}}" bindchange="onTimeChange">
+          <view class="form-picker">
+            <text class="{{form.time ? '' : 'placeholder'}}">{{form.time || '请选择时间'}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
     </view>
 
     <!-- 发情类型：发情阶段选择 -->

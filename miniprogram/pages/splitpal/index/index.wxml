@@ -1,0 +1,87 @@
+<view class="sp-page">
+  <nav-bar title="记账分账" titleOpacity="{{navTitleOpacity}}" back="{{true}}" />
+
+  <!-- 头部汇总 -->
+  <view class="sp-header">
+    <view class="sp-header-row">
+      <view class="sp-header-title">💜 我的分账</view>
+      <view class="sp-join-btn" bindtap="joinByCode">🔑 输入邀请码加入</view>
+    </view>
+    <view class="sp-stats">
+      <view class="sp-stat">
+        <view class="sp-stat-val">{{summary.activeCount}}</view>
+        <view class="sp-stat-lbl">进行中</view>
+      </view>
+      <view class="sp-stat">
+        <view class="sp-stat-val">¥{{summary.pendingAmount}}</view>
+        <view class="sp-stat-lbl">待结算</view>
+      </view>
+      <view class="sp-stat">
+        <view class="sp-stat-val">{{summary.historyCount}}</view>
+        <view class="sp-stat-lbl">已结清</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="sp-body">
+    <!-- 进行中 -->
+    <view class="sp-sec-title" wx:if="{{active.length}}">进行中</view>
+    <view
+      wx:for="{{active}}"
+      wx:key="_id"
+      class="sp-act-card"
+      data-id="{{item._id}}"
+      bindtap="goDetail"
+    >
+      <view class="sp-act-emoji">{{item.coverEmoji}}</view>
+      <view class="sp-act-main">
+        <view class="sp-act-top">
+          <text class="sp-act-name">{{item.name}}</text>
+          <text class="sp-act-badge active">进行中</text>
+        </view>
+        <view class="sp-act-bottom">
+          <view>
+            <text class="sp-act-amount">¥{{item.totalStr}}</text>
+            <text class="sp-act-unit">总花费</text>
+          </view>
+          <text class="sp-act-meta">{{item.memberCount}}人 · {{item.billCount}}笔</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 已结清 -->
+    <view class="sp-sec-title" wx:if="{{settled.length}}">已结清</view>
+    <view
+      wx:for="{{settled}}"
+      wx:key="_id"
+      class="sp-act-card done"
+      data-id="{{item._id}}"
+      bindtap="goDetail"
+    >
+      <view class="sp-act-emoji">{{item.coverEmoji}}</view>
+      <view class="sp-act-main">
+        <view class="sp-act-top">
+          <text class="sp-act-name">{{item.name}}</text>
+          <text class="sp-act-badge done">✓ 已结清</text>
+        </view>
+        <view class="sp-act-bottom">
+          <view>
+            <text class="sp-act-amount">¥{{item.totalStr}}</text>
+            <text class="sp-act-unit">总花费</text>
+          </view>
+          <text class="sp-act-meta">{{item.memberCount}}人 · {{item.billCount}}笔</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="sp-empty" wx:if="{{!loading && !active.length && !settled.length}}">
+      <view class="sp-empty-icon">🧾</view>
+      <view class="sp-empty-text">还没有分账活动</view>
+      <view class="sp-empty-sub">点击右下角 + 发起一次多人分账吧</view>
+    </view>
+  </view>
+
+  <!-- FAB 新建 -->
+  <view class="sp-fab" bindtap="goCreate">＋</view>
+</view>

@@ -1,0 +1,157 @@
+.sp-page {
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+/* 头部 */
+.sp-header {
+  /* background: linear-gradient(135deg, #7C6FCD 0%, #A99FE0 100%); */
+  padding: 40rpx;
+  color: #fff;
+}
+.sp-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28rpx;
+}
+.sp-header-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 28rpx;
+}
+.sp-header-row .sp-header-title {
+  margin-bottom: 0;
+}
+.sp-join-btn {
+  font-size: 22rpx;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 10rpx 20rpx;
+  border-radius: 24rpx;
+}
+.sp-stats {
+  display: flex;
+  gap: 20rpx;
+}
+.sp-stat {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 16rpx;
+  padding: 20rpx 0;
+  text-align: center;
+}
+.sp-stat-val {
+  font-size: 34rpx;
+  font-weight: 700;
+}
+.sp-stat-lbl {
+  font-size: 22rpx;
+  opacity: 0.85;
+  margin-top: 4rpx;
+}
+
+/* 列表 */
+.sp-body {
+  padding: 24rpx 32rpx;
+}
+.sp-sec-title {
+  font-size: 24rpx;
+  color: #7A74A0;
+  font-weight: 600;
+  padding: 16rpx 4rpx 12rpx;
+}
+.sp-act-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: linear-gradient(135deg, #7C6FCD 0%, #A99FE0 100%);
+  border-radius: 24rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4px 16px rgba(124, 111, 205, 0.2);
+}
+.sp-act-card.done {
+  background: linear-gradient(135deg, #D3FF90 0%, #FFFA9A 100%);
+  opacity: 0.85;
+  color: #040A18;
+}
+.sp-act-emoji {
+  font-size: 56rpx;
+  flex-shrink: 0;
+}
+.sp-act-main {
+  flex: 1;
+}
+.sp-act-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.sp-act-name {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+.sp-act-badge {
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.6);
+}
+.sp-act-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.sp-act-amount {
+  font-size: 40rpx;
+  font-weight: 700;
+}
+.sp-act-unit {
+  font-size: 22rpx;
+  opacity: 0.75;
+  margin-left: 8rpx;
+}
+.sp-act-meta {
+  font-size: 22rpx;
+}
+
+/* 空态 */
+.sp-empty {
+  text-align: center;
+  padding: 120rpx 0;
+}
+.sp-empty-icon {
+  font-size: 96rpx;
+  margin-bottom: 24rpx;
+}
+.sp-empty-text {
+  font-size: 30rpx;
+  color: #2D2755;
+  font-weight: 600;
+}
+.sp-empty-sub {
+  font-size: 24rpx;
+  color: #B8B3D8;
+  margin-top: 12rpx;
+}
+
+/* FAB */
+.sp-fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 80rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C6FCD 0%, #A99FE0 100%);
+  color: #fff;
+  font-size: 56rpx;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px rgba(124, 111, 205, 0.45);
+  z-index: 20;
+}

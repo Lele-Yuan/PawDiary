@@ -72,6 +72,42 @@ const BILL_CATEGORY_COLORS = {
 };
 
 /**
+ * 分账工具（SplitPal）账单分类
+ */
+const SPLIT_CATEGORIES = [
+  { key: 'food', label: '餐饮', icon: '🍽️' },
+  { key: 'transport', label: '交通', icon: '🚗' },
+  { key: 'hotel', label: '住宿', icon: '🏨' },
+  { key: 'shopping', label: '购物', icon: '🛍️' },
+  { key: 'fun', label: '娱乐', icon: '🎮' },
+  { key: 'medical', label: '医疗', icon: '💊' },
+  { key: 'gift', label: '礼物', icon: '🎁' },
+  { key: 'other', label: '其他', icon: '📦' }
+];
+
+/**
+ * 分账工具账单分类映射
+ */
+const SPLIT_CATEGORY_MAP = {};
+SPLIT_CATEGORIES.forEach(item => {
+  SPLIT_CATEGORY_MAP[item.key] = item;
+});
+
+/**
+ * 分账工具账单分类颜色（用于图表）
+ */
+const SPLIT_CATEGORY_COLORS = {
+  food: '#7C6FCD',
+  transport: '#A99FE0',
+  hotel: '#5A4EAA',
+  shopping: '#D4CEFF',
+  fun: '#8B6BF7',
+  medical: '#6B4FF0',
+  gift: '#FF8C42',
+  other: '#B8B3D8'
+};
+
+/**
  * 宠物物种
  */
 const PET_SPECIES = [
@@ -186,7 +222,11 @@ const COLLECTIONS = {
   FAMILY_MEMBERS: 'pet_members',
   PET_PLACES: 'pet_places',
   USER_LOCATIONS: 'user_locations',
-  APP_CONFIG: 'app_config'
+  APP_CONFIG: 'app_config',
+  SPLIT_ACTIVITIES: 'split_activities',
+  SPLIT_MEMBERS: 'split_members',
+  SPLIT_BILLS: 'split_bills',
+  SPLIT_SETTLEMENTS: 'split_settlements'
 };
 
 /**
@@ -262,6 +302,9 @@ module.exports = {
   BILL_CATEGORIES,
   BILL_CATEGORY_MAP,
   BILL_CATEGORY_COLORS,
+  SPLIT_CATEGORIES,
+  SPLIT_CATEGORY_MAP,
+  SPLIT_CATEGORY_COLORS,
   PET_SPECIES,
   PET_GENDERS,
   PET_REMARK_TYPES,

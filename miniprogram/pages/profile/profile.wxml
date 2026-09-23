@@ -57,6 +57,10 @@
         <view class="quick-action-icon">🐶</view>
         <text class="quick-action-label">DGTI</text>
       </view>
+      <view class="quick-action-item" bindtap="goSplitpal">
+        <view class="quick-action-icon">🧾</view>
+        <text class="quick-action-label">记账分账</text>
+      </view>
     </view>
   </view>
 
