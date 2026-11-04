@@ -1,0 +1,87 @@
+<nav-bar title="约饭小票" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/receipt/receipt.wxml -->
+<view wx:if="{{r}}" class="wrap">
+  <view class="ticket">
+    <!-- 票头 -->
+    <view class="t-head">
+      <view class="shop">🍚 {{r.familyName}}</view>
+      <view class="sub">来我家吃饭 · 第 {{r.seq}} 次约饭</view>
+      <view class="dash"></view>
+    </view>
+
+    <!-- 菜品明细 -->
+    <view class="t-sec">
+      <view class="t-row head">
+        <text class="c-name">菜品</text>
+        <text class="c-dur">时长</text>
+        <text class="c-cnt">点单</text>
+      </view>
+      <view wx:for="{{r.dishes}}" wx:key="dishId" class="t-row">
+        <view class="c-name">
+          <view class="dn">{{item.name}}</view>
+          <view class="pk">{{item.pickers}}</view>
+        </view>
+        <text class="c-dur">{{item.duration}}分</text>
+        <text class="c-cnt">×{{item.count}}</text>
+      </view>
+    </view>
+
+    <view class="dash"></view>
+
+    <!-- 汇总 -->
+    <view class="t-sum">
+      <view class="sum-row"><text>菜品数</text><text>{{r.dishCount}} 道</text></view>
+      <view class="sum-row"><text>总点单数</text><text>{{r.pickTotal}} 次</text></view>
+      <view class="sum-row big"><text>预计总时长</text><text>{{r.totalDuration}} 分钟</text></view>
+    </view>
+
+    <view class="dash"></view>
+
+    <!-- 当时成员 -->
+    <view wx:if="{{r.members.length}}" class="t-sec">
+      <view class="sec-lab">🧑‍🍳 当时成员（{{r.memberCount}} 人）</view>
+      <view class="mem-chips">
+        <view wx:for="{{r.members}}" wx:key="userId" class="mem-chip">
+          <view class="mem-ava">
+            <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}" mode="aspectFill"></image>
+            <text wx:else>{{item.nickName[0]}}</text>
+          </view>
+          <text class="mem-nick">{{item.nickName}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 食材汇总 -->
+    <view class="t-sec">
+      <view class="sec-lab">🧺 所需食材</view>
+      <view class="chips">
+        <text wx:for="{{r.ingredients}}" wx:key="name" class="chip">{{item.emoji}} {{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 口味 -->
+    <view wx:if="{{r.tastes.length}}" class="t-sec">
+      <view class="sec-lab">👅 口味</view>
+      <view class="chips">
+        <text wx:for="{{r.tastes}}" wx:key="name" class="chip">{{item.emoji}} {{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view wx:if="{{r.remarks.length}}" class="t-sec">
+      <view class="sec-lab">📝 备注</view>
+      <view wx:for="{{r.remarks}}" wx:key="*this" class="rmk">· {{item}}</view>
+    </view>
+
+    <view wx:if="{{orderedAtText}}" class="t-foot">下单时间：{{orderedAtText}}</view>
+    <view class="t-foot thanks">—— 开饭啦，祝好胃口 ——</view>
+    <!-- 锯齿底边 -->
+    <view class="zigzag"></view>
+  </view>
+
+  <!-- 状态 / 操作 -->
+  <view class="status-line">
+    <text class="tag status">{{r.status === 1 ? '已下单' : (r.status === 2 ? '已完成' : '点菜中')}}</text>
+  </view>
+  <button wx:if="{{r.status === 1}}" class="btn block" bindtap="finish">标记为已完成</button>
+</view>

@@ -1,0 +1,9 @@
+{
+  "name": "mealManage",
+  "version": "1.0.0",
+  "description": "来我家吃饭模块云函数（家庭/菜单/约饭/小票）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

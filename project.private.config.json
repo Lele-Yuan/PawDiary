@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "来吃饭",
+          "pathName": "pages/mealtime/index/index",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "邀请加入分账活动",
           "pathName": "pages/splitpal/activity-detail/activity-detail",
           "query": "id=d83520e26aaf4f17028d47023452162b&inviteCode=PWX27GQDGZ",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "分账账单",

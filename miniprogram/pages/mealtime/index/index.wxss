@@ -1,0 +1,48 @@
+@import "../mealtime-theme.wxss";
+
+/* pages/index/index.wxss */
+.page-head { padding-bottom: 32rpx; }
+.hello .greet { font-size: 40rpx; font-weight: 700; }
+.hello .slogan { color: var(--c-primary-deep); font-size: 26rpx; margin-top: 8rpx; }
+
+.head-actions { display: flex; margin-top: 32rpx; }
+.act-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  background: var(--grad-primary); color: #fff; font-weight: 600;
+  border-radius: 20rpx; padding: 26rpx 0; margin-right: 20rpx;
+  box-shadow: 0 10rpx 22rpx rgba(92, 171, 46, 0.28);
+}
+.act-btn:last-child { margin-right: 0; }
+.act-btn.ghost {
+  background: #fff; color: var(--c-primary-deep);
+  border: 2rpx solid var(--c-primary-light); box-shadow: none;
+}
+.act-btn .ic { margin-right: 10rpx; font-size: 32rpx; }
+
+.fam-card { transition: transform .1s; }
+.fam-card:active { transform: scale(0.98); }
+.fam-name { font-size: 32rpx; font-weight: 700; }
+
+/* 成员头像行 */
+.ava-row { display: flex; align-items: center; margin-top: 18rpx; }
+.ava {
+  width: 56rpx; height: 56rpx; border-radius: 50%; margin-right: -14rpx;
+  background: #EFEAFE; border: 3rpx solid #fff; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24rpx; color: var(--c-primary-deep);
+}
+.ava image { width: 100%; height: 100%; }
+.ava-more { margin-left: 24rpx; font-size: 22rpx; color: var(--c-sub); }
+
+/* 弹窗 */
+.mask {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center; z-index: 99;
+}
+.modal {
+  width: 600rpx; background: #fff; border-radius: 28rpx; padding: 44rpx 40rpx;
+}
+.modal-t { font-size: 34rpx; font-weight: 700; text-align: center; margin-bottom: 32rpx; }
+.field {
+  background: #F8F5FF; border-radius: 16rpx; padding: 24rpx 28rpx; font-size: 28rpx;
+}

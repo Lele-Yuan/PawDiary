@@ -305,6 +305,11 @@ Page({
     wx.navigateTo({ url: '/pages/splitpal/index/index' });
   },
 
+  // 来吃饭
+  goMealtime() {
+    wx.navigateTo({ url: '/pages/mealtime/index/index' });
+  },
+
   // 纪念馆
   goMemorial() {
     wx.navigateTo({ url: '/pages/memorial/memorial' });

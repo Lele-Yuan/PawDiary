@@ -32,7 +32,15 @@
     "pages/dogti/atlas/atlas",
     "pages/splitpal/index/index",
     "pages/splitpal/activity-edit/activity-edit",
-    "pages/splitpal/activity-detail/activity-detail"
+    "pages/splitpal/activity-detail/activity-detail",
+    "pages/mealtime/index/index",
+    "pages/mealtime/family/family",
+    "pages/mealtime/members/members",
+    "pages/mealtime/menu/menu",
+    "pages/mealtime/dishEdit/dishEdit",
+    "pages/mealtime/order/order",
+    "pages/mealtime/receipt/receipt",
+    "pages/mealtime/history/history"
   ],
   "window": {
     "backgroundTextStyle": "light",

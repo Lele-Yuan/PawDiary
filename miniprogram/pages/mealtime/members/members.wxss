@@ -1,0 +1,17 @@
+@import "../mealtime-theme.wxss";
+
+/* pages/members/members.wxss */
+.mem-row { display: flex; align-items: center; padding: 20rpx 0; border-bottom: 2rpx solid var(--c-line); }
+.mem-row:last-child { border-bottom: none; }
+.mem-info { margin-left: 20rpx; flex: 1; }
+.mem-name { font-size: 30rpx; font-weight: 600; }
+.mini { font-size: 24rpx; margin-left: 6rpx; }
+
+.ops { display: flex; align-items: center; }
+.op {
+  font-size: 22rpx; padding: 10rpx 20rpx; border-radius: 999rpx;
+  margin-left: 12rpx;
+}
+.op.pass { background: var(--grad-primary); color: #fff; }
+.op.reject { background: #FDECEC; color: #e05656; }
+.op.mini-op { background: #F8F5FF; color: var(--c-primary-deep); border: 2rpx solid var(--c-primary-light); }

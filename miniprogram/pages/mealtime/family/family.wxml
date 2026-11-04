@@ -1,0 +1,96 @@
+<nav-bar title="{{navTitle}}" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/family/family.wxml -->
+<block wx:if="{{detail}}">
+  <view class="page-head">
+    <view class="row sb">
+      <view class="fam-name">{{detail.family.name}}</view>
+      <view wx:if="{{detail.currentMeal}}" class="tag status">
+        {{statusMap[detail.currentMeal.status]}}
+      </view>
+    </view>
+    <view class="invite-actions">
+      <button class="inv-btn share" open-type="share">👨‍👩‍👧 邀请成员加入</button>
+      <view wx:if="{{detail.me.isAdmin}}" class="inv-btn ghost" bindtap="refreshCode">🔄 换码</view>
+      <view wx:if="{{detail.me.isAdmin}}" class="inv-btn ghost" bindtap="openEdit">✏️ 编辑</view>
+    </view>
+    <view class="invite" bindtap="copyCode">
+      <text class="lab">邀请码</text>
+      <text class="code">{{detail.family.inviteCode}}</text>
+      <text class="copy">点击复制</text>
+    </view>
+    <!-- 我的角色 -->
+    <view class="me-row">
+      <view class="row">
+        <view class="tag {{detail.me.kitchenRole ? 'cook' : 'eat'}}">
+          {{detail.me.kitchenRole ? '🍳 大厨' : '🍚 干饭人'}}
+        </view>
+        <text wx:if="{{detail.me.isAdmin}}" class="tag admin">管理员</text>
+        <text wx:if="{{detail.me.isFounder}}" class="tag admin">👑 发起人</text>
+      </view>
+      <view class="switch" bindtap="toggleRole">
+        切换为{{detail.me.kitchenRole ? '干饭人' : '大厨'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="entries">
+    <view class="entry main" bindtap="goOrder">
+      <text class="ic">🍜</text>
+      <view class="et">去点菜</view>
+      <view class="es">{{detail.currentMeal ? statusMap[detail.currentMeal.status] : '发起一次约饭'}}</view>
+    </view>
+    <view class="entry" bindtap="goMembers">
+      <text class="ic">👨‍👩‍👧</text>
+      <view class="et">成员</view>
+      <view class="es">{{detail.members.length}} 人{{detail.pending.length ? ' · ' + detail.pending.length + '待审批' : ''}}</view>
+    </view>
+    <view class="entry" bindtap="goHistory">
+      <text class="ic">🧾</text>
+      <view class="et">历史小票</view>
+      <view class="es">往期约饭记录</view>
+    </view>
+  </view>
+
+  <!-- 成员一览 -->
+  <view class="card">
+    <view class="sec-t">饭局成员</view>
+    <view wx:for="{{detail.members}}" wx:key="membershipId" class="mem-row">
+      <view class="avatar">
+        <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}"></image>
+        <text wx:else>{{item.nickName[0]}}</text>
+      </view>
+      <view class="mem-info">
+        <view class="mem-name">
+          {{item.nickName}}
+          <text wx:if="{{item.isFounder}}" class="mini">👑</text>
+        </view>
+        <view class="row" style="margin-top:6rpx;">
+          <view class="tag {{item.kitchenRole ? 'cook' : 'eat'}}">
+            {{item.kitchenRole ? '大厨' : '干饭人'}}
+          </view>
+          <text wx:if="{{item.isAdmin}}" class="tag admin">管理员</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 危险操作 -->
+  <view class="danger-zone">
+    <view wx:if="{{!detail.me.isFounder}}" class="danger-btn" bindtap="leaveFamily">退出饭局</view>
+    <view wx:if="{{detail.me.isFounder}}" class="danger-btn" bindtap="dissolveFamily">解散饭局</view>
+  </view>
+
+  <!-- 编辑饭局弹窗 -->
+  <view wx:if="{{showEdit}}" class="mask" catchtap="closeEdit">
+    <view class="modal" catchtap="stopEdit">
+      <view class="modal-t">编辑饭局</view>
+      <input class="field" placeholder="饭局名称" value="{{editName}}" bindinput="onEditName" maxlength="20" />
+      <view class="switch-row">
+        <text>加入需审批</text>
+        <switch checked="{{editApproval}}" bindchange="toggleApproval" color="#7B5CF5" />
+      </view>
+      <button class="btn block" style="margin:28rpx 0 0;" bindtap="saveEdit">保存</button>
+    </view>
+  </view>
+</block>

@@ -61,6 +61,10 @@
         <view class="quick-action-icon">🧾</view>
         <text class="quick-action-label">记账分账</text>
       </view>
+      <view class="quick-action-item" bindtap="goMealtime">
+        <view class="quick-action-icon">🍚</view>
+        <text class="quick-action-label">来吃饭</text>
+      </view>
     </view>
   </view>
 

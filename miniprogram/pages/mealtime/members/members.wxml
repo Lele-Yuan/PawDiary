@@ -1,0 +1,53 @@
+<nav-bar title="成员管理" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/members/members.wxml -->
+<block wx:if="{{detail}}">
+  <!-- 待审批 -->
+  <view wx:if="{{detail.me.isAdmin && detail.pending.length}}" class="card">
+    <view class="sec-t">待审批（{{detail.pending.length}}）</view>
+    <view wx:for="{{detail.pending}}" wx:key="membershipId" class="mem-row">
+      <view class="avatar">
+        <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}"></image>
+        <text wx:else>{{item.nickName[0]}}</text>
+      </view>
+      <view class="mem-info"><view class="mem-name">{{item.nickName}}</view>
+        <view class="sub" style="margin-top:4rpx;">申请加入</view>
+      </view>
+      <view class="ops">
+        <view class="op pass" data-id="{{item.membershipId}}" data-pass="{{true}}" bindtap="approve">通过</view>
+        <view class="op reject" data-id="{{item.membershipId}}" data-pass="{{false}}" bindtap="approve">拒绝</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 成员列表 -->
+  <view class="card">
+    <view class="sec-t">成员（{{detail.members.length}}）</view>
+    <view wx:for="{{detail.members}}" wx:key="membershipId" class="mem-row">
+      <view class="avatar">
+        <image wx:if="{{item.avatarUrl}}" src="{{item.avatarUrl}}"></image>
+        <text wx:else>{{item.nickName[0]}}</text>
+      </view>
+      <view class="mem-info">
+        <view class="mem-name">
+          {{item.nickName}}
+          <text wx:if="{{item.isFounder}}" class="mini">👑</text>
+        </view>
+        <view class="row" style="margin-top:6rpx;">
+          <view class="tag {{item.kitchenRole ? 'cook' : 'eat'}}">{{item.kitchenRole ? '大厨' : '干饭人'}}</view>
+          <text wx:if="{{item.isAdmin}}" class="tag admin">管理员</text>
+        </view>
+      </view>
+      <!-- 管理操作：发起人不可被操作 -->
+      <view wx:if="{{detail.me.isAdmin && !item.isFounder}}" class="ops">
+        <view class="op mini-op" data-id="{{item.membershipId}}" data-admin="{{item.isAdmin}}" bindtap="toggleAdmin">
+          {{item.isAdmin ? '取消管理' : '设管理员'}}
+        </view>
+        <view class="op reject" data-id="{{item.membershipId}}" data-name="{{item.nickName}}" bindtap="removeMember">移除</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!detail.me.isAdmin}}" class="sub" style="text-align:center;padding:20rpx;">
+    仅管理员可审批与管理成员
+  </view>
+</block>

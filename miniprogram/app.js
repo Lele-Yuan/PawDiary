@@ -46,6 +46,12 @@ App({
     return this.globalData.userReady;
   },
 
+  // 获取已登录用户（供来我家吃饭等模块页面展示使用）
+  async getUser() {
+    await this.waitForUserReady();
+    return this.globalData.userInfo;
+  },
+
   // 初始化用户信息
   async initUser() {
     // 标记用户初始化开始

@@ -1,0 +1,70 @@
+<nav-bar title="来吃饭" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/index/index.wxml -->
+<view class="page-head">
+  <view class="hello">
+    <view class="greet">👋 你好{{userInfo ? '，' + userInfo.nickName : ''}}</view>
+    <view class="slogan">来我家吃饭 · 一起约个饭</view>
+  </view>
+  <view class="head-actions">
+    <view class="act-btn" bindtap="openCreate">
+      <text class="ic">🏠</text><text>创建饭局</text>
+    </view>
+    <view class="act-btn ghost" bindtap="openJoin">
+      <text class="ic">🔑</text><text>加入饭局</text>
+    </view>
+    <view class="act-btn ghost" bindtap="goMenu">
+      <text class="ic">🍳</text><text>我的菜单</text>
+    </view>
+  </view>
+</view>
+
+<view class="sec-t" style="margin:28rpx 32rpx 0;">我的饭局</view>
+
+<view wx:if="{{!loading && families.length === 0}}" class="empty">
+  <text class="ic">🍽️</text>
+  还没有饭局，创建或加入一个吧～
+</view>
+
+<view wx:for="{{families}}" wx:key="_id" class="card fam-card" data-id="{{item._id}}" bindtap="onTapFamily">
+  <view class="row sb">
+    <view class="fam-name">{{item.name}}</view>
+    <view wx:if="{{item.mealStatus === 0 || item.mealStatus === 1}}" class="tag status">
+      {{statusMap[item.mealStatus]}}
+    </view>
+  </view>
+  <view class="row sub" style="margin-top:16rpx;">
+    <text>👨‍👩‍👧 {{item.memberCount}} 人</text>
+    <text style="margin-left:28rpx;">🍳 {{item.cookCount}} 位大厨</text>
+  </view>
+  <view wx:if="{{item.members.length}}" class="ava-row">
+    <view wx:for="{{item.members}}" wx:for-item="m" wx:key="index" class="ava">
+      <image wx:if="{{m.avatarUrl}}" src="{{m.avatarUrl}}" mode="aspectFill"></image>
+      <text wx:else>{{m.nickName[0]}}</text>
+    </view>
+    <text wx:if="{{item.memberCount > 5}}" class="ava-more">+{{item.memberCount - 5}}</text>
+  </view>
+  <view class="row" style="margin-top:16rpx;">
+    <text wx:if="{{item.isAdmin}}" class="tag admin">管理员</text>
+    <view class="tag {{item.kitchenRole ? 'cook' : 'eat'}}">
+      {{item.kitchenRole ? '🍳 大厨' : '🍚 干饭人'}}
+    </view>
+  </view>
+</view>
+
+<!-- 创建饭局弹窗 -->
+<view wx:if="{{showCreate}}" class="mask" bindtap="closeModal">
+  <view class="modal" catchtap="stop">
+    <view class="modal-t">创建饭局</view>
+    <input class="field" placeholder="给饭局起个名字，如：温馨小家" value="{{inputName}}" bindinput="onName" maxlength="20" />
+    <button class="btn block" style="margin:28rpx 0 0;" bindtap="doCreate">创建</button>
+  </view>
+</view>
+
+<!-- 加入饭局弹窗 -->
+<view wx:if="{{showJoin}}" class="mask" bindtap="closeModal">
+  <view class="modal" catchtap="stop">
+    <view class="modal-t">加入饭局</view>
+    <input class="field" placeholder="输入 6 位邀请码" value="{{inputCode}}" bindinput="onCode" maxlength="6" />
+    <button class="btn block" style="margin:28rpx 0 0;" bindtap="doJoin">加入</button>
+  </view>
+</view>

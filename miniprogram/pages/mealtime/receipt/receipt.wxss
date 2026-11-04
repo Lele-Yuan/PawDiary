@@ -1,0 +1,61 @@
+@import "../mealtime-theme.wxss";
+
+/* pages/receipt/receipt.wxss */
+.wrap { padding: 32rpx; }
+
+.ticket {
+  background: #fff; border-radius: 24rpx 24rpx 0 0;
+  padding: 44rpx 40rpx 0; position: relative;
+  box-shadow: 0 10rpx 30rpx rgba(123,92,245,0.12);
+}
+
+.t-head { text-align: center; }
+.shop { font-size: 40rpx; font-weight: 800; }
+.t-head .sub { margin-top: 10rpx; }
+
+.dash { border-top: 2rpx dashed #E6DEF5; margin: 28rpx 0; }
+
+.t-row { display: flex; align-items: center; padding: 16rpx 0; }
+.t-row.head { color: var(--c-sub); font-size: 24rpx; padding-bottom: 8rpx; }
+.c-name { flex: 1; }
+.c-dur { width: 110rpx; text-align: center; color: var(--c-sub); font-size: 26rpx; }
+.c-cnt { width: 90rpx; text-align: right; font-weight: 700; color: var(--c-primary-deep); }
+.dn { font-size: 30rpx; font-weight: 600; }
+.pk { font-size: 22rpx; color: var(--c-sub); margin-top: 4rpx; }
+
+.t-sum { }
+.sum-row { display: flex; justify-content: space-between; padding: 10rpx 0; color: var(--c-text); }
+.sum-row.big { font-size: 34rpx; font-weight: 800; color: var(--c-primary-deep); margin-top: 8rpx; }
+
+.sec-lab { font-weight: 700; margin-bottom: 14rpx; }
+.t-sec { margin-bottom: 20rpx; }
+.rmk { color: #6B6585; font-size: 26rpx; padding: 6rpx 0; }
+
+.t-foot { text-align: center; color: var(--c-sub); font-size: 24rpx; padding-top: 24rpx; }
+.t-foot.thanks { padding: 16rpx 0 40rpx; letter-spacing: 2rpx; }
+
+/* 锯齿底边 */
+.zigzag {
+  height: 24rpx;
+  background:
+    linear-gradient(135deg, transparent 50%, #F6F3FF 50%) 0 0 / 24rpx 24rpx repeat-x,
+    linear-gradient(-135deg, transparent 50%, #F6F3FF 50%) 0 0 / 24rpx 24rpx repeat-x;
+}
+
+.status-line { text-align: center; margin: 32rpx 0 10rpx; }
+
+/* 当时成员：头像 + 昵称 */
+.mem-chips { display: flex; flex-wrap: wrap; }
+.mem-chip {
+  display: flex; align-items: center;
+  background: #F8F5FF; border-radius: 999rpx;
+  padding: 6rpx 20rpx 6rpx 6rpx; margin: 8rpx 12rpx 0 0;
+}
+.mem-ava {
+  width: 44rpx; height: 44rpx; border-radius: 50%; margin-right: 12rpx;
+  background: #EFEAFE; overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22rpx; color: var(--c-primary-deep);
+}
+.mem-ava image { width: 100%; height: 100%; }
+.mem-nick { font-size: 24rpx; color: var(--c-text); }

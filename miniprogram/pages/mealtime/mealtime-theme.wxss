@@ -1,0 +1,116 @@
+/* mealtime-theme.wxss - 来我家吃饭模块主题（对齐 PawDiary 紫色品牌）。仅在模块页面内 @import */
+page {
+  --c-primary: #7B5CF5;
+  --c-primary-deep: #5A3FE0;
+  --c-primary-light: #A48BFA;
+  --c-bg: #F6F3FF;
+  --c-card: #FFFFFF;
+  --c-text: #1F1A3D;
+  --c-sub: #6B6585;
+  --c-line: #ECE7F7;
+  --c-sage: #4FB1F0;
+  --grad-primary: linear-gradient(135deg, #7B5CF5 0%, #A48BFA 100%);
+  --grad-head: linear-gradient(180deg, #EFEAFE 0%, #F6F3FF 50%);
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+/* 顶部渐变头 */
+.page-head {
+  /* background: var(--grad-head); */
+  background: var(--grad-head);
+  padding: 24rpx 32rpx 40rpx;
+}
+
+/* 搜索框 */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 999rpx;
+  padding: 16rpx 28rpx;
+  box-shadow: 0 6rpx 20rpx rgba(123, 92, 245, 0.12);
+}
+.search-bar .ph { color: var(--c-sub); margin-left: 12rpx; font-size: 26rpx; }
+
+/* 卡片 */
+.card {
+  background: var(--c-card);
+  border-radius: 28rpx;
+  padding: 28rpx;
+  margin: 20rpx 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(123, 92, 245, 0.08);
+}
+
+/* 主按钮：渐变胶囊 */
+.btn {
+  background: var(--grad-primary);
+  color: #fff;
+  border: none;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  padding: 22rpx 0;
+  margin: 18rpx 32rpx;
+  box-shadow: 0 8rpx 20rpx rgba(123, 92, 245, 0.32);
+}
+.btn::after { border: none; }
+.btn.ghost {
+  background: #fff;
+  color: var(--c-primary-deep);
+  border: 2rpx solid var(--c-primary-light);
+  box-shadow: none;
+}
+.btn.sm {
+  display: inline-block;
+  width: auto;
+  padding: 10rpx 28rpx;
+  font-size: 24rpx;
+  margin: 0 0 0 12rpx;
+}
+.btn.block { display: block; width: auto; }
+.btn[disabled] { opacity: 0.5; }
+
+/* 胶囊标签 */
+.tag {
+  display: inline-block;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  margin-right: 10rpx;
+}
+.tag.cook { background: #EFEAFE; color: var(--c-primary); }
+.tag.eat { background: #E3F0FE; color: var(--c-sage); }
+.tag.admin { background: #FFF6D9; color: #C99500; }
+.tag.status { background: var(--grad-primary); color: #fff; }
+
+/* 行布局 */
+.row { display: flex; align-items: center; }
+.row.sb { justify-content: space-between; }
+.sub { color: var(--c-sub); font-size: 24rpx; }
+.sec-t { font-size: 28rpx; font-weight: 600; margin-bottom: 16rpx; }
+
+/* 头像 */
+.avatar {
+  width: 72rpx; height: 72rpx; border-radius: 50%;
+  background: #EFEAFE; display: flex; align-items: center;
+  justify-content: center; font-size: 36rpx; overflow: hidden;
+}
+.avatar image { width: 100%; height: 100%; }
+
+/* chip */
+.chip {
+  display: inline-block;
+  background: #F8F5FF;
+  color: var(--c-sub);
+  border-radius: 12rpx;
+  padding: 6rpx 16rpx;
+  font-size: 22rpx;
+  margin: 6rpx 10rpx 6rpx 0;
+}
+.chip.on { background: var(--grad-primary); color: #fff; }
+.chip.dash { background: #fff; border: 2rpx dashed #E0D8F5; color: var(--c-sub); }
+
+/* 空状态 */
+.empty { text-align: center; color: var(--c-sub); padding: 120rpx 0; font-size: 26rpx; }
+.empty .ic { font-size: 90rpx; display: block; margin-bottom: 20rpx; }

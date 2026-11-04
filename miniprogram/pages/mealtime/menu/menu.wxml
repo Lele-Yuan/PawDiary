@@ -1,0 +1,41 @@
+<nav-bar title="我的菜单" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/menu/menu.wxml -->
+<view class="page-head">
+  <view class="row sb">
+    <view>
+      <view class="t">我的拿手好菜</view>
+      <view class="sub" style="margin-top:6rpx;">菜品是全局资产，可在任意饭局复用</view>
+    </view>
+    <view class="count">{{dishes.length}}</view>
+  </view>
+</view>
+
+<view wx:if="{{!loading && dishes.length === 0}}" class="empty">
+  <text class="ic">🍳</text>
+  还没有菜品，点下方按钮添加第一道菜
+</view>
+
+<view class="list">
+  <view wx:for="{{dishes}}" wx:key="_id" class="dish-card" data-id="{{item._id}}" bindtap="editDish">
+    <view class="dish-img">
+      <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill"></image>
+      <text wx:else class="ph-ic">🍲</text>
+    </view>
+    <view class="dish-body">
+      <view class="row sb">
+        <view class="dish-name">{{item.name}}</view>
+        <view class="del" catchtap="removeDish" data-id="{{item._id}}" data-name="{{item.name}}">删除</view>
+      </view>
+      <view class="ings">
+        <text wx:for="{{item.ingredients}}" wx:for-item="g" wx:key="name" class="chip">{{g.emoji}} {{g.name}}</text>
+      </view>
+      <view class="row" style="margin-top:8rpx;">
+        <text wx:if="{{item.duration}}" class="sub">⏱ {{item.duration}} 分钟</text>
+        <text wx:for="{{item.tastes}}" wx:for-item="t" wx:key="name" class="taste">{{t.emoji}}{{t.name}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view style="height:140rpx;"></view>
+<view class="fab" bindtap="addDish">＋ 添加菜品</view>

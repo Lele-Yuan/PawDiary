@@ -1,0 +1,39 @@
+@import "../mealtime-theme.wxss";
+
+/* pages/dishEdit/dishEdit.wxss */
+.wrap { padding-top: 20rpx; }
+
+.img-box { margin-top: 16rpx; }
+.up-btn {
+  width: 220rpx; height: 220rpx; border-radius: 20rpx;
+  background: #F8F5FF; border: 2rpx dashed #E0D8F5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.up-btn .ic { font-size: 56rpx; }
+.preview { position: relative; width: 220rpx; height: 220rpx; border-radius: 20rpx; overflow: hidden; }
+.preview image { width: 100%; height: 100%; }
+.rm {
+  position: absolute; top: 8rpx; right: 8rpx; width: 44rpx; height: 44rpx;
+  background: rgba(0,0,0,0.5); color: #fff; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 36rpx;
+}
+
+.field-row {
+  display: flex; align-items: center; padding: 22rpx 0;
+  border-bottom: 2rpx solid var(--c-line);
+}
+.field-row:last-child { border-bottom: none; }
+.field-row.col { flex-direction: column; align-items: flex-start; }
+.lab { width: 140rpx; color: var(--c-sub); font-size: 28rpx; flex-shrink: 0; }
+.inp { flex: 1; font-size: 30rpx; }
+.unit { color: var(--c-sub); font-size: 26rpx; }
+.ta { width: 100%; margin-top: 16rpx; font-size: 28rpx; min-height: 120rpx; }
+
+.chips { margin-top: 10rpx; }
+
+.ing-group { margin-top: 4rpx; }
+.grp-title { font-size: 24rpx; color: var(--c-sub); font-weight: 600; margin: 18rpx 0 2rpx; }
+
+.fab-save {
+  position: fixed; left: 32rpx; right: 32rpx; bottom: 36rpx; margin: 0;
+}

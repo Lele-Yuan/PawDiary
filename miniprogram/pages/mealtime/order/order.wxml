@@ -1,0 +1,91 @@
+<nav-bar title="点菜" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/order/order.wxml -->
+<wxs module="f">
+  module.exports = {
+    hit: function (d, kw) {
+      if (!kw) return true;
+      if (d.name && d.name.indexOf(kw) >= 0) return true;
+      var ings = d.ingredients || [];
+      for (var i = 0; i < ings.length; i++) {
+        var n = ings[i].name || '';
+        if (n.indexOf(kw) >= 0) return true;
+      }
+      return false;
+    }
+  };
+</wxs>
+
+<!-- 无进行中约饭：开桌引导 -->
+<view wx:if="{{!meal}}" class="start-wrap">
+  <view class="start-card">
+    <text class="big">🍚</text>
+    <view class="st">还没有进行中的约饭</view>
+    <view class="sub">发起一次约饭，召集全家来点菜</view>
+    <button class="btn block" style="margin-top:36rpx;width:420rpx;" bindtap="startMeal">发起约饭</button>
+  </view>
+</view>
+
+<!-- 点菜界面 -->
+<block wx:else>
+  <!-- 搜索框 -->
+  <view class="top">
+    <view class="search-bar">
+      <text>🔍</text>
+      <input class="s-inp" placeholder="搜菜名或食材" value="{{keyword}}" bindinput="onSearch" />
+    </view>
+    <view class="status-pill tag status">第 {{meal.seq}} 次 · {{meal.status === 0 ? '点菜中' : '已下单'}}</view>
+  </view>
+
+  <!-- 已下单：只读提示 -->
+  <view wx:if="{{meal.status !== 0}}" class="locked" bindtap="viewReceipt">
+    本次约饭已下单并锁定，点击查看小票 🧾
+  </view>
+
+  <!-- 菜品：按大厨分组可折叠 -->
+  <view class="acc">
+    <block wx:for="{{groups}}" wx:key="ownerId">
+      <view class="cat">
+        <view class="cat-head" data-id="{{item.ownerId}}" bindtap="toggleGroup">
+          <text class="cat-name">🍳 {{item.ownerName}} 的拿手菜（{{item.dishes.length}}）</text>
+          <text class="cat-arrow">{{ (keyword || !collapsed[item.ownerId]) ? '▾' : '▸' }}</text>
+        </view>
+        <view wx:if="{{keyword || !collapsed[item.ownerId]}}" class="cat-body">
+          <view wx:for="{{item.dishes}}" wx:for-item="d" wx:key="_id"
+                wx:if="{{f.hit(d, keyword)}}" class="d-item">
+            <view class="d-img">
+              <image wx:if="{{d.imageUrl}}" src="{{d.imageUrl}}" mode="aspectFill"></image>
+              <text wx:else class="ph">🍲</text>
+            </view>
+            <view class="d-info">
+              <view class="d-name">{{d.name}}</view>
+              <view class="d-ing">
+                <text wx:for="{{d.ingredients}}" wx:for-item="g" wx:key="name" class="mini-chip">{{g.emoji}}</text>
+              </view>
+              <view class="d-meta">
+                <text wx:if="{{d.duration}}" class="sub">⏱ {{d.duration}}分</text>
+                <text wx:if="{{counts[d._id]}}" class="hot">🔥 {{counts[d._id]}}人点</text>
+              </view>
+            </view>
+            <view class="pick-btn {{myPicks[d._id] ? 'picked' : ''}}"
+                  wx:if="{{meal.status === 0}}"
+                  data-id="{{d._id}}" bindtap="togglePick">
+              {{myPicks[d._id] ? '已点' : '＋ 点'}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view wx:if="{{groups.length === 0}}" class="nav-empty">暂无大厨，去「我的菜单」添加拿手菜吧</view>
+  </view>
+
+  <!-- 底部结算栏 -->
+  <view class="bar">
+    <view class="bar-info">
+      <text class="bar-ic">🛒</text>
+      <text>我已点 <text class="num">{{pickCount}}</text> 道</text>
+    </view>
+    <view wx:if="{{meal.status === 0 && meal.isAdmin}}" class="bar-btn" bindtap="submit">下单生成小票</view>
+    <view wx:elif="{{meal.status === 0}}" class="bar-btn ghost">等管理员下单</view>
+    <view wx:else class="bar-btn" bindtap="viewReceipt">查看小票</view>
+  </view>
+</block>

@@ -1,0 +1,27 @@
+<nav-bar title="历史小票" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/history/history.wxml -->
+<view wx:if="{{!loading && list.length === 0}}" class="empty">
+  <text class="ic">🧾</text>
+  还没有历史约饭记录
+</view>
+
+<view wx:for="{{list}}" wx:key="mealId" class="card h-card" data-id="{{item.mealId}}" bindtap="openReceipt">
+  <view class="row sb">
+    <view class="h-title">第 {{item.seq}} 次约饭</view>
+    <view class="sub">{{item.dateText}}</view>
+  </view>
+  <view class="emojis">
+    <text wx:for="{{item.emojis}}" wx:for-item="e" wx:key="*this" class="e">{{e}}</text>
+  </view>
+  <view class="row sb h-meta">
+    <text class="sub">🍲 {{item.dishCount}} 道 · 🙋 {{item.pickTotal}} 单</text>
+    <text class="dur">⏱ {{item.totalDuration}} 分钟</text>
+  </view>
+  <view wx:if="{{item.members.length}}" class="ava-row">
+    <view wx:for="{{item.members}}" wx:for-item="m" wx:key="index" class="ava">
+      <image wx:if="{{m.avatarUrl}}" src="{{m.avatarUrl}}" mode="aspectFill"></image>
+      <text wx:else>{{m.nickName[0]}}</text>
+    </view>
+    <text class="ava-lbl">当时 {{item.memberCount}} 人</text>
+  </view>
+</view>

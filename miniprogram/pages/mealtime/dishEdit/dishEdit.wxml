@@ -1,0 +1,64 @@
+<nav-bar title="{{navTitle}}" back="{{true}}" titleOpacity="{{navTitleOpacity}}" />
+<!-- pages/dishEdit/dishEdit.wxml -->
+<view class="wrap">
+  <!-- 图片 -->
+  <view class="card">
+    <view class="sec-t">菜品图片</view>
+    <view class="img-box">
+      <view wx:if="{{imageUrl}}" class="preview">
+        <image src="{{imageUrl}}" mode="aspectFill"></image>
+        <view class="rm" bindtap="removeImage">×</view>
+      </view>
+      <view wx:else class="up-btn" bindtap="chooseImage">
+        <text class="ic">📷</text><text class="sub">上传图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="card">
+    <view class="field-row">
+      <text class="lab">菜品名称</text>
+      <input class="inp" placeholder="如：番茄炒蛋" value="{{name}}" bindinput="onName" maxlength="20" />
+    </view>
+    <view class="field-row">
+      <text class="lab">预计时长</text>
+      <input class="inp" type="number" placeholder="分钟" value="{{duration}}" bindinput="onDuration" />
+      <text class="unit">分钟</text>
+    </view>
+    <view class="field-row col">
+      <text class="lab">备注</text>
+      <textarea class="ta" placeholder="做法、口味偏好等（选填）" value="{{remark}}" bindinput="onRemark" maxlength="100"></textarea>
+    </view>
+  </view>
+
+  <!-- 食材选择 -->
+  <view class="card">
+    <view class="sec-t">选择食材 <text class="sub">（可多选）</text></view>
+    <view wx:for="{{ingGroups}}" wx:for-item="g" wx:key="category" class="ing-group">
+      <view class="grp-title">{{g.category}}</view>
+      <view class="chips">
+        <view wx:for="{{g.items}}" wx:key="_id"
+              class="chip {{pickedIng[item.name] ? 'on' : ''}}"
+              data-item="{{item}}" bindtap="toggleIng">
+          {{item.emoji}} {{item.name}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 口味选择 -->
+  <view class="card">
+    <view class="sec-t">口味 <text class="sub">（可多选）</text></view>
+    <view class="chips">
+      <view wx:for="{{tasteLib}}" wx:key="_id"
+            class="chip {{pickedTaste[item.name] ? 'on' : ''}}"
+            data-item="{{item}}" bindtap="toggleTaste">
+        {{item.emoji}} {{item.name}}
+      </view>
+    </view>
+  </view>
+
+  <view style="height:140rpx;"></view>
+  <button class="btn block fab-save" bindtap="save">保存菜品</button>
+</view>
