@@ -1,0 +1,350 @@
+{
+  "apis": [
+    {
+      "name": "listPets",
+      "description": "查询当前用户可访问的宠物档案列表，用于选择宠物并取得真实 petId。不查询称重历史。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "pets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "petName": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "breed": {
+                  "type": "string"
+                },
+                "gender": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "birthday": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "adoptDate": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "remarks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "customType": {
+                        "type": "string"
+                      },
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "componentPath": "components/pet-profile-card"
+        }
+      }
+    },
+    {
+      "name": "getPetProfile",
+      "description": "查询一只可访问宠物的品种、生日、档案体重及备注。档案体重不是最近称重记录；编辑由用户打开管理页面完成。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "petId": {
+            "type": "string",
+            "description": "来自 petProfileSkill.listPets 返回 pets[]._id。多宠物或同名时让用户选择，不得猜测。"
+          },
+          "petName": {
+            "type": "string",
+            "description": "用户明确提到的宠物名字；不传时使用当前宠物或唯一宠物。与 petId 同传时必须一致。"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "petName": {
+            "type": "string"
+          },
+          "species": {
+            "type": "string"
+          },
+          "breed": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "weight": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "birthday": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "adoptDate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "remarks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "customType": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "componentPath": "components/pet-profile-card"
+        }
+      }
+    },
+    {
+      "name": "updatePetProfile",
+      "description": "按用户明确要求更新选定宠物的档案，可一次更新多个字段；改名也使用此接口。仅创建者或管理员可更新，同名先选择真实petId。仅写入updates指定字段，不新增日常记录。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "petId": {
+            "type": "string",
+            "description": "来自 petProfileSkill.listPets 返回 pets[]._id。多宠物或同名时让用户选择，不得猜测。"
+          },
+          "petName": {
+            "type": "string",
+            "description": "用户明确提到的宠物名字；不传时使用当前宠物或唯一宠物。与 petId 同传时必须一致。"
+          },
+          "updates": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20,
+                "description": "新的宠物名字。petName填写旧名字，updates.name填写新名字。"
+              },
+              "species": {
+                "type": "string",
+                "enum": [
+                  "cat",
+                  "dog",
+                  "other"
+                ]
+              },
+              "breed": {
+                "type": "string",
+                "maxLength": 20,
+                "description": "品种。明确清空时传空字符串。"
+              },
+              "gender": {
+                "type": "string",
+                "enum": [
+                  "male",
+                  "female"
+                ]
+              },
+              "birthday": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "用户明确指定的生日YYYY-MM-DD；明确清空时传null，不推测日期。"
+              },
+              "adoptDate": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "到家日期YYYY-MM-DD；明确清空时传null。"
+              },
+              "weight": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "仅用于用户明确修改档案体重，单位kg。新增一次称重用recordSkill，不同时写两处。"
+              },
+              "remarks": {
+                "type": "array",
+                "maxItems": 10,
+                "description": "整体替换备注。先getPetProfile取得原备注，添加时保留旧项；删除或整体替换须让用户确认最终完整列表。明确清空传[]。",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "preference",
+                        "taboo",
+                        "caution",
+                        "other",
+                        "custom"
+                      ]
+                    },
+                    "customType": {
+                      "type": "string",
+                      "maxLength": 10,
+                      "description": "type为custom时必填非空类型名。"
+                    },
+                    "content": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "content"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false,
+            "description": "仅填写用户明确要求改动的字段。未提供的字段保持不变，不填默认值。"
+          }
+        },
+        "required": [
+          "updates"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "petId": {
+            "type": "string"
+          },
+          "previousName": {
+            "type": "string"
+          },
+          "petName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title"
+          },
+          "updatedFields": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "name",
+                "species",
+                "breed",
+                "gender",
+                "birthday",
+                "adoptDate",
+                "weight",
+                "remarks"
+              ]
+            }
+          }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "componentPath": "components/pet-profile-card"
+        }
+      }
+    }
+  ],
+  "components": [
+    {
+      "path": "components/pet-profile-card",
+      "relatedPage": "/pages/profile/profile"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+<view class="card"><view wx:for="{{data.checklists}}" wx:key="_id"><text>{{item.icon}} {{item.title}}</text><text>完成 {{item.progress}}%</text></view></view>

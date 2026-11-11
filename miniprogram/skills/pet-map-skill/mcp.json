@@ -1,0 +1,190 @@
+{
+  "apis": [
+    {
+      "name": "searchPlaces",
+      "description": "检索宠物友好地点样本，支持名称地址关键词及分类。后端最多100个；未提供明确坐标时不判断附近，不自动申请定位。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "用户给出的地点名称、地址或描述关键词，默认不过滤。"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "cafe",
+              "park",
+              "hospital",
+              "shop",
+              "restaurant",
+              "other"
+            ],
+            "description": "可选分类：咖啡厅、公园、宠物医院、创意园、宠物乐园、其他。默认不过滤，勿按英文自行推断中文分类。"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20,
+            "description": "本次最多返回条数，默认20，上限50。不代表全部历史。"
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90,
+            "description": "用户明确提供的纬度，必须与 longitude 同传。不得猜测或自动定位。"
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180,
+            "description": "用户明确提供的经度，与 latitude 同传。不传坐标不判断附近。"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "places": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "latitude": {
+                  "type": "number"
+                },
+                "longitude": {
+                  "type": "number"
+                },
+                "distance": {
+                  "type": "number"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "页面入口的展示文字。"
+                },
+                "pagePath": {
+                  "type": "string",
+                  "format": "page-link",
+                  "x-link-text-field": "title",
+                  "description": "真实小程序页面入口，由用户点击继续操作。"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "sourceMayBeTruncated": {
+            "type": "boolean"
+          },
+          "locationProvided": {
+            "type": "boolean"
+          },
+          "distanceUnit": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "getPlaceDetail",
+      "description": "查询用户选定的公共宠物友好地点详情，不返回在线用户或其位置。营业及准入规则需向商家核实。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "placeId": {
+            "type": "string",
+            "description": "来自 searchPlaces.places[]._id，由用户选定，不编造。"
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90,
+            "description": "用户明确提供的纬度，必须与 longitude 同传。不得猜测或自动定位。"
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180,
+            "description": "用户明确提供的经度，与 latitude 同传。不传坐标不判断附近。"
+          }
+        },
+        "required": [
+          "placeId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "distance": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -12,7 +12,7 @@ exports.main = async (event, context) => {
     case 'add':
       return await addPet(OPENID, data);
     case 'update':
-      return await updatePet(OPENID, data);
+      return await require('./updatePet')({ db, cloud, security }, OPENID, data);
     case 'delete':
       return await deletePet(OPENID, data);
     case 'get':
@@ -98,55 +98,6 @@ async function addPet(openid, data) {
   }
 
   return { code: 0, message: '添加成功', data: { _id: res._id } };
-}
-
-// 更新宠物
-async function updatePet(openid, data) {
-  if (!data || !data._id) {
-    return { code: -1, message: '缺少宠物ID' };
-  }
-
-  // 内容安全校验
-  const remarksText = Array.isArray(data.remarks)
-    ? data.remarks.map(r => [r.customType, r.content].filter(Boolean).join(' ')).join('\n')
-    : '';
-  const composedText = [data.name, data.breed, data.description, remarksText].filter(Boolean).join('\n');
-  if (composedText) {
-    const r = await security.checkText(cloud, openid, composedText);
-    if (!r.pass) return security.violationResult();
-  }
-  if (data.avatar) {
-    const r = await security.checkImageByFileId(cloud, data.avatar);
-    if (!r.pass) {
-      await security.deleteFiles(cloud, [data.avatar]);
-      return security.violationResult();
-    }
-  }
-
-  const petId = data._id;
-  const updateData = { updatedAt: new Date() };
-
-  if (data.name !== undefined) updateData.name = data.name;
-  if (data.avatar !== undefined) updateData.avatar = data.avatar;
-  if (data.species !== undefined) updateData.species = data.species;
-  if (data.breed !== undefined) updateData.breed = data.breed;
-  if (data.gender !== undefined) updateData.gender = data.gender;
-  if (data.birthday !== undefined) updateData.birthday = data.birthday ? new Date(data.birthday) : null;
-  if (data.adoptDate !== undefined) updateData.adoptDate = data.adoptDate ? new Date(data.adoptDate) : null;
-
-  // remarks 整体替换
-  if (data.remarks !== undefined) updateData.remarks = Array.isArray(data.remarks) ? data.remarks : [];
-
-  // 体重更新时追加历史记录
-  if (data.weight !== undefined) {
-    const newWeight = Number(data.weight);
-    updateData.weight = newWeight;
-    updateData.weightHistory = _.push([{ date: new Date(), weight: newWeight }]);
-  }
-
-  await db.collection('pets').doc(petId).update({ data: updateData });
-
-  return { code: 0, message: '更新成功' };
 }
 
 // 归档宠物（软删除）

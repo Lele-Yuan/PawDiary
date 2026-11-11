@@ -24,7 +24,7 @@ Page({
   },
 
   onLoad(options) {
-    app.getUser().then(u => {
+    app.waitForUserReady().then(() => app.globalData.userInfo).then(u => {
       this.setData({ userInfo: u });
       if (u) api.user.syncProfile({ nickName: u.nickName, avatarUrl: u.avatarUrl });
       // 通过转发卡片进入：自动凭邀请码加入

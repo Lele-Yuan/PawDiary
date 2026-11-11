@@ -101,8 +101,8 @@
     }
   ],
   "components": [
-    { "path": "components/bill-card" },
-    { "path": "components/bill-list-card" },
-    { "path": "components/bill-stats-card" }
+    { "path": "components/bill-card", "relatedPage": "/pages/bill/bill" },
+    { "path": "components/bill-list-card", "relatedPage": "/pages/bill/bill" },
+    { "path": "components/bill-stats-card", "relatedPage": "/pages/bill/bill-stats/bill-stats" }
   ]
 }

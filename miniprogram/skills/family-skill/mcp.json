@@ -1,0 +1,67 @@
+{
+  "apis": [
+    {
+      "name": "listFamilyMembers",
+      "description": "查询宠物的共养成员、角色和当前用户角色，并提供共养管理入口。不调整权限、不邀请或移除成员。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "petId": {
+            "type": "string",
+            "description": "来自 petProfileSkill.listPets 返回 pets[]._id。多宠物或同名时让用户选择，不得猜测。"
+          },
+          "petName": {
+            "type": "string",
+            "description": "用户明确提到的宠物名字；不传时使用当前宠物或唯一宠物。与 petId 同传时必须一致。"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "petId": {
+            "type": "string"
+          },
+          "petName": {
+            "type": "string"
+          },
+          "myRole": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "nickName": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    }
+  ]
+}

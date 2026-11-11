@@ -60,6 +60,6 @@
     }
   ],
   "components": [
-    { "path": "components/reminder-list-card" }
+    { "path": "components/reminder-list-card", "relatedPage": "/pages/home/home" }
   ]
 }

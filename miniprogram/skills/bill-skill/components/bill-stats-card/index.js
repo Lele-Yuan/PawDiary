@@ -13,7 +13,7 @@ Component({
       const modelCtx = wx.modelContext.getContext(this);
       const { NotificationType } = wx.modelContext;
       modelCtx.on(NotificationType.Result, (d) => {
-        const sc = (d && d.structuredContent) || {};
+        const sc = (d && d.result && d.result.structuredContent) || {};
         const monthTotal = Number(sc.monthTotal) || 0;
         const lastMonthTotal = Number(sc.lastMonthTotal) || 0;
         let showDiff = false, diffUp = false, diffText = '';

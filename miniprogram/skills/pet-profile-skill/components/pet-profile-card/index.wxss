@@ -1,0 +1,1 @@
+.card{padding:24rpx;color:#35313e}.card>text,.card view{display:block;margin:8rpx 0}.card>text:first-child{font-size:34rpx;font-weight:600}

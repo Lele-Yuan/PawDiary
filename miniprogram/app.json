@@ -94,7 +94,67 @@
       "desc": "你的位置信息将用于展示附近的宠物友好地点和在线用户"
     }
   },
-  "requiredPrivateInfos": ["getLocation", "chooseLocation"],
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseLocation"
+  ],
   "style": "v2",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "subPackages": [
+    {
+      "root": "skills",
+      "independent": true,
+      "pages": []
+    }
+  ],
+  "agent": {
+    "instruction": "agent-instructions.md",
+    "skills": [
+      {
+        "name": "recordSkill",
+        "description": "宠物日常记录：新增、按类型和日期查询、删除记录。",
+        "path": "/skills/record-skill"
+      },
+      {
+        "name": "billSkill",
+        "description": "宠物消费账单：记账、查询明细、月度分类统计与消费趋势。",
+        "path": "/skills/bill-skill"
+      },
+      {
+        "name": "reminderSkill",
+        "description": "查询已开启的宠物提醒、近期到期事项、某类型下次提醒。仅查询，不创建提醒。",
+        "path": "/skills/reminder-skill"
+      },
+      {
+        "name": "petProfileSkill",
+        "description": "查询和按需更新宠物档案：名字、物种、品种、性别、生日、到家日期、档案体重及备注。仅创建者或管理员可更新。",
+        "path": "/skills/pet-profile-skill"
+      },
+      {
+        "name": "checklistSkill",
+        "description": "查询宠物出行和照护清单及完成进度。当前只读。",
+        "path": "/skills/checklist-skill"
+      },
+      {
+        "name": "familySkill",
+        "description": "查询宠物共养成员与角色，提供共养管理入口。",
+        "path": "/skills/family-skill"
+      },
+      {
+        "name": "petMapSkill",
+        "description": "检索公共宠物友好地点及详情，不自动定位。",
+        "path": "/skills/pet-map-skill"
+      },
+      {
+        "name": "splitpalSkill",
+        "description": "查询活动分账概况、账单及已有结算，金额单位分。",
+        "path": "/skills/splitpal-skill"
+      },
+      {
+        "name": "mealtimeSkill",
+        "description": "查询来吃饭家庭、共享菜单、当前约饭与历史小票。",
+        "path": "/skills/mealtime-skill"
+      }
+    ]
+  }
 }

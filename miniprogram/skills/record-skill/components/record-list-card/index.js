@@ -14,7 +14,7 @@ Component({
       const modelCtx = wx.modelContext.getContext(this);
       const { NotificationType } = wx.modelContext;
       modelCtx.on(NotificationType.Result, (data) => {
-        const sc = (data && data.structuredContent) || {};
+        const sc = (data && data.result && data.result.structuredContent) || {};
         this.setData({ data: sc });
       });
     }

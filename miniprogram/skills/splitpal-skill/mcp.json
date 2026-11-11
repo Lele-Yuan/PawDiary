@@ -1,0 +1,349 @@
+{
+  "apis": [
+    {
+      "name": "listActivities",
+      "description": "查询当前用户参与的分账活动列表与活动合计待结算金额。合计不是个人欠款；金额单位为人民币分。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "activities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "页面入口的展示文字。"
+                },
+                "pagePath": {
+                  "type": "string",
+                  "format": "page-link",
+                  "x-link-text-field": "title",
+                  "description": "真实小程序页面入口，由用户点击继续操作。"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "activityPendingAmount": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "amountUnit": {
+            "type": "string",
+            "enum": [
+              "fen"
+            ],
+            "description": "所有分账金额单位为人民币分，转为元需除以100。"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "getActivityOverview",
+      "description": "查询选定分账活动概况、分类统计及成员应分摊金额。应分摊金额不是未付欠款，不自动结算。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "string",
+            "description": "必须来自 listActivities.activities[]._id。先查询列表，由用户选定活动，不能编造。"
+          }
+        },
+        "required": [
+          "activityId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "activity": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            }
+          },
+          "myRole": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "nickName": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "removed": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "average": {
+            "type": "integer"
+          },
+          "billCount": {
+            "type": "integer"
+          },
+          "memberCount": {
+            "type": "integer"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "integer"
+                },
+                "percent": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "memberShares": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "nickName": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "integer"
+                },
+                "removed": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "currency": {
+            "type": "string"
+          },
+          "amountUnit": {
+            "type": "string",
+            "enum": [
+              "fen"
+            ],
+            "description": "所有分账金额单位为人民币分，转为元需除以100。"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "listActivityBills",
+      "description": "查询选定分账活动的账单明细，金额单位为人民币分。列表可能截断，总额应查询 getActivityOverview。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "string",
+            "description": "必须来自 listActivities.activities[]._id。先查询列表，由用户选定活动，不能编造。"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20,
+            "description": "本次最多返回条数，默认20，上限50。不代表全部历史。"
+          }
+        },
+        "required": [
+          "activityId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "bills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "billDate": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "amountUnit": {
+            "type": "string",
+            "enum": [
+              "fen"
+            ],
+            "description": "所有分账金额单位为人民币分，转为元需除以100。"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "listSettlements",
+      "description": "查询选定分账活动已保存的结算记录和付款记录状态，不计算结算、不转账、不标记付款。无记录不等于无欠款。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "string",
+            "description": "必须来自 listActivities.activities[]._id。先查询列表，由用户选定活动，不能编造。"
+          }
+        },
+        "required": [
+          "activityId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "settlements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "paidAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "fromName": {
+                  "type": "string"
+                },
+                "toName": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "paid": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "amountUnit": {
+            "type": "string",
+            "enum": [
+              "fen"
+            ],
+            "description": "所有分账金额单位为人民币分，转为元需除以100。"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    }
+  ]
+}

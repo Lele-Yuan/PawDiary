@@ -1,0 +1,504 @@
+{
+  "apis": [
+    {
+      "name": "listMealFamilies",
+      "description": "查询用户已加入的来吃饭家庭饭局列表，取得 familyId。此处家庭与宠物共养家庭不同。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "families": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "memberCount": {
+                  "type": "integer"
+                },
+                "cookCount": {
+                  "type": "integer"
+                },
+                "isAdmin": {
+                  "type": "boolean"
+                },
+                "kitchenRole": {
+                  "type": "integer",
+                  "description": "0为食客，1为大厨。"
+                },
+                "mealStatus": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": "string",
+                  "description": "页面入口的展示文字。"
+                },
+                "pagePath": {
+                  "type": "string",
+                  "format": "page-link",
+                  "x-link-text-field": "title",
+                  "description": "真实小程序页面入口，由用户点击继续操作。"
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "listFamilyDishes",
+      "description": "查询选定来吃饭家庭的共享菜单，支持菜名关键词。耗时单位分钟，不提供过敏安全保证，不执行点菜。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "familyId": {
+            "type": "string",
+            "description": "必须来自 listMealFamilies.families[]._id，是来吃饭的家庭 ID，不能使用宠物 ID。多项时由用户选择。"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "用户提供的菜名关键词，默认不过滤。"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20,
+            "description": "本次最多返回条数，默认20，上限50。不代表全部历史。"
+          }
+        },
+        "required": [
+          "familyId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "familyId": {
+            "type": "string"
+          },
+          "dishes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "dishId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "number"
+                },
+                "remark": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "ingredients": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "emoji": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "tastes": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "emoji": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "durationUnit": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "getCurrentMeal",
+      "description": "查询选定家庭当前约饭状态、本人已选菜品 ID 和点菜数量。状态0为点菜中，1为已下单；无约饭返回null。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "familyId": {
+            "type": "string",
+            "description": "必须来自 listMealFamilies.families[]._id，是来吃饭的家庭 ID，不能使用宠物 ID。多项时由用户选择。"
+          }
+        },
+        "required": [
+          "familyId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "familyId": {
+            "type": "string"
+          },
+          "meal": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "seq": {
+                    "type": "integer"
+                  },
+                  "isAdmin": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            ]
+          },
+          "myPicks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "listMealHistory",
+      "description": "查询选定家庭已完成约饭列表，后端最多最近50次。mealId 可用于查询小票，不等于 familyId。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "familyId": {
+            "type": "string",
+            "description": "必须来自 listMealFamilies.families[]._id，是来吃饭的家庭 ID，不能使用宠物 ID。多项时由用户选择。"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20,
+            "description": "本次最多返回条数，默认20，上限50。不代表全部历史。"
+          }
+        },
+        "required": [
+          "familyId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "familyId": {
+            "type": "string"
+          },
+          "meals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "mealId": {
+                  "type": "string"
+                },
+                "seq": {
+                  "type": "integer"
+                },
+                "dishCount": {
+                  "type": "integer"
+                },
+                "pickTotal": {
+                  "type": "integer"
+                },
+                "totalDuration": {
+                  "type": "number"
+                },
+                "memberCount": {
+                  "type": "integer"
+                },
+                "finishedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "createdAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": "string",
+                  "description": "页面入口的展示文字。"
+                },
+                "pagePath": {
+                  "type": "string",
+                  "format": "page-link",
+                  "x-link-text-field": "title",
+                  "description": "真实小程序页面入口，由用户点击继续操作。"
+                }
+              }
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "sourceMayBeTruncated": {
+            "type": "boolean"
+          },
+          "durationUnit": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    },
+    {
+      "name": "getMealReceipt",
+      "description": "查询选定约饭的小票、菜品、点菜数和耗时。小票不是支付凭证，不执行下单。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mealId": {
+            "type": "string",
+            "description": "来自 getCurrentMeal.meal._id 或 listMealHistory.meals[].mealId，由用户选择。不能使用家庭ID。"
+          }
+        },
+        "required": [
+          "mealId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "mealId": {
+            "type": "string"
+          },
+          "familyName": {
+            "type": "string"
+          },
+          "seq": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "dishCount": {
+            "type": "integer"
+          },
+          "pickTotal": {
+            "type": "integer"
+          },
+          "totalDuration": {
+            "type": "number"
+          },
+          "memberCount": {
+            "type": "integer"
+          },
+          "orderedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "finishedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dishes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "dishId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "duration": {
+                  "type": "number"
+                },
+                "remark": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "ingredients": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "emoji": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "tastes": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "emoji": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "durationUnit": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "页面入口的展示文字。"
+          },
+          "pagePath": {
+            "type": "string",
+            "format": "page-link",
+            "x-link-text-field": "title",
+            "description": "真实小程序页面入口，由用户点击继续操作。"
+          }
+        }
+      }
+    }
+  ]
+}

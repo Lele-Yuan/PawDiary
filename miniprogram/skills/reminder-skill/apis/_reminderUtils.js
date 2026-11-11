@@ -6,10 +6,11 @@ const TYPE_TEXT_MAP = {
 };
 
 function daysDiff(target) {
-  const t = new Date(target).getTime();
+  const targetDay = new Date(target);
+  targetDay.setHours(0, 0, 0, 0);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return Math.round((t - today.getTime()) / 86400000);
+  return Math.round((targetDay.getTime() - today.getTime()) / 86400000);
 }
 
 function diffLabel(diff) {

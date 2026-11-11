@@ -1,0 +1,1 @@
+Component({data:{data:{}},lifetimes:{created(){const ctx=wx.modelContext.getContext(this);ctx.on(wx.modelContext.NotificationType.Result,d=>this.setData({data:(d&&d.result&&d.result.structuredContent)||{}}));}}});

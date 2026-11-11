@@ -109,7 +109,7 @@
     }
   ],
   "components": [
-    { "path": "components/record-card" },
-    { "path": "components/record-list-card" }
+    { "path": "components/record-card", "relatedPage": "/pages/record/record" },
+    { "path": "components/record-list-card", "relatedPage": "/pages/record/record" }
   ]
 }

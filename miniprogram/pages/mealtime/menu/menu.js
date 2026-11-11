@@ -18,7 +18,7 @@ Page({
   },
 
   onLoad() {
-    app.getUser().then(u => this.setData({ userInfo: u }));
+    app.waitForUserReady().then(() => app.globalData.userInfo).then(u => this.setData({ userInfo: u }));
   },
   onShow() { this.load(); },
   onPullDownRefresh() { this.load().then(() => wx.stopPullDownRefresh()); },
